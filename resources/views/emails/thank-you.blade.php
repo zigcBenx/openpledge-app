@@ -100,7 +100,7 @@
 													<table class="image_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
 														<tr>
 															<td class="pad" style="width:100%;padding-right:0px;padding-left:0px;">
-																<div class="alignment" align="center" style="line-height:10px"><a href="https://openpledge.io/" target="_blank" style="outline:none" tabindex="-1"><img src="{{ asset('images/logotip_white.svg') }}" style="display: block; height: auto; border: 0; max-width: 330px; width: 100%;" width="330"></a></div>
+																<div class="alignment" align="center" style="line-height:10px"><a href="https://openpledge.io/" target="_blank" style="outline:none" tabindex="-1"><img src="{{ asset('images/logotip_white.png') }}" style="display: block; height: auto; border: 0; max-width: 330px; width: 100%;" width="330"></a></div>
 															</td>
 														</tr>
 													</table>
