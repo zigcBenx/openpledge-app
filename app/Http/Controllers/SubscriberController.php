@@ -50,7 +50,7 @@ class SubscriberController extends Controller
             ]);
 
             // Send email
-            Mail::to($email)->send(new ThankYouMail());
+            Mail::to($email)->send(new ThankYouMail($email));
 
             return response()->json(['message' => 'Email sent successfully']);
         } catch (ValidationException $e) {
