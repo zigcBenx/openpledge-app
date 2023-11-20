@@ -44,9 +44,11 @@ class SubscriberController extends Controller
             ]);
 
             $email = $data['email'];
+            $source = $data['source'];
 
             Subscriber::create([
-                'email' => $email
+                'email'  => $email,
+                'source' => $source,
             ]);
 
             // Send email
