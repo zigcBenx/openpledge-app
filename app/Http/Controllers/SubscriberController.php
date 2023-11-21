@@ -40,7 +40,8 @@ class SubscriberController extends Controller
     {
         try {
             $data = $request->validate([
-                'email' => 'required|email'
+                'email'  => 'required|email',
+                'source' => '',
             ]);
 
             $email = $data['email'];
