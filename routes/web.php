@@ -31,7 +31,8 @@ Route::middleware([
     'verified',
 ])->group(function () {
 
-    Route::get('/dashboard', [MainController::class, 'index'])->name('dashboard');
+    Route::get('/home', [MainController::class, 'index'])->name('home');
+    Route::get('/dashboard', [MainController::class, 'dashboard'])->name('dashboard');
 
     Route::get('/subscribers', [SubscriberController::class, 'index'])->name('subscribers');
 

@@ -21,8 +21,13 @@ class MainController extends Controller
         // $issues = GitHub::issues();
         // logger($issues);
         // $repos = $client->api('repo')->find('chess', array('language' => 'php'));
-        return Inertia::render('Dashboard', [
+        return Inertia::render('Home', [
             'issues' => $issues
         ]);
+    }
+
+    public function dashboard(Request $request)
+    {
+        return Inertia::render('Dashboard');
     }
 }
