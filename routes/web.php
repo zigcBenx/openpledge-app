@@ -1,10 +1,10 @@
 <?php
 
+use App\Http\Controllers\GithubController;
 use App\Http\Controllers\SubscriberController;
-use Illuminate\Foundation\Application;
+use App\Http\Controllers\MainController;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,10 +31,12 @@ Route::middleware([
     'verified',
 ])->group(function () {
 
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [MainController::class, 'index'])->name('dashboard');
 
     Route::get('/subscribers', [SubscriberController::class, 'index'])->name('subscribers');
 
 });
+
+
+Route::get('/auth/github/callback', [GithubController::class, 'callback'])->name('callback');
+Route::get('/auth/github', [GithubController::class, 'redirect'])->name('redirect');

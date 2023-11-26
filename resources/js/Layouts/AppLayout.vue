@@ -8,6 +8,11 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 
+import { useDark, useToggle } from '@vueuse/core';
+
+const isDark = useDark();
+const toggleDark = useToggle(isDark);
+
 defineProps({
     title: String,
 });
@@ -49,7 +54,7 @@ const logout = () => {
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                                    Dashboard
+                                    Home
                                 </NavLink>
                                 <NavLink :href="route('subscribers')" :active="route().current('subscribers')">
                                     Subscribers
@@ -58,6 +63,14 @@ const logout = () => {
                         </div>
 
                         <div class="hidden sm:flex sm:items-center sm:ms-6">
+                            <div>
+                                   <button
+                                        @click="toggleDark()"
+                                        class="px-4 py-2 text-white bg-gray-600 dark:bg-white dark:text-gray-600"
+                                    >
+                                        Dark Toggle
+                                    </button>
+                            </div>
                             <div class="ms-3 relative">
                                 <!-- Teams Dropdown -->
                                 <Dropdown v-if="$page.props.jetstream.hasTeamFeatures" align="right" width="60">

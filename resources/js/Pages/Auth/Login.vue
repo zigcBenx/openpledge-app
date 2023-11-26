@@ -85,6 +85,13 @@ const submit = () => {
                     Log in
                 </PrimaryButton>
             </div>
+        
+            <div class="flex items-center justify-end mt-4 border-t-white">
+                <a href="/auth/github" class="flex items-center justify-center w-full py-2 px-4 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                    <i class="fa-brands fa-github mr-1"></i>
+                    Login with GitHub
+                </a>
+            </div>
         </form>
     </AuthenticationCard>
 </template>
