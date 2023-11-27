@@ -56,6 +56,9 @@ const logout = () => {
                                 <NavLink :href="route('home')" :active="route().current('home')">
                                     Home
                                 </NavLink>
+                                <NavLink :href="route('repositories-request-get')" :active="route().current('repositories-request-get')">
+                                    Request repository
+                                </NavLink>
                                 <NavLink :href="route('dashboard')" :active="route().current('dashbaord')">
                                     Dashboard
                                 </NavLink>
@@ -213,8 +216,14 @@ const logout = () => {
                         <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
                             Home
                         </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('repositories-request-get')" :active="route().current('repositories-request-get')">
+                            Request repository
+                        </ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
                             Dashboard
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('subscribers')" :active="route().current('subscribers')">
+                            Subscribers
                         </ResponsiveNavLink>
                     </div>
 

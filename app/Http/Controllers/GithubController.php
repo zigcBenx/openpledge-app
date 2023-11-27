@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Github\GetGithubRepositories;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,5 +33,10 @@ class GithubController extends Controller
 
         Auth::login($dbUser);
         return redirect('/');
+    }
+
+    public function getRepositories()
+    {
+        return GetGithubRepositories::run();
     }
 }

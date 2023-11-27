@@ -3,6 +3,7 @@
 use App\Http\Controllers\GithubController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\MainController;
+use App\Http\Controllers\RepositoryController;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 
@@ -33,8 +34,12 @@ Route::middleware([
 
     Route::get('/home', [MainController::class, 'index'])->name('home');
     Route::get('/dashboard', [MainController::class, 'dashboard'])->name('dashboard');
-
     Route::get('/subscribers', [SubscriberController::class, 'index'])->name('subscribers');
+
+    Route::get('/repositories/request', [RepositoryController::class, 'getRequestNew'])->name('repositories-request-get');
+    // Route::post('/repositories/request', [RepositoryController::class, 'requestNew'])->name('repositories-request-post');
+
+    Route::get('/github/repositories', [GithubController::class, 'getRepositories'])->name('github-repositories-get'); // TODO: LEFT
 
 });
 
