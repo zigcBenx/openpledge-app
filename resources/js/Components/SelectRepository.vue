@@ -24,7 +24,15 @@
     </div>
 
     <div v-if="selectedRepository" class="mt-2">
-      <p class="text-gray-700 dark:text-white">Selected Repository: {{ selectedRepository.full_name }}</p>
+      <div class="text-gray-700 dark:text-white">
+        <ul>
+            <li>{{ selectedRepository.id }}</li>
+            <li>{{ selectedRepository.full_name }}</li>
+            <li>{{ selectedRepository.description }}</li>
+            <li>{{ selectedRepository.open_issues_count }} opened issues</li>
+            <li>#{{ selectedRepository.topics.join(' #')}}</li>
+        </ul>
+      </div>
       <button class="bg-green-400 text-white p-3">Add repository to Open Pledge</button>
     </div>
   </div>
