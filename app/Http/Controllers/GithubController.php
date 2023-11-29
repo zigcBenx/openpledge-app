@@ -35,8 +35,8 @@ class GithubController extends Controller
         return redirect('/');
     }
 
-    public function getRepositories()
+    public function getRepositories(Request $request)
     {
-        return GetGithubRepositories::run();
+        return GetGithubRepositories::run($request->get('q'));
     }
 }
