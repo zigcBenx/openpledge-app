@@ -38,6 +38,8 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import SelectRepository from '@/Components/SelectRepository.vue'
 import { useToast } from "vue-toastification";
 
+import { router } from '@inertiajs/vue3';
+
 export default {
   data() {
     return {
@@ -58,6 +60,7 @@ export default {
         .then((response) => {
             const toast = useToast()
             toast.success('Repository added to OpenPledge!')
+            router.visit(route('repositories-index'))
         }).catch((err) => {
             const toast = useToast()
             toast.error(err.response.data.message)

@@ -3,16 +3,16 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
 
 defineProps({
-    issues: Object,
+    repositories: Array,
 });
 
 </script>
 
 <template>
-    <AppLayout title="Home">
+    <AppLayout title="Repositories">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Issues / <Link :href="route('repositories-index')" :active="route().current('repositories-index')">Repositories</Link>
+                <Link :href="route('home')" :active="route().current('home')">Issues</Link> / Repositories
             </h2>
         </template>
 
@@ -21,19 +21,19 @@ defineProps({
                 <div class="bg-white flex justify-center dark:text-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
                     <div class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
                         <div class="flex items-center justify-between mb-4">
-                            <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">Latest PHP issues</h5>
+                            <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">Repositories</h5>
                     </div>
                         <div class="flow-root">
                             <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
-                                <li v-for="issue in issues.items" :key="issue.id" class="py-3 sm:py-4">
+                                <li v-for="repository in repositories" :key="repository.id" class="py-3 sm:py-4">
                                     <div class="flex items-center">
                                         <div class="flex-shrink-0">
-                                            <img class="w-8 h-8 rounded-full" :src="issue.user.avatar_url" alt="Neil image">
+                                            <!-- <img class="w-8 h-8 rounded-full" :src="issue.user.avatar_url" alt="Neil image"> -->
                                         </div>
                                         <div class="flex-1 min-w-0 ms-4">
                                             <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                                <a :href="issue.html_url">
-                                                    {{ issue.title }}
+                                                <a :href="repository.github_url">
+                                                    {{ repository.title }}
                                                 </a>
                                             </p>
                                             <p class="text-sm text-gray-500 truncate dark:text-gray-400">
@@ -46,17 +46,18 @@ defineProps({
                                         <div class="ml-3 flex">
                                             <a class="flex items-center justify-center w-full py-2 px-4 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
                                             <i class="fa-solid fa-hand-holding-dollar"></i>
-                                                Donate
-                                            </a>
-
-                                            <a :href="issue.html_url" target="_blank" class="ml-2 flex items-center justify-center w-full py-2 px-4 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                                            <i class="fa-solid fa-code-pull-request"></i>
-                                                Contribute
+                                                View issues
                                             </a>
                                         </div>
                                     </div>
                                 </li>
                             </ul>
+                            <div class="flex flex-col w-full items-center">
+                                <p>Can't find your favourite repository?</p>
+                                <Link class="underline" :href="route('repositories-request-get')">
+                                    Request repository
+                                </Link>
+                            </div>
                         </div>
                     </div>
 

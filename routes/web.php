@@ -38,6 +38,7 @@ Route::middleware([
 
     Route::get('/repositories/request', [RepositoryController::class, 'getRequestNew'])->name('repositories-request-get');
     Route::post('/repositories/create', [RepositoryController::class, 'create'])->name('repositories-create');
+    Route::get('/repositories', [RepositoryController::class, 'index'])->name('repositories-index');
 
     Route::get('/github/repositories', [GithubController::class, 'getRepositories'])->name('github-repositories-get'); // TODO: LEFT
 
