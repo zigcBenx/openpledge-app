@@ -6,11 +6,12 @@
       id="repositorySearch"
       v-model="searchQuery"
       @input="searchRepositories"
+      @focus="showResults = true"
       class="mt-1 p-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300 w-full dark:text-gray-600 text-white"
       placeholder="Start typing name of missing repository..."
     />
 
-    <div v-if="searchResults.length" class="absolute z-10 mt-2 w-full bg-white border rounded-md shadow-md">
+    <div v-if="searchResults.length && showResults" class="absolute z-10 mt-2 w-full bg-white border rounded-md shadow-md">
       <ul>
         <li
           v-for="repo in searchResults"
@@ -22,19 +23,6 @@
         </li>
       </ul>
     </div>
-
-    <div v-if="selectedRepository" class="mt-2">
-      <div class="text-gray-700 dark:text-white">
-        <ul>
-            <li>{{ selectedRepository.id }}</li>
-            <li>{{ selectedRepository.full_name }}</li>
-            <li>{{ selectedRepository.description }}</li>
-            <li>{{ selectedRepository.open_issues_count }} opened issues</li>
-            <li>#{{ selectedRepository.topics.join(' #')}}</li>
-        </ul>
-      </div>
-      <button class="bg-green-400 text-white p-3">Add repository to Open Pledge</button>
-    </div>
   </div>
 </template>
 
@@ -45,9 +33,11 @@ export default {
       searchQuery: "",
       searchResults: [],
       selectedRepository: null,
-      loading: false
+      loading: false,
+      showResults: false
     };
   },
+  emits: ['selected'],
   methods: {
     searchRepositories: debounce(function () {
       if (this.searchQuery.length >= 3) {
@@ -63,8 +53,8 @@ export default {
       }
     },400),
     selectRepository(repo) {
-      this.selectedRepository = repo;
-      this.searchResults = [];
+      this.$emit('selected', repo)
+      this.showResults = false
     },
   },
 };

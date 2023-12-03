@@ -1,8 +1,3 @@
-<script setup>
-import AppLayout from '@/Layouts/AppLayout.vue';
-import SelectRepository from '@/Components/SelectRepository.vue'
-</script>
-
 <template>
     <AppLayout title="Dashboard">
         <template #header>
@@ -18,10 +13,59 @@ import SelectRepository from '@/Components/SelectRepository.vue'
                         <div class="flex items-center justify-between mb-4">
                             <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">Find missing repository</h5>
                         </div>
-                        <SelectRepository/>
+                        <SelectRepository @selected="selectionPicked" />
+                        <div v-if="selectedRepository" class="mt-2">
+                            <div class="text-gray-700 dark:text-white">
+                                <ul>
+                                    <li>{{ selectedRepository.id }}</li>
+                                    <li>{{ selectedRepository.full_name }}</li>
+                                    <li>{{ selectedRepository.description }}</li>
+                                    <li>{{ selectedRepository.open_issues_count }} opened issues</li>
+                                    <li>#{{ selectedRepository.topics.join(' #')}}</li>
+                                </ul>
+                            </div>
+                            <button class="bg-green-400 text-white p-3" @click="createRepository" :disabled="!selectedRepository">Add repository to Open Pledge</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </AppLayout>
 </template>
+
+<script>
+import AppLayout from '@/Layouts/AppLayout.vue';
+import SelectRepository from '@/Components/SelectRepository.vue'
+import { useToast } from "vue-toastification";
+
+export default {
+  data() {
+    return {
+      selectedRepository: null,
+    };
+  },
+  components: {AppLayout, SelectRepository},
+  methods: {
+    selectionPicked(repo){
+        this.selectedRepository = repo
+    },
+    createRepository() {
+        axios.post('/repositories/create', {
+            title: this.selectedRepository.full_name,
+            github_id: this.selectedRepository.id,
+            github_url: this.selectedRepository.html_url,
+        })
+        .then((response) => {
+            const toast = useToast()
+            toast.success('Repository added to OpenPledge!')
+        }).catch((err) => {
+            const toast = useToast()
+            toast.error(err.response.data.message)
+        }).finally(() => {
+            this.loading = false
+        });
+    }
+  }
+}
+
+</script>
