@@ -29,11 +29,11 @@ class SubscriberController extends Controller
                 'count' => $subscribers->count()
             ],
             [
-                'name' => 'Sponsors',
+                'name' => 'All sponsors',
                 'count' => $subscribers->where('campaign', 'sponsor')->count(),
             ],
             [
-                'name' => 'Hackathon',
+                'name' => 'Hackathon interested',
                 'count' => $subscribers->where('campaign', 'hackathon')->count(),
             ],
         ];
