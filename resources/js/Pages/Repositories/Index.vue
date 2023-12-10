@@ -44,10 +44,12 @@ defineProps({
                                             $320
                                         </div>
                                         <div class="ml-3 flex">
-                                            <a class="flex items-center justify-center w-full py-2 px-4 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                                            <i class="fa-solid fa-hand-holding-dollar"></i>
-                                                View issues
-                                            </a>
+                                            <Link
+                                             :href="`/repositories/${repository.id}`"
+                                             class="flex items-center justify-center w-full py-2 px-4 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                                             View Details
+                                            </Link>
+                                            
                                         </div>
                                     </div>
                                 </li>

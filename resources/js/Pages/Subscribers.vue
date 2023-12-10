@@ -31,12 +31,14 @@ defineProps({
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <th scope="col" class="px-6 py-3">Email</th>
                             <th scope="col" class="px-6 py-3">Source</th>
+                            <th scope="col" class="px-6 py-3">Campaign</th>
                             <th scope="col" class="px-6 py-3">Subscribed at</th>
                         </thead>
                         <tbody>
                             <tr v-for="subscriber in subscribers" :key="subscriber.id" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                                 <td scope="col" class="px-6 py-3">{{ subscriber.email }}</td>
                                 <td scope="col" class="px-6 py-3">{{ subscriber.source }}</td>
+                                <td scope="col" class="px-6 py-3">{{ subscriber.campaign }}</td>
                                 <td scope="col" class="px-6 py-3">{{ subscriber.created_at }}</td>
                             </tr>
                         </tbody>

@@ -42,14 +42,17 @@ class SubscriberController extends Controller
             $data = $request->validate([
                 'email'  => 'required|email',
                 'source' => '',
+                'campaign' => '',
             ]);
 
             $email = $data['email'];
             $source = $data['source'];
+            $campaign = $data['campaign'];
 
             Subscriber::create([
                 'email'  => $email,
                 'source' => $source,
+                'campaign' => $campaign,
             ]);
 
             // Send email

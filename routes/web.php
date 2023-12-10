@@ -36,9 +36,18 @@ Route::middleware([
     Route::get('/dashboard', [MainController::class, 'dashboard'])->name('dashboard');
     Route::get('/subscribers', [SubscriberController::class, 'index'])->name('subscribers');
 
+
+
+
+    // TODO: this route is for displaying request view -> which will be removed
+    // since whenever user comes from github repo to openpledge, repos should be automatically created
+    // hwoever this could be used if user searched repos on open pledge and cant find it's own
+    // but mybe it would be better when 0 results to request all github repos with certain filters
+    // and if found automatically add and show index page...
     Route::get('/repositories/request', [RepositoryController::class, 'getRequestNew'])->name('repositories-request-get');
-    Route::post('/repositories/create', [RepositoryController::class, 'create'])->name('repositories-create');
-    Route::get('/repositories', [RepositoryController::class, 'index'])->name('repositories-index');
+
+
+    Route::resource('repositories', RepositoryController::class)->only('index', 'create', 'show');
 
     Route::get('/github/repositories', [GithubController::class, 'getRepositories'])->name('github-repositories-get'); // TODO: LEFT
 

@@ -52,7 +52,7 @@ export default {
         this.selectedRepository = repo
     },
     createRepository() {
-        axios.post('/repositories/create', {
+        axios.post('/repositories', {
             title: this.selectedRepository.full_name,
             github_id: this.selectedRepository.id,
             github_url: this.selectedRepository.html_url,
@@ -60,7 +60,7 @@ export default {
         .then((response) => {
             const toast = useToast()
             toast.success('Repository added to OpenPledge!')
-            router.visit(route('repositories-index'))
+            router.visit(route('repositories.index'))
         }).catch((err) => {
             const toast = useToast()
             toast.error(err.response.data.message)

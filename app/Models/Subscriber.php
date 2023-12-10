@@ -13,5 +13,6 @@ class Subscriber extends Model
         'email',
         'description',
         'source',
+        'campaign'
     ];
 }
