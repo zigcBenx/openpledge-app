@@ -28,6 +28,14 @@ class SubscriberController extends Controller
                 'name' => 'All subscribers',
                 'count' => $subscribers->count()
             ],
+            [
+                'name' => 'Sponsors',
+                'count' => $subscribers->where('campaign', 'sponsor')->count(),
+            ],
+            [
+                'name' => 'Hackathon',
+                'count' => $subscribers->where('campaign', 'hackathon')->count(),
+            ],
         ];
 
         return Inertia::render('Subscribers', [
