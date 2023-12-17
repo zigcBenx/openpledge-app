@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Github\GetGithubIssues;
 use App\Actions\Github\GetGithubRepositories;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -38,5 +39,10 @@ class GithubController extends Controller
     public function getRepositories(Request $request)
     {
         return GetGithubRepositories::run($request->get('q'));
+    }
+
+    public function getIssues(Request $request)
+    {
+        return GetGithubIssues::run($request->get('q'));
     }
 }

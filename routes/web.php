@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\GithubController;
+use App\Http\Controllers\IssueController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\RepositoryController;
@@ -47,9 +48,11 @@ Route::middleware([
     Route::get('/repositories/request', [RepositoryController::class, 'getRequestNew'])->name('repositories-request-get');
 
 
-    Route::resource('repositories', RepositoryController::class)->only('index', 'create', 'show');
+    Route::resource('repositories', RepositoryController::class)->only('index','show', 'store');
+    Route::resource('issues', IssueController::class)->only('store');
 
-    Route::get('/github/repositories', [GithubController::class, 'getRepositories'])->name('github-repositories-get'); // TODO: LEFT
+    Route::get('/github/repositories', [GithubController::class, 'getRepositories'])->name('github-repositories-get');
+    Route::get('/github/issues', [GithubController::class, 'getIssues'])->name('github-issues-get');
 
 });
 

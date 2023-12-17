@@ -56,6 +56,7 @@ export default {
             title: this.selectedRepository.full_name,
             github_id: this.selectedRepository.id,
             github_url: this.selectedRepository.html_url,
+            user_avatar: this.selectedRepository.owner.avatar_url,
         })
         .then((response) => {
             const toast = useToast()

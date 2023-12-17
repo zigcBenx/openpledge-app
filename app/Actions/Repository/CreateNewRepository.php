@@ -16,15 +16,17 @@ class CreateNewRepository
             // if not: create new repository and open it on open pledge
                     
         Validator::make($input, [
-            'title' => ['required', 'string', 'max:255'],
-            'github_url' => ['required', 'string', 'url',],
-            'github_id' => ['required','unique:repositories,github_id'],
+            'title'       => ['required', 'string', 'max:255'],
+            'github_url'  => ['required', 'string', 'url',],
+            'github_id'   => ['required','unique:repositories,github_id'],
+            'user_avatar' => ['string'],
         ])->validate();
 
         return Repository::create([
-            'title' => $input['title'],
-            'github_url' => $input['github_url'],
-            'github_id' => $input['github_id'],
+            'title'       => $input['title'],
+            'github_url'  => $input['github_url'],
+            'github_id'   => $input['github_id'],
+            'user_avatar' => $input['user_avatar'],
         ]);
     }
 }

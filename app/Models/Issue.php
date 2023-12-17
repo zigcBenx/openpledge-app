@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Repository extends Model
+class Issue extends Model
 {
     use HasFactory;
 
@@ -13,11 +13,12 @@ class Repository extends Model
         'title',
         'github_url',
         'github_id',
+        'repository_id',
         'user_avatar'
     ];
 
-    public function issues()
+    public function repository()
     {
-        return $this->hasMany(Issue::class);
+        return $this->belongsTo(Repository::class);
     }
 }

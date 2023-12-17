@@ -15,7 +15,7 @@ class RepositoryController extends Controller
         return Inertia::render('Repositories/Create');
     }
 
-    public function create(Request $request)
+    public function store(Request $request)
     {
         return CreateNewRepository::create($request->all());
     }
