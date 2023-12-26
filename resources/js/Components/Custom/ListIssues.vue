@@ -1,3 +1,13 @@
+<script setup>
+    import { Link } from '@inertiajs/vue3';
+
+    defineProps({
+        issues: Object,
+        title: String
+    });
+
+</script>
+
 <template>
     <div>
         <div class="flex items-center justify-between mb-4 mt-2">
@@ -25,6 +35,12 @@
                         </div>
                         <div class="ml-3 flex">
                             <slot name="actions" :issue="issue"></slot>
+                            <Link
+                                v-if="issue.repository_id"
+                                :href="`/issues/${issue.id}`"
+                                class="flex items-center justify-center w-full py-2 px-4 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                                View Details
+                            </Link>
 
                             <a :href="issue.html_url" target="_blank" class="ml-2 flex items-center justify-center w-full py-2 px-4 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
                             <i class="fa-solid fa-code-pull-request"></i>
@@ -37,13 +53,3 @@
         </div>
     </div>
 </template>
-
-<script>
-export default {
-    name: 'ListIssues',
-    props: {
-        issues: Object,
-        title: String
-    },
-}
-</script>

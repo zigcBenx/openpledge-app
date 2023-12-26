@@ -25,7 +25,12 @@
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-4">
                 <div class="bg-white flex justify-center dark:text-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
                     <div class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
-                        list of issues on repository page
+                        Donations:
+                            <u>
+                                <li v-for="donation in issue.donations" :key="donation.id">
+                                    {{ donation.amount }} by {{ donation.donor_id }} for {{ donation.donatable_id }}({{ donation.donatable_type }})
+                                </li>
+                            </u>
                     </div>
                 </div>
             </div>

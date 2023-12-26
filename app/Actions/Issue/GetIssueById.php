@@ -8,6 +8,6 @@ class GetIssueById
 {
     public static function get($id)
     {
-        return Issue::with('repository')->find($id);
+        return Issue::with('repository', 'donations')->find($id);
     }
 }

@@ -25,6 +25,7 @@
                 <div class="bg-white flex justify-center dark:text-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
                     <div class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
                         <list-issues v-if="repository.issues" :issues="repository.issues" title="Pledged issues" />
+                        <br>
                         <hr>
                         <list-issues v-if="openIssues" :issues="openIssues" title="Open issues">
                             <template #actions="{ issue }">
