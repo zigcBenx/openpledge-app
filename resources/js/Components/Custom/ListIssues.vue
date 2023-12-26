@@ -5,7 +5,7 @@
         </div>
         <div class="text-gray-700 dark:text-white">
             <ul>
-                <li v-for="issue in issues" :key="issue.id">
+                <li v-for="issue in issues" :key="issue.id" class="mt-2">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
                             <img class="w-8 h-8 rounded-full" :src="issue.user_avatar ?? issue.user.avatar_url" alt="Neil image">
