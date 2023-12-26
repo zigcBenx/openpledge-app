@@ -21,4 +21,9 @@ class Issue extends Model
     {
         return $this->belongsTo(Repository::class);
     }
+
+    public function donations()
+    {
+        return $this->morphMany(Donation::class, 'donatable');
+    }
 }

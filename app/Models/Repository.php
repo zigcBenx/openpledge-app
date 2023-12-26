@@ -20,4 +20,9 @@ class Repository extends Model
     {
         return $this->hasMany(Issue::class);
     }
+
+    public function donations()
+    {
+        return $this->morphMany(Donation::class, 'donatable');
+    }
 }

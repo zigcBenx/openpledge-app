@@ -3,6 +3,7 @@
 use App\Http\Controllers\GithubController;
 use App\Http\Controllers\IssueController;
 use App\Http\Controllers\SubscriberController;
+use App\Http\Controllers\DonationController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\RepositoryController;
 use Illuminate\Support\Facades\Redirect;
@@ -49,7 +50,8 @@ Route::middleware([
 
 
     Route::resource('repositories', RepositoryController::class)->only('index','show', 'store');
-    Route::resource('issues', IssueController::class)->only('store');
+    Route::resource('issues', IssueController::class)->only('index', 'show', 'store');
+    Route::resource('donations', DonationController::class)->only('index', 'show', 'store');
 
     Route::get('/github/repositories', [GithubController::class, 'getRepositories'])->name('github-repositories-get');
     Route::get('/github/issues', [GithubController::class, 'getIssues'])->name('github-issues-get');
