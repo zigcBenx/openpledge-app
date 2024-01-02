@@ -25,7 +25,7 @@ class IssueController extends Controller
 
     public function show($id)
     {
-        $issue = GetIssueById::get($id);
+        $issue = GetIssueById::get($id, true);
         return Inertia::render('Issues/Show', [
             'issue' => $issue
         ]);

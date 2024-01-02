@@ -25,4 +25,14 @@ class Repository extends Model
     {
         return $this->morphMany(Donation::class, 'donatable');
     }
+
+    public function getDonationSumAttribute()
+    {
+        return $this->donations()->sum('amount');
+    }
+
+    public function getIssuesDonationSumAttribute()
+    {
+        return $this->issues()->donations()->sum('amount');
+    }
 }
