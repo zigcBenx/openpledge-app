@@ -44,12 +44,19 @@
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-4">
                 <div class="bg-white flex justify-center dark:text-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
                     <div class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
-                        Donations:
-                            <u>
-                                <li v-for="donation in issue.donations" :key="donation.id">
-                                    <b>{{ donation.amount }}€</b> by {{ donation.donor_id }} for {{ donation.donatable_id }}({{ donation.donatable_type }})
+                        ISSUE ACTIVITY:
+                            <ol class="relative border-s border-gray-200 dark:border-gray-700">
+                                <li v-for="donation in issue.donations" :key="donation.id" class="mb-10 ms-4">
+                                    <div class="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-gray-900 dark:bg-gray-700"></div>
+                                    <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">March 2022</time>
+                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Donation</h3>
+                                    <p class="text-base font-normal text-gray-500 dark:text-gray-400">
+                                        <b>{{ donation.amount }}€</b> by {{ donation.donor_id }} for {{ donation.donatable_id }}({{ donation.donatable_type }})
+                                    </p>
                                 </li>
-                            </u>
+                            </ol>
+
+
                     </div>
                 </div>
             </div>
