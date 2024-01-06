@@ -5,6 +5,7 @@ use App\Http\Controllers\IssueController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\MainController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\RepositoryController;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
@@ -53,8 +54,13 @@ Route::middleware([
     Route::resource('issues', IssueController::class)->only('index', 'show', 'store');
     Route::resource('donations', DonationController::class)->only('index', 'show', 'store');
 
+
+    Route::get('issues/{issue}/donations', [IssueController::class, 'donations'])->name('issues.donations');
+
     Route::get('/github/repositories', [GithubController::class, 'getRepositories'])->name('github-repositories-get');
     Route::get('/github/issues', [GithubController::class, 'getIssues'])->name('github-issues-get');
+
+    Route::post('/get-payment-intent', [PaymentController::class, 'getPaymentIntent'])->name('get-payment-intent');
 
 });
 
