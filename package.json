@@ -24,7 +24,9 @@
         "@fortawesome/free-brands-svg-icons": "^6.4.2",
         "@fortawesome/free-regular-svg-icons": "^6.4.2",
         "@fortawesome/free-solid-svg-icons": "^6.4.2",
+        "@stripe/stripe-js": "^2.2.2",
         "@vueuse/core": "^10.6.1",
+        "date-fns": "^3.1.0",
         "vue-toastification": "^2.0.0-rc.5"
     }
 }
