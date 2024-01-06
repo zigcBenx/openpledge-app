@@ -22,7 +22,7 @@ defineProps({
                 <div class="bg-white flex justify-center dark:text-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
                     <div class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
                         <div class="flow-root">
-                            <list-issues v-if="issues" :issues="issues" title="Pledged issues" />
+                            <list-issues v-if="issues" :issues="issues" :pledged="true" title="Pledged issues" />
                             <div class="flex flex-col w-full items-center">
                                 <p>Can't find your favourite repository?</p>
                                 <Link class="underline" :href="route('repositories-request-get')">

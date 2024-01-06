@@ -41,7 +41,7 @@ defineProps({
                                             </p>
                                         </div>
                                         <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                            $320
+                                            {{ repository.donations_sum || 0 }} €
                                         </div>
                                         <div class="ml-3 flex">
                                             <Link

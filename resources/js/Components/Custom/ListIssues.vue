@@ -3,7 +3,11 @@
 
     defineProps({
         issues: Object,
-        title: String
+        title: String,
+        pledged: {
+            type: Boolean,
+            default: false,
+        },
     });
 
 </script>
@@ -30,8 +34,8 @@
                                 {{ issue.user?.login }}
                             </p>
                         </div>
-                        <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                            $320
+                        <div v-if="pledged" class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                            {{ issue.donations_sum_amount || 0 }} €
                         </div>
                         <div class="ml-3 flex">
                             <slot name="actions" :issue="issue"></slot>
