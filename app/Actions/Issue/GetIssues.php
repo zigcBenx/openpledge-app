@@ -8,6 +8,6 @@ class GetIssues
 {
     public static function get()
     {
-        return Issue::all();
+        return Issue::withSum('donations', 'amount')->get();
     }
 }

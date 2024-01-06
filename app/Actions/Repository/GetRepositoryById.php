@@ -8,6 +8,8 @@ class GetRepositoryById
 {
     public static function get($id)
     {
-        return Repository::with('issues')->find($id);
+        return Repository::with(['issues' => function ($query) {
+            $query->withSum('donations', 'amount');
+        }])->find($id);
     }
 }

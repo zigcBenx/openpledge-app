@@ -25,9 +25,15 @@ class IssueController extends Controller
 
     public function show($id)
     {
-        $issue = GetIssueById::get($id, true);
+        $issue = GetIssueById::get($id);
         return Inertia::render('Issues/Show', [
             'issue' => $issue
         ]);
+    }
+
+    public function donations($id)
+    {
+        $issue = GetIssueById::get($id);
+        return $issue->donations;
     }
 }
