@@ -76,3 +76,5 @@ For example of "issues":
             'issues' => $issues
         ]);
     ```
+
+As you will find out, we are not consistent on using Options or Composition API in Vue components. This is because of my habbit of using options API and Jetstream came with Composition API presets...
