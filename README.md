@@ -9,7 +9,7 @@ Project is meant to run on [Laravel sail](https://laravel.com/docs/10.x/sail), w
 - `cd` into project
 - `cp .env.example .env` - add your stripe and Github keys, alter other data is optional
 - `composer install`
-- `vendor/bin/sail up -d` - runs sail containers
+- `vendor/bin/sail up -d` - runs sail containers. <br>
 Containers should now be ready to go. Check with: `vendor/bin/sail ps` to check running containers
 - For running regular laravel commands with artisan use **sail** instead of **php**, e.g: `sail artisan migrate` to run migrations. This makes sure that command is beeing run inside container (same as if you would do: `docker-compose exec <container>`, and then run the command)
 - `sail artisan key:generate`
@@ -24,7 +24,7 @@ Password is the same as for database, saved in .env file under `DB_PASSWORD` env
 
 Project was initialy generated with [Laravel jetstream](https://jetstream.laravel.com/) starter pack, which provides basic design, authentication and some other perks. As scaffolding Inertia was chosen.
 
-- **[Larave](https://laravel.com/docs/10.x)** -> Modern PHP framework with elegant syntax based on MVC.
+- **[Laravel](https://laravel.com/docs/10.x)** -> Modern PHP framework with elegant syntax based on MVC.
 - **[Inertia](https://inertiajs.com/)** -> Is for createing SPA(Single Page Applications) without need of separate API project - it is integrated into Laravel. In this project we use **[Vue](https://vuejs.org/)** version of inertia, which means every page can be presented as separate component.
 
 For future developers that may not be that well familiar with Laravel, I can't suggest Laravel official documentation enough, it's an work of art with great examples and explanations.
