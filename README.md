@@ -2,6 +2,23 @@
 
 Open pledge is online marketplace for monetizing opensource. On one side donors can support open source issues with their donations and help with maintaing secure and updated project that they are possibly using. And on the other side developers that can solve issues having certain donation pledged and receive reward for their contribution.
 
+## Setup instructions
+Project is meant to run on [Laravel sail](https://laravel.com/docs/10.x/sail), which is wrapper of Docker with minimal initial configuration.
+- pull repository on your local machine
+- make sure you have Docker installed (suggested platforms: Linux, MacOs or WSL)
+- `cd` into project
+- `cp .env.example .env` - add your stripe and Github keys, alter other data is optional
+- `composer install`
+- `vendor/bin/sail up -d` - runs sail containers
+Containers should now be ready to go. Check with: `vendor/bin/sail ps` to check running containers
+- For running regular laravel commands with artisan use **sail** instead of **php**, e.g: `sail artisan migrate` to run migrations. This makes sure that command is beeing run inside container (same as if you would do: `docker-compose exec <container>`, and then run the command)
+- `sail artisan key:generate`
+- `sail artisan migrate`
+- App should be live and working on `localhost`.
+
+You can access phpmyadmin via: localhost:<port> - port can be viewed in `vendor/bin/sail ps`
+Password is the same as for database, saved in .env file under `DB_PASSWORD` env variable
+
 
 ## Stack
 
@@ -15,7 +32,7 @@ For future developers that may not be that well familiar with Laravel, I can't s
 
 ### Backend
 As mentioned, this project is based on Laravel.
-Important building bloks:
+Important building blocks:
 - [Routes](https://laravel.com/docs/10.x/routing#main-content) -> found in `routes/web.php` file, where all routes are defined.
 - Controllers -> found in `app/Http/Controllers/` where route is mapped to certain logic.
 - Models -> found in `app/Models/`, where database tables are presented for later quering with ORM ([Eloquent](https://laravel.com/docs/10.x/eloquent))
@@ -78,3 +95,10 @@ For example of "issues":
     ```
 
 As you will find out, we are not consistent on using Options or Composition API in Vue components. This is because of my habbit of using options API and Jetstream came with Composition API presets...
+
+
+### Other
+
+#### Permissions and roles
+Basic functionality of permissions is supported via spatie package [laravel-permissions](https://spatie.be/docs/laravel-permission/v6/introduction).
+Example of usage is made for subscribers page. All permissions are sent to frontend via `HandleInertiaRequests`'s `share` method
