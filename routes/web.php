@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\GithubController;
 use App\Http\Controllers\IssueController;
 use App\Http\Controllers\SubscriberController;
@@ -52,6 +53,7 @@ Route::middleware([
 
     Route::resource('repositories', RepositoryController::class)->only('index','show', 'store');
     Route::resource('issues', IssueController::class)->only('index', 'show', 'store');
+    Route::resource('campaigns', CampaignController::class);
     Route::resource('donations', DonationController::class)->only('index', 'show', 'store');
 
 
