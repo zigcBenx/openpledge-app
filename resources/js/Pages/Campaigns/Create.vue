@@ -1,8 +1,8 @@
 <template>
-    <AppLayout title="Campaign edit">
+    <AppLayout title="Campaign create">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Edit Campaign
+                Create Campaign
             </h2>
         </template>
 
@@ -59,22 +59,12 @@
 
                                     <div class="mt-4">
                                         <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">
-                                            Update Campaign
+                                            Create Campaign
                                         </button>
-                                        <!-- <button type="button" class="focus:outline-none float-right text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Run campaign</button> -->
                                     </div>
                                 </form>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-4">
-                <div class="bg-white flex justify-center dark:text-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
-                    <div class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
-                       todo: users that have received this campaign
-
                     </div>
                 </div>
             </div>
@@ -85,26 +75,26 @@
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { useToast } from "vue-toastification";
+import { router } from '@inertiajs/vue3';
 
 export default {
-    props: {
-        campaign: Object,
-    },
     components: { AppLayout },
     data() {
         return {
-            form: this.campaign
+            form: {}
         };
     },
     methods: {
         submitForm() {
             const toast = useToast()
             // Implement the logic to update the campaign
-            axios.put(`/campaigns/${this.campaign.id}`, this.form)
+            axios.post(`/campaigns/`, this.form)
                 .then(() => {
-                    toast.success('Campaign saved!')
+                    toast.success('Campaign created!')
+                    router.visit(route('campaigns.index'))
                 })
                 .catch((error) => {
+                    console.log(error)
                     toast.error('Something went wrong!')
                 });
         },

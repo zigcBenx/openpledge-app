@@ -9,10 +9,6 @@ use Inertia\Inertia;
 
 class CampaignController extends Controller
 {
-    // public function store(Request $request)
-    // {
-    //     return CreateNewIssue::create($request->all());
-    // }
 
     public function index()
     {
@@ -40,7 +36,26 @@ class CampaignController extends Controller
 
     public function update(Request $request, Campaign $campaign)
     {
-        // Validate the incoming request data
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'template' => 'required|string',
+            'is_enabled' => 'boolean',
+            'is_recurring_for_new_users' => 'boolean',
+            'new_user_delay_days' => '',
+            'start_time' => '',
+        ]);
+
+        $campaign->update($validatedData);
+        return response()->json(['message' => 'Campaign updated successfully']);
+    }
+
+    public function create()
+    {
+        return Inertia::render('Campaigns/Create');
+    }
+
+    public function store(Request $request)
+    {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'template' => 'required|string',
@@ -51,12 +66,7 @@ class CampaignController extends Controller
         ]);
 
         // Update the campaign with the validated data
-        $campaign->update($validatedData);
+        Campaign::create($validatedData);
         return response()->json(['message' => 'Campaign updated successfully']);
     }
-
-    // public function update(Request $request, $id)
-    // {
-    //     // Logic to update a specific resource based on the form submission
-    // }
 }
