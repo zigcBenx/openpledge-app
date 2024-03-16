@@ -12,7 +12,6 @@ class RunCampaignsCommand extends Command
 {
     protected $signature = 'campaigns:run';
 
-    // TODO: insert into campaign_subscriber table so we know which subscribers already received the email
     public function handle()
     {
         $campaigns = $this->getCampaigns();
@@ -22,9 +21,12 @@ class RunCampaignsCommand extends Command
             $subscribersToSend = Subscriber::whereNotIn('id', $subscribersReceived)->get();
 
             // Handle recurring campaigns for new users
-            if ($campaign->is_recurring_for_new_users) {
-                $newSubscribers = Subscriber::where('created_at', '>=', now()->subDays($campaign->new_user_delay_days))->get();
-                $subscribersToSend->merge($newSubscribers);
+            if (Carbon::today()->isAfter($campaign->start_time)) {
+                if ($campaign->is_recurring_for_new_users) {
+                    $newSubscribers = Subscriber::where('created_at', '>=', now()->subDays($campaign->new_user_delay_days))->get();
+                    $this->sendCampaign($campaign, $$newSubscribers);
+                }
+                continue;
             }
             $this->sendCampaign($campaign, $subscribersToSend);
         }
@@ -40,7 +42,7 @@ class RunCampaignsCommand extends Command
     private function getCampaigns()
     {
         return Campaign::where('is_enabled', true)
-            ->whereDate('start_time', Carbon::today())
+            ->whereDate('start_time', '<=', Carbon::today())
             ->get();
     }
 }
