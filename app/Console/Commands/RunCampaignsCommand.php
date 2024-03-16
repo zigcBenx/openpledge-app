@@ -24,7 +24,7 @@ class RunCampaignsCommand extends Command
             if (Carbon::today()->isAfter($campaign->start_time)) {
                 if ($campaign->is_recurring_for_new_users) {
                     $newSubscribers = Subscriber::where('created_at', '>=', now()->subDays($campaign->new_user_delay_days))->get();
-                    $this->sendCampaign($campaign, $$newSubscribers);
+                    $this->sendCampaign($campaign, $newSubscribers->pluck('subscriber_id')->diff($subscribersReceived));
                 }
                 continue;
             }
@@ -36,7 +36,17 @@ class RunCampaignsCommand extends Command
 
     private function sendCampaign($campaign, $subscribers)
     {
-        $this->info('Campaign: ' . $campaign->name . ' is sent to: ' . join(',',array_map(function($s){return $s['email'];},$subscribers->toArray())));
+        $subscriberEmails = $subscribers->pluck('email')->toArray();
+        $this->info('Campaign: ' . $campaign->name . ' is sent to: ' . implode(',', $subscriberEmails));
+    
+        // Insert into CampaignSubscriber model
+        foreach ($subscribers as $subscriber) {
+            CampaignSubscriber::create([
+                'campaign_id' => $campaign->id,
+                'subscriber_id' => $subscriber->id,
+            ]);
+        }
+
     }
 
     private function getCampaigns()
