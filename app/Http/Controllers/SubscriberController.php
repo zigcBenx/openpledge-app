@@ -6,7 +6,6 @@ use App\Mail\ThankYouMail;
 use App\Models\Subscriber;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;

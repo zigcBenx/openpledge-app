@@ -11,8 +11,8 @@
                 <div class="bg-white flex justify-center dark:text-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
                     <div class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
                         <div class="flex">
-                            <div class="flex items-center justify-between mb-4">
-                                <form @submit.prevent="submitForm">                                    
+                            <div class="flex items-center justify-between mb-4 w-4/5">
+                                <form @submit.prevent="submitForm" class="w-full">
                                     <div class="mb-4">
                                         <div class="relative">
                                             <input v-model="form.name" type="text" id="name" class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " />
@@ -21,8 +21,9 @@
                                     </div>
                                     <div class="mb-4">
                                         <div class="relative">
-                                            <input v-model="form.template" type="text" id="template" class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " />
-                                            <label for="template" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">Template</label>
+                                            <!-- <textarea v-model="form.content" id="content" class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " />
+                                            <label for="content" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">Content</label> -->
+                                            <tip-tap v-model="form.content" />
                                         </div>
                                     </div>
                                     <div class="mb-4">
@@ -76,9 +77,10 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { useToast } from "vue-toastification";
 import { router } from '@inertiajs/vue3';
+import TipTap from '@/Components/Custom/TipTap.vue';
 
 export default {
-    components: { AppLayout },
+    components: { AppLayout, TipTap },
     data() {
         return {
             form: {}

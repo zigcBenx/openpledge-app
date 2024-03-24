@@ -10,8 +10,8 @@ class Campaign extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'template', 'is_enabled', 'is_recurring_for_new_users',
-        'new_user_delay_days', 'start_time',
+        'name', 'is_enabled', 'is_recurring_for_new_users',
+        'new_user_delay_days', 'start_time', 'content'
     ];
 
     protected $casts = [

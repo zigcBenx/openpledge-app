@@ -38,7 +38,7 @@ class CampaignController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'template' => 'required|string',
+            'content' => 'string',
             'is_enabled' => 'boolean',
             'is_recurring_for_new_users' => 'boolean',
             'new_user_delay_days' => '',
@@ -58,7 +58,7 @@ class CampaignController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'template' => 'required|string',
+            'content' => 'string',
             'is_enabled' => 'boolean',
             'is_recurring_for_new_users' => 'boolean',
             'new_user_delay_days' => '',
