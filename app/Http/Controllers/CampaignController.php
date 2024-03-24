@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Actions\Issue\GetIssueById;
 use App\Models\Campaign;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Inertia\Inertia;
 
 class CampaignController extends Controller
@@ -68,5 +70,16 @@ class CampaignController extends Controller
         // Update the campaign with the validated data
         Campaign::create($validatedData);
         return response()->json(['message' => 'Campaign updated successfully']);
+    }
+
+    public function run()
+    {
+        try {
+            Artisan::call('campaigns:run');
+            return response()->json(['message' => 'Campaigns ran successfully']);
+        } catch(Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 422);
+        }
+        
     }
 }

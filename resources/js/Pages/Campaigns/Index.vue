@@ -1,10 +1,25 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import { useToast } from "vue-toastification";
 
 defineProps({
     campaigns: Array,
 });
+
+const runCampaigns = () => {
+    axios.post('api/campaigns-run')
+            .then((response) => {
+                const toast = useToast()
+                toast.success('Campaigns run!')
+            }).catch((err) => {
+                const toast = useToast()
+                toast.error(err?.response.data.message)
+            }).finally(() => {
+                // this.loading = false
+            });
+}
 
 </script>
 
@@ -29,6 +44,7 @@ defineProps({
                                     class="flex items-center float-right mb-2 w-1/12 justify-center py-2 px-4 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
                                     NEW
                                 </Link>
+                                <PrimaryButton class="ms-3" @click="runCampaigns">Run <i class="fa fa-play ml-1" /></PrimaryButton>
                                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                         <tr>
