@@ -10,6 +10,7 @@ class CampaignSubscriber extends Model
     use HasFactory;
 
     protected $table = 'campaign_subscriber';
+    protected $fillable = ['campaign_id', 'subscriber_id'];
 
     // protected $fillable = [];
 
