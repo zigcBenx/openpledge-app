@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Actions\Issue\GetIssueById;
 use App\Models\Campaign;
+use App\Models\CampaignSubscriber;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -72,6 +73,8 @@ class CampaignController extends Controller
         return response()->json(['message' => 'Campaign updated successfully']);
     }
 
+
+    /** THIS IS FOR TESTING ONLY _ REMOVE WHEN IN PRODUCTION */
     public function run()
     {
         try {
@@ -81,5 +84,10 @@ class CampaignController extends Controller
             return response()->json(['error' => $e->getMessage()], 422);
         }
         
+    }
+
+    public function clear()
+    {
+        CampaignSubscriber::truncate();   
     }
 }

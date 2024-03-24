@@ -21,6 +21,19 @@ const runCampaigns = () => {
             });
 }
 
+const clearHistory = () => {
+    axios.post('api/campaigns-clear')
+            .then((response) => {
+                const toast = useToast()
+                toast.success('Campaigns history cleared!')
+            }).catch((err) => {
+                const toast = useToast()
+                toast.error(err?.response.data.message)
+            }).finally(() => {
+                // this.loading = false
+            });
+}
+
 </script>
 
 <template>
@@ -45,6 +58,7 @@ const runCampaigns = () => {
                                     NEW
                                 </Link>
                                 <PrimaryButton class="ms-3" @click="runCampaigns">Run <i class="fa fa-play ml-1" /></PrimaryButton>
+                                <PrimaryButton class="ms-3" @click="clearHistory" title="Clear history of sent campaigns">Clear <i class="fa fa-trash ml-1" /></PrimaryButton>
                                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                         <tr>
