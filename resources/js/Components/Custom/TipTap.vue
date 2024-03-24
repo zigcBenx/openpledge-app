@@ -222,6 +222,19 @@ export default {
   font-size: 1.55rem;
 }
 
+.tiptap a {
+    color: blue; /* Default link color */
+    text-decoration: underline; /* Underline by default */
+}
+
+.tiptap a:hover {
+    text-decoration: underline; /* Maintain underline on hover */
+}
+
+.tiptap a:visited {
+    color: purple; /* Visited link color */
+}
+
 .tiptap h2 {
   font-size: 1.35rem;
 }

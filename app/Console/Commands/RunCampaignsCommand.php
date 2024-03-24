@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Actions\Campaign\SendCampaign;
 use App\Models\Campaign;
 use App\Models\CampaignSubscriber;
 use App\Models\Subscriber;
@@ -17,14 +18,20 @@ class RunCampaignsCommand extends Command
         $campaigns = $this->getCampaigns();
 
         foreach ($campaigns as $campaign) {
-            $subscribersReceived = CampaignSubscriber::where('campaign_id', $campaign->id)->pluck('subscriber_id');
-            $subscribersToSend = Subscriber::whereNotIn('id', $subscribersReceived)->get();
+            $subscribersReceived = CampaignSubscriber::where('campaign_id', $campaign->id)->get();
+            $subscribersToSend = Subscriber::whereNotIn('id', $subscribersReceived->pluck('subscriber_id'))->get();
 
             // Handle recurring campaigns for new users
             if (Carbon::today()->isAfter($campaign->start_time)) {
                 if ($campaign->is_recurring_for_new_users) {
-                    $newSubscribers = Subscriber::where('created_at', '>=', now()->subDays($campaign->new_user_delay_days))->get();
-                    $this->sendCampaign($campaign, $newSubscribers->pluck('subscriber_id')->diff($subscribersReceived));
+                    $newSubscribers = Subscriber::whereDate('created_at','>=', $campaign->start_time)
+                                                    ->whereDate('created_at', now()->subDays($campaign->new_user_delay_days))->get();
+
+                    $newSubscribers = $newSubscribers->filter(function($subscriber) use ($subscribersReceived) {
+                        return !in_array($subscriber->id, $subscribersReceived->pluck('subscriber_id')->toArray());
+                    });
+
+                    $this->sendCampaign($campaign, $newSubscribers);
                 }
                 continue;
             }
@@ -36,17 +43,18 @@ class RunCampaignsCommand extends Command
 
     private function sendCampaign($campaign, $subscribers)
     {
-        $subscriberEmails = $subscribers->pluck('email')->toArray();
-        $this->info('Campaign: ' . $campaign->name . ' is sent to: ' . implode(',', $subscriberEmails));
-    
+        if (!$subscribers->count()) {
+            return;
+        }
+
         // Insert into CampaignSubscriber model
         foreach ($subscribers as $subscriber) {
             CampaignSubscriber::create([
                 'campaign_id' => $campaign->id,
                 'subscriber_id' => $subscriber->id,
             ]);
+            SendCampaign::send($subscriber->email, $campaign->content);
         }
-
     }
 
     private function getCampaigns()
