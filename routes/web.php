@@ -69,3 +69,5 @@ Route::middleware([
 
 Route::get('/auth/github/callback', [GithubController::class, 'callback'])->name('callback');
 Route::get('/auth/github', [GithubController::class, 'redirect'])->name('redirect');
+
+Route::get('/unsubscribe-user', [SubscriberController::class, 'unsubscribe'])->name('unsubscribe');

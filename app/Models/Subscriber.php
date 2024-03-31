@@ -13,6 +13,8 @@ class Subscriber extends Model
         'email',
         'description',
         'source',
-        'campaign'
+        'campaign',
+        'unsubscribe_token',
+        'newsletter'
     ];
 }
