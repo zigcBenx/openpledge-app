@@ -17,6 +17,7 @@ class Campaign extends Model
     protected $casts = [
         'is_enabled' => 'boolean',
         'is_recurring_for_new_users' => 'boolean',
+        'start_time' => 'datetime',
     ];
 
     public function subscribers()

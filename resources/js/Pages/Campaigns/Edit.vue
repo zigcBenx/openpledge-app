@@ -55,7 +55,7 @@
                                         </div>
                                     </div>
                                     <div class="mt-4">
-                                        <input v-model="form.start_time" type="date" placeholder="Campaign start date" class="text-black">
+                                        <date-picker v-model="form.start_time" format="dd.MM.yyyy HH:ss" />
                                     </div>
 
                                     <div class="mt-4">
@@ -87,12 +87,14 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { useToast } from "vue-toastification";
 import TipTap from '@/Components/Custom/TipTap.vue';
+import DatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
 
 export default {
     props: {
         campaign: Object,
     },
-    components: { AppLayout, TipTap },
+    components: { AppLayout, TipTap, DatePicker },
     data() {
         return {
             form: this.campaign

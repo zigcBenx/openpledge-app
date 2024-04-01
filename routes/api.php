@@ -20,6 +20,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::middleware('auth:sanctum')->post('/campaigns-run', [CampaignController::class, 'run']);
+
 Route::post('/subscribe-user', [SubscriberController::class, 'subscribeUser']);
-Route::post('/campaigns-run', [CampaignController::class, 'run']);
-Route::post('/campaigns-clear', [CampaignController::class, 'clear']);
