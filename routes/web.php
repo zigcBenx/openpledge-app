@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\GithubController;
 use App\Http\Controllers\IssueController;
 use App\Http\Controllers\SubscriberController;
@@ -52,6 +53,7 @@ Route::middleware([
 
     Route::resource('repositories', RepositoryController::class)->only('index','show', 'store');
     Route::resource('issues', IssueController::class)->only('index', 'show', 'store');
+    Route::resource('campaigns', CampaignController::class);
     Route::resource('donations', DonationController::class)->only('index', 'show', 'store');
 
 
@@ -67,3 +69,5 @@ Route::middleware([
 
 Route::get('/auth/github/callback', [GithubController::class, 'callback'])->name('callback');
 Route::get('/auth/github', [GithubController::class, 'redirect'])->name('redirect');
+
+Route::get('/unsubscribe-user', [SubscriberController::class, 'unsubscribe'])->name('unsubscribe');

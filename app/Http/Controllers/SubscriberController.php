@@ -6,7 +6,6 @@ use App\Mail\ThankYouMail;
 use App\Models\Subscriber;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -54,8 +53,8 @@ class SubscriberController extends Controller
     {
         try {
             $data = $request->validate([
-                'email'  => 'required|email',
-                'source' => '',
+                'email'    => 'required|email',
+                'source'   => '',
                 'campaign' => '',
             ]);
 
@@ -64,9 +63,10 @@ class SubscriberController extends Controller
             $campaign = $data['campaign'];
 
             Subscriber::create([
-                'email'  => $email,
-                'source' => $source,
-                'campaign' => $campaign,
+                'email'             => $email,
+                'source'            => $source,
+                'campaign'          => $campaign,
+                'unsubscribe_token' => hash('sha256',$email)
             ]);
 
             // Send email
@@ -76,5 +76,19 @@ class SubscriberController extends Controller
         } catch (ValidationException $e) {
             return response()->json(['error' => $e->validator->errors()], 422);
         }
+    }
+
+    public function unsubscribe(Request $request)
+    {
+        $token = $request->query('token');
+
+        $subscriber = Subscriber::where('unsubscribe_token', $token)->first();
+        
+        if (!$subscriber) {
+            return response()->json(['message' => 'Subscriber not found. Please contact us on: info@openpledge.io']);
+        }
+        
+        $subscriber->update(['newsletter' => false]);
+        return response()->json(['message' => 'You have been successfully unsubscribed from our newsletter.']);
     }
 }
