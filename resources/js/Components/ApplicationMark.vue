@@ -1,3 +1,27 @@
 <template>
-    <img src="../../img/logo.svg" style="width: 75px;" alt="">
+    <LogoBlack
+      v-if="isDark"
+      class="w-[182px] h-[76px]"
+    />
+    <LogoWhite
+      v-else
+      class="w-[182px] h-[76px]"
+    />
 </template>
+<script>
+  import LogoWhite from './../assets/logo_white.svg';
+  import LogoBlack from './../assets/logo_black.svg';
+  export default {
+    components: {
+      LogoBlack,
+      LogoWhite
+    },
+    props: {
+      isDark: {
+        type: Boolean,
+        default: false,
+      },
+    },
+  };
+</script>
+  

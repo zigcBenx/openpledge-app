@@ -18,8 +18,8 @@ defineProps({
 
         <div class="pt-12 pb-4">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white flex justify-center dark:text-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
-                    <div class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
+                <div class="flex justify-center dark:text-white overflow-hidden shadow-xl sm:rounded-lg">
+                    <div class="w-full p-4 border border-gray-200 rounded-lg shadow sm:p-8 dark:border-gray-700">
                         <div class="flex items-center justify-between mb-4">
                             <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">Trending today</h5>
                         </div>
@@ -31,8 +31,8 @@ defineProps({
 
         <div class="py-3">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white flex justify-center dark:text-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
-                    <div class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
+                <div class="flex justify-center overflow-hidden shadow-xl sm:rounded-lg">
+                    <div class="w-full p-4 border border-gray-200 rounded-lg shadow sm:p-8 dark:border-gray-700">
                         <div class="flex items-center justify-between mb-4">
                             <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">For you</h5>
                         </div>
@@ -44,8 +44,8 @@ defineProps({
 
         <div class="py-3 flex max-w-7xl mx-auto sm:px-6 lg:px-8 justify-between">
             <div class="w-full justify-between pr-4">
-                <div class="bg-white flex justify-center dark:text-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
-                    <div class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
+                <div class="flex justify-center dark:text-white overflow-hidden shadow-xl sm:rounded-lg">
+                    <div class="w-full p-4 border border-gray-200 rounded-lg shadow sm:p-8 dark:border-gray-700">
                         <div class="flex items-center justify-between mb-4">
                             <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">Work in progress</h5>
                         </div>
@@ -55,8 +55,8 @@ defineProps({
             </div>
 
             <div class="w-full justify-between">
-                <div class="bg-white flex justify-center dark:text-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
-                    <div class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
+                <div class="flex justify-center dark:text-white overflow-hidden shadow-xl sm:rounded-lg">
+                    <div class="w-full p-4 border border-gray-200 rounded-lg shadow sm:p-8 dark:border-gray-700">
                         <div class="flex items-center justify-between mb-4">
                             <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">Finished</h5>
                         </div>
@@ -68,8 +68,8 @@ defineProps({
 
         <div class="py-3">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white flex justify-center dark:text-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
-                    <div class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
+                <div class=" flex justify-center dark:text-white overflow-hidden shadow-xl sm:rounded-lg">
+                    <div class="w-full p-4  border border-gray-200 rounded-lg shadow sm:p-8 dark:border-gray-700">
                         <div class="flex items-center justify-between mb-4">
                             <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">Discover</h5>
                         </div>
