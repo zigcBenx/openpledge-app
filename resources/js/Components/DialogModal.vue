@@ -9,10 +9,9 @@
             <div class="float-left w-full p-4">
                 <Icon @click="close" 
                     class="float-right cursor-pointer" 
-                    name="close" 
-                    :fill="closeFill" 
-                    @mouseover="handleCloseMouseOver()"
-                    @mouseleave="handleCloseMouseLeave()"
+                    name="close"
+                    :hover="colors.green"
+                    :fill="colors['spun-pearl']"
                 />
             </div>
             <div class="p-10">
@@ -60,18 +59,9 @@
             const close = () => {
                 emit('close');
             };
-            const closeFill = ref(props.colors['spun-pearl']);
-            const handleCloseMouseOver = (type) => {
-                closeFill.value = props.colors?.green;
-            }
-            const handleCloseMouseLeave = () => {
-                closeFill.value = props.colors['spun-pearl'];
-            }
+            
             return {
                 close,
-                closeFill,
-                handleCloseMouseOver,
-                handleCloseMouseLeave
             }
         }
     }    

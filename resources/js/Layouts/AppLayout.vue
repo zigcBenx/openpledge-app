@@ -44,9 +44,7 @@
                             </div>
                             <div>
                                 <Icon name="bell" 
-                                    :fill="fillBell"
-                                    @mouseover="handleBellMouseOver()"
-                                    @mouseleave="handleBellMouseLeave()"    
+                                    :hover="theme.colors?.green"
                                     :stroke="isDark ? theme.colors['spun-pearl'] : theme.colors?.tundora"  
                                 />
                             </div>
@@ -54,9 +52,7 @@
                                 <Dropdown align="right" width="400px">
                                     <template #trigger>
                                         <Icon name="user" 
-                                            :fill="fillUser"
-                                            @mouseover="handleUserMouseOver()"
-                                            @mouseleave="handleUserMouseLeave()"
+                                            :hover="theme.colors?.green"
                                             :stroke="isDark ? theme.colors['spun-pearl'] : theme.colors?.tundora" 
                                         />
                                     </template>
@@ -68,9 +64,7 @@
                             </div>
                             <div>
                                 <Icon name="moon" 
-                                    :fill="fillMoon"
-                                    @mouseover="handleMoonMouseOver()"
-                                    @mouseleave="handleMoonMouseLeave()"
+                                    :hover="theme.colors?.green"
                                     @click="toggleDark()" 
                                     :stroke="isDark ? theme.colors['spun-pearl'] : theme.colors?.tundora" 
                                 />
@@ -239,42 +233,11 @@
 
             const user = usePage().props.auth.user;
 
-            const fillUser = ref('none');
-            const handleUserMouseOver = (type) => {
-                fillUser.value = theme.colors?.green;
-            }
-            const handleUserMouseLeave = () => {
-                fillUser.value = 'none';
-            }
-
-            const fillBell = ref('none');
-            const handleBellMouseOver = (type) => {
-                fillBell.value = theme.colors?.green;
-            }
-            const handleBellMouseLeave = () => {
-                fillBell.value = 'none';
-            }
-            const fillMoon = ref('none');
-            const handleMoonMouseOver = (type) => {
-                fillMoon.value = theme.colors?.green;
-            }
-            const handleMoonMouseLeave = () => {
-                fillMoon.value = 'none';
-            }
             return {
                 showingNavigationDropdown,
                 theme,
                 logout,
                 user,
-                fillUser,
-                fillBell,
-                fillMoon,
-                handleUserMouseOver,
-                handleUserMouseLeave,
-                handleBellMouseOver,
-                handleBellMouseLeave,
-                handleMoonMouseOver,
-                handleMoonMouseLeave,
                 toggleDark,
                 isDark
             };

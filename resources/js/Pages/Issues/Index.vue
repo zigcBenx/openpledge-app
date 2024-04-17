@@ -29,22 +29,7 @@
                             </div>
                         </template>
                         <template v-slot="">
-                            <!--<div class="grid grid-cols-12 text-spun-pearl uppercase text-xs gap-4 mb-4">
-                                <Col :span="1">State</Col>
-                                <Col :span="3">Name</Col>
-                                <Col :span="2">Labels</Col>
-                                <Col :span="2">Repository</Col>
-                                <Col :span="2">Languages</Col>
-                                <Col :span="2">Donations</Col>
-                            </div>
-                            <div class="grid grid-cols-12 gap-4 bg-charcoal-gray rounded-md text-sm h-[88px] content-center relative">
-                                <Col :span="1"><div class="absolute top-0 h-full w-1.5 bg-green rounded-l-md float-left"></div><span class="pl-4">Open</span></Col>
-                                <Col :span="3" class="break-words">Thiseeeeeeeeeeeeeeeeeeeeee is the issue title test</Col>
-                                <Col :span="2">bug</Col>
-                                <Col :span="2">strapi</Col>
-                                <Col :span="2">javascript</Col>
-                                <Col :span="2">$300</Col>
-                            </div>-->
+                            <IssuesTable :issues="issues" />
                         </template>
                     </Page>
                 </Col>
@@ -83,6 +68,7 @@ import Icon from '@/Components/Icon.vue';
 import { useDark } from '@vueuse/core';
 import Filters from './Filters.vue';
 import Page from '@/Components/Page.vue';
+import IssuesTable from './Partials/IssuesTable.vue'
 import resolveConfig from 'tailwindcss/resolveConfig';
 import tailwindConfig from '/tailwind.config.js';
 
@@ -96,7 +82,8 @@ export default {
         Pill,
         ListIssues,
         AppLayout,
-        Link
+        Link,
+        IssuesTable
     },
     props: {
         issues: {
@@ -135,6 +122,52 @@ export default {
             {"label":"Java", "value": "java"},
             {"label":"Scala", "value": "scala"}
         ]);
+        const issues = [{
+            id: 1,
+            state: 'open',
+            title: 'This Is The Issue Title',
+            user: {
+                username: 'test',
+                user_avatar: '/images/avatar.png'
+
+            },
+            created_at: 'Wed Apr 17 2024',
+            labels: ['bug', 'feature'],
+            repository: 'strapi/strapi',
+            languages: ['Javascript', 'Java', 'Python', 'Ruby', 'Go'],
+            donations: '$300',
+            favorite: false
+        }, {
+            id: 2,
+            state: 'open',
+            title: 'Favorite issue',
+            user: {
+                username: 'test',
+                user_avatar: '/images/avatar.png'
+
+            },
+            created_at: 'Wed Apr 17 2024',
+            labels: ['bug', 'feature'],
+            repository: 'strapi/strapi',
+            languages: ['Javascript', 'Java', 'Python', 'Ruby', 'Go'],
+            donations: '$300',
+            favorite: true
+        }, {
+            id: 3,
+            state: 'closed',
+            title: 'Issue title 2',
+            user: {
+                username: 'test',
+                user_avatar: '/images/avatar.png'
+
+            },
+            created_at: 'Wed Apr 10 2024',
+            labels: ['bug', 'feature'],
+            repository: 'strapi/strapi',
+            languages: ['Javascript', 'Java', 'Python', 'Ruby', 'Go'],
+            donations: '$400',
+            favorite: true
+        }]
         const filters = ref({labels: [],languages: []});
         const displayFilterModal = ref(false);
 
@@ -170,6 +203,7 @@ export default {
         return {
             labels,
             languages,
+            issues,
             isDark,
             filters,
             displayFilterModal,

@@ -3,9 +3,14 @@
     class="cursor-pointer"
   >
     <component
-      :is="components[name]"
+      :class="[{ 
+        'pointer-events-all !cursor-default': disabled 
+      }]"
+      :is="icon"      
+      @mouseover="handleMouseOver()"
+      @mouseleave="handleMouseLeave()"
       :stroke="stroke"
-      :fill="fill"
+      :fill="fillColor"
     />
   </span>
 </template>
@@ -18,6 +23,7 @@
   import Search from './../assets/icons/search.svg';
   import Vertical from './../assets/icons/vertical.svg';
   import Close from './../assets/icons/close.svg';
+  import Star from './../assets/icons/star.svg';
   import { ref, watch, onMounted, onUnmounted } from 'vue';
 
   export default {
@@ -33,6 +39,14 @@
         type: String,
         default: 'none'
       },
+      hover: {
+        type: String,
+        default: 'none'
+      },
+      disabled: {
+        type: Boolean,
+        default: false
+      }
     },
     components: {
       Bell,
@@ -42,13 +56,29 @@
       Key,
       Search,
       Vertical,
-      Close
+      Close,
+      Star
     },
     setup(props) {
-      const components = {search: Search, bell: Bell, user: User, moon: Moon, settings: Settings, key: Key, vertical: Vertical, close:Close};
+      const components = { search: Search, bell: Bell, user: User, moon: Moon, settings: Settings, key: Key, vertical: Vertical, close:Close, star: Star };
+      const icon = components[props.name];
+      const fillColor = ref(props.fill);
+
+      const handleMouseOver = (type) => {
+        if(props.hover !== 'none') {
+          fillColor.value = props.hover;
+        }
+      }
+      const handleMouseLeave = () => {
+        fillColor.value = props.fill !== 'none' ? props.fill : 'none';
+      }
 
       return {
-        components
+        components,
+        handleMouseOver,
+        handleMouseLeave,
+        fillColor,
+        icon
       }
     }
   };
