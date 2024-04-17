@@ -1,54 +1,11 @@
-<script setup>
-import { ref } from 'vue';
-import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import ApplicationMark from '@/Components/ApplicationMark.vue';
-import Banner from '@/Components/Banner.vue';
-import Dropdown from '@/Components/Dropdown.vue';
-import NavLink from '@/Components/NavLink.vue';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { useDark, useToggle } from '@vueuse/core';
-import TextInput from '@/Components/TextInput.vue';
-import Icon from '@/Components/Icon.vue';
-import MenuCard from './Partials/MenuCard.vue';
-
-const isDark = useDark();
-const toggleDark = useToggle(isDark);
-
-defineProps({
-    title: String,
-});
-
-const showingNavigationDropdown = ref(false);
-
-const switchToTeam = (team) => {
-    router.put(route('current-team.update'), {
-        team_id: team.id,
-    }, {
-        preserveState: false,
-    });
-};
-
-const logout = () => {
-    router.post(route('logout'));
-};
-const isHoveredUser = ref(false);
-const isHoveredBell = ref(false);
-const isHoveredMoon = ref(false);
-
-const user = usePage().props.auth.user;
-console.log(user);
-</script>
-
 <template>
     <div>
         <Head :title="title" />
-
         <Banner />
-
-        <div class="min-h-screen bg-primary-white bg-gray-100 dark:bg-primary-dark">
+        <div class="min-h-screen bg-lavender-mist bg-gray-100 dark:bg-oil">
             <nav>
                 <!-- Primary Navigation Menu -->
-                <div class="max-w-7xl mx-auto p-4 sm:px-6 lg:px-8">
+                <div class="p-8">
                     <div class="flex justify-between h-16">
                         <div class="flex">
                             <!-- Logo -->
@@ -68,26 +25,55 @@ console.log(user);
                             </div>
                         </div>
 
-                        <div class="hidden sm:flex sm:items-center sm:ms-6 gap-8">
-                            <div class="space-x-8 sm:-my-px sm:ms-10 content-center w-80">
-                                <TextInput placeholder="Search" />
+                        <div class="hidden sm:flex sm:items-center gap-8">
+                            <div class="space-x-8 sm:-my-px sm:ms-10 content-center">
+                                <Dropdown align="right" width="710px">
+                                    <template #trigger>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                                <Icon name="search" />
+                                            </div>
+                                            <input type="search" class="w-80 focus:w-[710px] search-cancel:appearance-none search-cancel:w-6 search-cancel:h-6 search-cancel:bg-[url('/images/close.svg')] placeholder-spun-pearl ps-11 dark:text-lavender-mist h-12 focus:ring-0 dark:bg-oil bg-lavender-mist dark:focus:border-green focus:border-green rounded-md transition-all" placeholder="Search" />
+                                        </div>
+                                    </template>
+
+                                    <template #content>
+                                        <SearchCard :isDark="isDark" class="w-[710px]"/>
+                                    </template>
+                                </Dropdown>                                
                             </div>
                             <div>
-                                <Icon name="Bell" :isDark="isDark" class="cursor-pointer" />
+                                <Icon name="bell" 
+                                    :fill="fillBell"
+                                    @mouseover="handleBellMouseOver()"
+                                    @mouseleave="handleBellMouseLeave()"    
+                                    :stroke="isDark ? theme.colors['spun-pearl'] : theme.colors?.tundora"  
+                                />
                             </div>
                             <div class="relative">
                                 <Dropdown align="right" width="400px">
                                     <template #trigger>
-                                        <Icon name="User" class="cursor-pointer" :isDark="isDark" />
+                                        <Icon name="user" 
+                                            :fill="fillUser"
+                                            @mouseover="handleUserMouseOver()"
+                                            @mouseleave="handleUserMouseLeave()"
+                                            :stroke="isDark ? theme.colors['spun-pearl'] : theme.colors?.tundora" 
+                                        />
                                     </template>
 
                                     <template #content>
-                                        <MenuCard class="w-[400px]"/>
+                                        <MenuCard :colors="theme.colors" :isDark="isDark" class="w-[400px]"/>
                                     </template>
                                 </Dropdown>
                             </div>
                             <div>
-                                <Icon name="Moon" @click="toggleDark()" class="cursor-pointer" :isDark="isDark" />
+                                <Icon name="moon" 
+                                    :fill="fillMoon"
+                                    @mouseover="handleMoonMouseOver()"
+                                    @mouseleave="handleMoonMouseLeave()"
+                                    @click="toggleDark()" 
+                                    :stroke="isDark ? theme.colors['spun-pearl'] : theme.colors?.tundora" 
+                                />
                             </div>
                         </div>
 
@@ -202,9 +188,96 @@ console.log(user);
             </header>-->
 
             <!-- Page Content -->
-            <main>
+            <main class="px-16">
                 <slot />
             </main>
         </div>
     </div>
 </template>
+
+<script>
+    import { ref } from 'vue';
+    import { Head, Link, router, usePage } from '@inertiajs/vue3';
+    import ApplicationMark from '@/Components/ApplicationMark.vue';
+    import Banner from '@/Components/Banner.vue';
+    import Dropdown from '@/Components/Dropdown.vue';
+    import NavLink from '@/Components/NavLink.vue';
+    import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+    import { useDark, useToggle } from '@vueuse/core';
+    import Icon from '@/Components/Icon.vue';
+    import MenuCard from './Partials/MenuCard.vue';
+    import SearchCard from './Partials/SearchCard.vue';
+    import resolveConfig from 'tailwindcss/resolveConfig';
+    import tailwindConfig from '../../../tailwind.config.js';
+
+    export default {
+        props: {
+            title: String
+        },
+        components: {
+            Link,
+            Head,
+            ApplicationMark,
+            Banner,
+            Dropdown,
+            NavLink,
+            ResponsiveNavLink,
+            Icon,
+            MenuCard,
+            SearchCard
+        },
+        setup(props) {
+            const { theme } = resolveConfig(tailwindConfig);
+            const isDark = useDark();
+            const toggleDark = useToggle(isDark);
+
+            const showingNavigationDropdown = ref(false);
+
+            const logout = () => {
+                router.post(route('logout'));
+            };
+
+            const user = usePage().props.auth.user;
+
+            const fillUser = ref('none');
+            const handleUserMouseOver = (type) => {
+                fillUser.value = theme.colors?.green;
+            }
+            const handleUserMouseLeave = () => {
+                fillUser.value = 'none';
+            }
+
+            const fillBell = ref('none');
+            const handleBellMouseOver = (type) => {
+                fillBell.value = theme.colors?.green;
+            }
+            const handleBellMouseLeave = () => {
+                fillBell.value = 'none';
+            }
+            const fillMoon = ref('none');
+            const handleMoonMouseOver = (type) => {
+                fillMoon.value = theme.colors?.green;
+            }
+            const handleMoonMouseLeave = () => {
+                fillMoon.value = 'none';
+            }
+            return {
+                showingNavigationDropdown,
+                theme,
+                logout,
+                user,
+                fillUser,
+                fillBell,
+                fillMoon,
+                handleUserMouseOver,
+                handleUserMouseLeave,
+                handleBellMouseOver,
+                handleBellMouseLeave,
+                handleMoonMouseOver,
+                handleMoonMouseLeave,
+                toggleDark,
+                isDark
+            };
+        }
+    }
+</script>

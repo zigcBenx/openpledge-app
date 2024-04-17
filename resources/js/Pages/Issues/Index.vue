@@ -1,86 +1,60 @@
-<script setup>
-import AppLayout from '@/Layouts/AppLayout.vue';
-import { Link } from '@inertiajs/vue3';
-import ListIssues from '@/Components/Custom/ListIssues.vue';
-import Pill from '@/Components/Form/Pill.vue';
-import { ref } from 'vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import RangeSlider from '@/Components/Form/RangeSlider.vue';
-import Row from '@/Components/Grid/Row.vue';
-import Col from '@/Components/Grid/Col.vue';
-
-defineProps({
-    issues: Array,
-});
-
-const labels = ref([{"label":"Test", "value": "test"},{"label":"Feature", "value": "feature"},{"label":"Bug", "value": "bug"}]);
-const filters = ref({labels: []});
-
-const handleSelectOption = (value) => {
-  if (filters.value.labels.includes(value)) {
-    filters.value.labels = filters.value.labels.filter(label => label !== value);
-  } else {
-    filters.value.labels.push(value);
-  }
-}
-
-const handleRemoveOption = (value) => {
-    const indexToRemove = labels.value.findIndex(labelObj => labelObj.value === value);
-    if (indexToRemove !== -1) {
-        labels.value.splice(indexToRemove, 1);
-    }
-}
-
-const handleRangeChange = (value) => {
-    console.log(value);
-}
-
-
-</script>
-
 <template>
     <AppLayout title="Issues">
         <template #header>
-            <!-- <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                <Link :href="route('home')" :active="route().current('home')">Issues</Link> / Repositories
-            </h2> -->
         </template>
+            <Row>
+                <Col :span="8">
+                    <Page title="Issues" description="Search issues you are interested in...">
+                        <template #actions>
+                            <button @click="displayFilterModal = true" class="w-[107px] justify-center hover:bg-mint-green text-dark-green flex dark:text-green text-dark-green p-1.5 dark:hover:bg-tropical-rain-forest dark:hover:text-green rounded-full py-3 px-3.5">
+                                Filters 
+                                <Icon class="pl-1" name="vertical" :fill="isDark ? theme.colors?.green : theme.colors['dark-green']" />
+                            </button>
+                        </template>
+                        <template #filters>
+                            <div 
+                                v-for="selectedValue in labels"    
+                            >
+                                <Pill 
+                                    :key="selectedValue.value"
+                                    color="secondary"
+                                    :colors="theme.colors"
+                                    :contentClasses="['px-2', 'py-1']"
+                                    :dismissable="true"
+                                    @select="() => handleSelectOption(selectedValue.value)"
+                                    @dismiss="() => handleRemoveOption(selectedValue.value)"
+                                >
+                                    {{ selectedValue.label }}
+                                </Pill>
+                            </div>
+                        </template>
+                        <template v-slot="">
+                            <!--<div class="grid grid-cols-12 text-spun-pearl uppercase text-xs gap-4 mb-4">
+                                <Col :span="1">State</Col>
+                                <Col :span="3">Name</Col>
+                                <Col :span="2">Labels</Col>
+                                <Col :span="2">Repository</Col>
+                                <Col :span="2">Languages</Col>
+                                <Col :span="2">Donations</Col>
+                            </div>
+                            <div class="grid grid-cols-12 gap-4 bg-charcoal-gray rounded-md text-sm h-[88px] content-center relative">
+                                <Col :span="1"><div class="absolute top-0 h-full w-1.5 bg-green rounded-l-md float-left"></div><span class="pl-4">Open</span></Col>
+                                <Col :span="3" class="break-words">Thiseeeeeeeeeeeeeeeeeeeeee is the issue title test</Col>
+                                <Col :span="2">bug</Col>
+                                <Col :span="2">strapi</Col>
+                                <Col :span="2">javascript</Col>
+                                <Col :span="2">$300</Col>
+                            </div>-->
+                        </template>
+                    </Page>
+                </Col>
+                <Col :span="4">
+                    
+                </Col>
+            </Row>
 
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <Col>
-            <div class="pl-2 pb-3">
-                <InputLabel>Label</InputLabel>
-            </div>
-        </Col>
-        <Row class="mb-4">
-            <Col>
-                <div 
-                    v-for="selectedValue in labels"
-                    class="pl-2 float-left flex"    
-                >
-                    <Pill 
-                        :key="selectedValue.value"
-                        :color="filters.labels.includes(selectedValue.value) ? 'secondary' : 'primary'"
-                        :dismissable="true"
-                        @select="() => handleSelectOption(selectedValue.value)"
-                        @dismiss="() => handleRemoveOption(selectedValue.value)"
-                    >
-                        {{ selectedValue.label }}
-                    </Pill>
-                </div>
-            </Col>
-        </Row>
-
-            <div class="w-1/3">
-                <RangeSlider
-                    :min="1"
-                    :max="100"
-                    :start="20"
-                    :end="35"
-                    @input="handleRangeChange"
-                    />
-            </div>
+            <Filters :displayFilterModal="displayFilterModal" :colors="theme.colors" @display="() => handleDisplayModal()" />
+            <div class="py-8">
                 <div class="bg-white flex justify-center dark:text-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
                     <div class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
                         <div class="flow-root">
@@ -93,9 +67,117 @@ const handleRangeChange = (value) => {
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
-        </div>
     </AppLayout>
 </template>
+<script>
+import AppLayout from '@/Layouts/AppLayout.vue';
+import { Link } from '@inertiajs/vue3';
+import ListIssues from '@/Components/Custom/ListIssues.vue';
+import Pill from '@/Components/Form/Pill.vue';
+import { ref } from 'vue';
+import Row from '@/Components/Grid/Row.vue';
+import Col from '@/Components/Grid/Col.vue';
+import Icon from '@/Components/Icon.vue';
+import { useDark } from '@vueuse/core';
+import Filters from './Filters.vue';
+import Page from '@/Components/Page.vue';
+import resolveConfig from 'tailwindcss/resolveConfig';
+import tailwindConfig from '/tailwind.config.js';
+
+export default {
+    components: {
+        Page,
+        Filters,
+        Icon,
+        Row,
+        Col,
+        Pill,
+        ListIssues,
+        AppLayout,
+        Link
+    },
+    props: {
+        issues: {
+            type: Array,
+            default: [],
+        },
+        labels: {
+            type: Array,
+            default: [],
+        },
+        languages: {
+            type: Array,
+            default: [],
+        },
+    },
+    setup() {
+        const { theme } = resolveConfig(tailwindConfig);
+        const isDark = useDark();
+        const labels = ref([
+            {"label":"Test", "value": "test"},
+            {"label":"Feature", "value": "feature"},
+            {"label":"Bug", "value": "bug"},
+            {"label":"Enhancement", "value": "enhancement"},
+            {"label":"Documentation", "value": "documentation"},
+            {"label":"Question", "value": "question"},
+            {"label":"Invalid", "value": "invalid"},
+            {"label":"Duplicate", "value": "duplicate"},
+            {"label":"Security", "value": "security"}
+        ]);
+        const languages = ref([
+            {"label":"Python", "value": "python"},
+            {"label":"TypeScript", "value": "typeScript"},
+            {"label":"PHP", "value": "php"},
+            {"label":"Ruby", "value": "ruby"},
+            {"label":"Swift", "value": "swift"},
+            {"label":"Java", "value": "java"},
+            {"label":"Scala", "value": "scala"}
+        ]);
+        const filters = ref({labels: [],languages: []});
+        const displayFilterModal = ref(false);
+
+        const handleSelectOption = (value) => {
+        if (filters.value.labels.includes(value)) {
+            filters.value.labels = filters.value.labels.filter(label => label !== value);
+        }else if (labels.value.indexOf(value)) {
+            filters.value.labels.push(value);
+        }
+
+        if (filters.value.languages.includes(value)) {
+            filters.value.languages = filters.value.languages.filter(language => language !== value);
+        }else if (languages.value.indexOf(value)) {
+            filters.value.languages.push(value);
+        }
+        }
+
+        const handleRemoveOption = (value) => {
+            const indexToRemove = labels.value.findIndex(labelObj => labelObj.value === value);
+            if (indexToRemove !== -1) {
+                labels.value.splice(indexToRemove, 1);
+            }
+            const indexLangToRemove = languages.value.findIndex(lang => lang.value === value);
+            if (indexLangToRemove !== -1) {
+                filters.value.languages.splice(indexLangToRemove, 1);
+            }
+        }
+
+        const handleDisplayModal = () => {
+            displayFilterModal.value = !displayFilterModal.value;
+        }
+
+        return {
+            labels,
+            languages,
+            isDark,
+            filters,
+            displayFilterModal,
+            handleDisplayModal,
+            handleRemoveOption,
+            handleSelectOption,
+            theme
+        }
+    }
+}
+</script>

@@ -1,6 +1,7 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
+import plugin from 'tailwindcss/plugin';
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -22,43 +23,43 @@ export default {
                 primary: '#2A0F2E',
                 secondary: '#541F5C',
             },
-            backgroundColor: {
-                primary: '#141316',
-                secondary: '#249E81',
-                'light-frost': '#F0EFF1',
-                'grayish-blue': '#2D2B31',
-                'turquoise': '#37C3A2',
-                'grayish': '#D3D1D7',
-                'rich-black': '#19181B',
-                'light-gray': '#F7F7F8',
-                'charcoal-gray': '#201F23',
-                'ghost-white': '#FCFCFD',
-                'shade-green': '#152824',
-            },
-            textColor: {
-                primary: '#ACA8B3',
-                secondary: '#666170',
-                'light-frost': '#F0EFF1',
-                'jet-black': '#141316',
-                'gray-tones': '#E5E4E7',
-                'rich-black': '#19181B',
-                'ghost-white': '#FCFCFD',
-            },
             colors: {
-                'primary-dark': '#141316',
-                'green': '#3FE4BD',
-                'primary-white': '#F0EFF1',
+                'lavender-mist': '#F0EFF1',
+                'ghost-white': '#F7F7F8',
+                'seashell': '#FCFCFD',
+                'grayish': '#D3D1D7',
+                'spun-pearl': '#ACA8B3',
+                'pale-aqua': '#D5EBE7',
+                'ocean-green': '#249E81',
+                'periwinkle': '#EAD8F3',
+                'thistle': '#E3BBF7',
                 'dark-green': '#187C65',
+                'turquoise': '#37C3A2',
+                'mint-green': '#CCEFE9',
+                'green': '#3FE4BD',
+                'light-sea-shade': '#85E0CC',
+                'platinum': '#E5E4E7',
+                'tundora': '#666170',
+                'rich-black': '#19181B',
+                'mondo': '#4B4752',
+                'oil': '#141316',
+                'purple-heart': '#B235D4',
+                'gunmetal': '#2D2B31',
                 'charcoal-gray': '#201F23',
-                'gray-tones': '#E5E4E7',
-                'lavender-gray': '#ACA8B3',
+                'tropical-rain-forest': '#0D4538',
+                'valhalla': '#2E1332',
+                'stylish-red': '#3F1645',
                 'shade-green': '#152824',
-                'grayish-blue': '#2D2B31',
-                'primary-grayish': '#D3D1D7',
-                'primary-text': '#19181B'
-            }
+                'magic-mint': '#3AD4B0',
+            },
         },
     },
 
-    plugins: [forms, typography],
+    plugins: [
+        forms, 
+        typography,
+        new plugin(({ addVariant }) => {
+            addVariant('search-cancel', '&::-webkit-search-cancel-button');
+        }),
+    ],
 };

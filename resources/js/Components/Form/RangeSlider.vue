@@ -1,19 +1,19 @@
 <template>
 
   <div class="flex gap-2">
-    <div class="text-sm text-secondary dark:text-primary -mt-2">{{'$'+Math.round(startValue) }}</div>
+    <div class="text-sm text-spun-pearl dark:text-spun-pearl -mt-2">{{'$'+Math.round(startValue) }}</div>
     <div class="w-full relative h-1">
       <div class="w-full overflow-hidden">
         <div
-          class="absolute h-full bg-turquoise dark:bg-secondary"
+          class="absolute h-full bg-turquoise dark:bg-ocean-green"
           :style="{ left: handleLeft + '%', width: rangeWidth + '%' }"
         ></div>
         <div
-          class="absolute h-full bg-grayish dark:bg-grayish-blue"
+          class="absolute h-full bg-grayish dark:bg-gunmetal"
           :style="{ width: handleLeft + '%' }"
         ></div>
         <div
-          class="absolute h-full bg-grayish dark:bg-grayish-blue"
+          class="absolute h-full bg-grayish dark:bg-gunmetal"
           :style="{ left: handleRight + '%', width: (100 - handleRight) + '%' }"
         ></div>
         <div
@@ -29,7 +29,7 @@
         </div>
       </div>
     </div>
-    <div class="text-sm text-secondary dark:text-primary -mt-2">{{'$'+Math.round(endValue) }}</div>
+    <div class="text-sm text-ocean-green dark:text-spun-pearl -mt-2">{{'$'+Math.round(endValue) }}</div>
 
   </div>
 </template>
@@ -44,15 +44,15 @@ export default {
     },
     max: {
       type: Number,
-      default: 100
+      default: 1000
     },
     start: {
       type: Number,
-      default: 20
+      default: 0
     },
     end: {
       type: Number,
-      default: 35
+      default: 500
     }
   },
   data() {
