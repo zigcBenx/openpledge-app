@@ -1,11 +1,11 @@
 <template>
     <LogoBlack
       v-if="isDark"
-      class="w-[182px] h-[76px]"
+      class="w-[13rem] h-[5.4286rem]"
     />
     <LogoWhite
       v-else
-      class="w-[182px] h-[76px]"
+      class="w-[13rem] h-[5.4286rem]"
     />
 </template>
 <script>

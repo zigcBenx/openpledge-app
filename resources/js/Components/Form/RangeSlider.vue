@@ -1,7 +1,7 @@
 <template>
 
   <div class="flex gap-2">
-    <div class="text-sm text-spun-pearl dark:text-spun-pearl -mt-2">{{'$'+Math.round(startValue) }}</div>
+    <div class="text-sm text-spun-pearl dark:text-spun-pearl -mt-2">{{'$'+startValue }}</div>
     <div class="w-full relative h-1">
       <div class="w-full overflow-hidden">
         <div
