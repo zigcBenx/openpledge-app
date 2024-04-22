@@ -1,137 +1,73 @@
-<script setup>
-import { ref } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
-import ApplicationMark from '@/Components/ApplicationMark.vue';
-import Banner from '@/Components/Banner.vue';
-import Dropdown from '@/Components/Dropdown.vue';
-import DropdownLink from '@/Components/DropdownLink.vue';
-import NavLink from '@/Components/NavLink.vue';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-
-import { useDark, useToggle } from '@vueuse/core';
-
-const isDark = useDark();
-const toggleDark = useToggle(isDark);
-
-defineProps({
-    title: String,
-});
-
-const showingNavigationDropdown = ref(false);
-
-const switchToTeam = (team) => {
-    router.put(route('current-team.update'), {
-        team_id: team.id,
-    }, {
-        preserveState: false,
-    });
-};
-
-const logout = () => {
-    router.post(route('logout'));
-};
-</script>
-
 <template>
     <div>
         <Head :title="title" />
-
         <Banner />
-
-        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-            <nav class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
+        <div class="min-h-screen bg-lavender-mist bg-gray-100 dark:bg-oil">
+            <nav>
                 <!-- Primary Navigation Menu -->
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="p-8">
                     <div class="flex justify-between h-16">
                         <div class="flex">
                             <!-- Logo -->
                             <div class="shrink-0 flex items-center">
                                 <Link :href="route('home')">
-                                    <ApplicationMark class="block h-9 w-auto" />
+                                    <ApplicationMark class="block h-9 w-auto" :isDark="isDark" />
                                 </Link>
                             </div>
-
                             <!-- Navigation Links -->
-                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink :href="route('home')" :active="route().current('home')">
-                                    Home
-                                </NavLink>
-                                <NavLink :href="route('repositories.index')" :active="route().current('repositories.index')">
-                                    Repositories
-                                </NavLink>
+                            <div class="space-x-8 sm:-my-px sm:ms-10 content-center">
                                 <NavLink :href="route('issues.index')" :active="route().current('issues.index')">
-                                    Issues
+                                    Discover
                                 </NavLink>
                                 <NavLink :href="route('donations.index')" :active="route().current('donations.index')">
-                                    Donations
-                                </NavLink>
-                                <NavLink :href="route('repositories-request-get')" :active="route().current('repositories-request-get')">
-                                    Request repository
-                                </NavLink>
-                                <NavLink :href="route('dashboard')" :active="route().current('dashbaord')">
-                                    Dashboard
-                                </NavLink>
-                                <NavLink v-if="$page.props.user.roles.includes('admin')" :href="route('subscribers')" :active="route().current('subscribers')">
-                                    Subscribers
-                                </NavLink>
-                                <NavLink v-if="$page.props.user.roles.includes('admin')" :href="route('campaigns.index')" :active="route().current('campaigns.index')">
-                                    Campaigns
+                                    Leaderboard
                                 </NavLink>
                             </div>
                         </div>
 
-                        <div class="hidden sm:flex sm:items-center sm:ms-6">
-                            <!-- Settings Dropdown -->
-                            <div class="ms-3 relative">
-                                <Dropdown align="right" width="48">
+                        <div class="hidden sm:flex sm:items-center gap-8">
+                            <div class="space-x-8 sm:-my-px sm:ms-10 content-center">
+                                <Dropdown align="right" width="710px">
                                     <template #trigger>
-                                        <button v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
-                                            <img class="h-8 w-8 rounded-full object-cover" :src="$page.props.auth.user.profile_photo_url" :alt="$page.props.auth.user.name">
-                                        </button>
-
-                                        <span v-else class="inline-flex rounded-md">
-                                            <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-700 active:bg-gray-50 dark:active:bg-gray-700 transition ease-in-out duration-150">
-                                                {{ $page.props.auth.user.name }}
-
-                                                <svg class="ms-2 -me-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                                                </svg>
-                                            </button>
-                                        </span>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                                <Icon name="search" />
+                                            </div>
+                                            <input type="search" class="w-80 focus:w-[710px] search-cancel:appearance-none search-cancel:w-6 search-cancel:h-6 search-cancel:bg-[url('/images/close.svg')] placeholder-spun-pearl ps-11 dark:text-lavender-mist h-12 focus:ring-0 dark:bg-oil bg-lavender-mist dark:focus:border-green focus:border-green rounded-md transition-all" placeholder="Search" />
+                                        </div>
                                     </template>
 
                                     <template #content>
-                                        <!-- Account Management -->
-                                        <div class="block px-4 py-2 text-xs text-gray-400">
-                                            Manage Account
-                                        </div>
+                                        <SearchCard :isDark="isDark" class="w-[710px]"/>
+                                    </template>
+                                </Dropdown>                                
+                            </div>
+                            <div>
+                                <Icon name="bell" 
+                                    :hover="theme.colors?.green"
+                                    :stroke="isDark ? theme.colors['spun-pearl'] : theme.colors?.tundora"  
+                                />
+                            </div>
+                            <div class="relative">
+                                <Dropdown align="right" width="400px">
+                                    <template #trigger>
+                                        <Icon name="user" 
+                                            :hover="theme.colors?.green"
+                                            :stroke="isDark ? theme.colors['spun-pearl'] : theme.colors?.tundora" 
+                                        />
+                                    </template>
 
-                                        <DropdownLink :href="route('profile.show')">
-                                            Profile
-                                        </DropdownLink>
-
-                                        <DropdownLink v-if="$page.props.jetstream.hasApiFeatures" :href="route('api-tokens.index')">
-                                            API Tokens
-                                        </DropdownLink>
-
-                                        <div class="border-t border-gray-200 dark:border-gray-600" />
-
-                                        <!-- Authentication -->
-                                        <form @submit.prevent="logout">
-                                            <DropdownLink as="button">
-                                                Log Out
-                                            </DropdownLink>
-                                        </form>
+                                    <template #content>
+                                        <MenuCard :colors="theme.colors" :isDark="isDark" class="w-[400px]"/>
                                     </template>
                                 </Dropdown>
                             </div>
-                            <div class="border-l-gray-600 pl-1">
-                                   <button
-                                        @click="toggleDark()"
-                                        class="text-white dark:text-gray-600"
-                                    >
-                                        <i :class="{'fa-solid text-gray-600': true, 'fa-sun': !isDark, 'fa-moon': isDark}"></i>
-                                    </button>
+                            <div>
+                                <Icon name="moon" 
+                                    :hover="theme.colors?.green"
+                                    @click="toggleDark()" 
+                                    :stroke="isDark ? theme.colors['spun-pearl'] : theme.colors?.tundora" 
+                                />
                             </div>
                         </div>
 
@@ -239,16 +175,72 @@ const logout = () => {
             </nav>
 
             <!-- Page Heading -->
-            <header v-if="$slots.header" class="bg-white dark:bg-gray-800 shadow">
+            <!--<header v-if="$slots.header" class="shadow">
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                     <slot name="header" />
                 </div>
-            </header>
+            </header>-->
 
             <!-- Page Content -->
-            <main>
+            <main class="px-16">
                 <slot />
             </main>
         </div>
     </div>
 </template>
+
+<script>
+    import { ref } from 'vue';
+    import { Head, Link, router, usePage } from '@inertiajs/vue3';
+    import ApplicationMark from '@/Components/ApplicationMark.vue';
+    import Banner from '@/Components/Banner.vue';
+    import Dropdown from '@/Components/Dropdown.vue';
+    import NavLink from '@/Components/NavLink.vue';
+    import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+    import { useDark, useToggle } from '@vueuse/core';
+    import Icon from '@/Components/Icon.vue';
+    import MenuCard from './Partials/MenuCard.vue';
+    import SearchCard from './Partials/SearchCard.vue';
+    import resolveConfig from 'tailwindcss/resolveConfig';
+    import tailwindConfig from '../../../tailwind.config.js';
+
+    export default {
+        props: {
+            title: String
+        },
+        components: {
+            Link,
+            Head,
+            ApplicationMark,
+            Banner,
+            Dropdown,
+            NavLink,
+            ResponsiveNavLink,
+            Icon,
+            MenuCard,
+            SearchCard
+        },
+        setup(props) {
+            const { theme } = resolveConfig(tailwindConfig);
+            const isDark = useDark();
+            const toggleDark = useToggle(isDark);
+
+            const showingNavigationDropdown = ref(false);
+
+            const logout = () => {
+                router.post(route('logout'));
+            };
+
+            const user = usePage().props.auth.user;
+
+            return {
+                showingNavigationDropdown,
+                theme,
+                logout,
+                user,
+                toggleDark,
+                isDark
+            };
+        }
+    }
+</script>
