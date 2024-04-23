@@ -14,6 +14,10 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    closeOnOutside: {
+        type: Boolean,
+        default: false
+    }
 });
 
 let open = ref(false);
@@ -68,7 +72,7 @@ const alignmentClasses = computed(() => {
                 class="absolute z-50 mt-2 rounded-md shadow-lg"
                 :class="[widthClass, alignmentClasses]"
                 style="display: none;"
-                @click="open = false"
+                @click="closeOnOutside ? open = false : open = true"
             >
                 <div class="rounded-md ring-1 ring-black ring-opacity-5" :class="contentClasses">
                     <slot name="content" />

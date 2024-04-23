@@ -1,57 +1,8 @@
-<script setup>
-    import { Link } from '@inertiajs/vue3';
-    import Pill from '@/Components/Form/Pill.vue';
-    import Icon from '@/Components/Icon.vue';
-    import Avatar from '@/Components/Avatar.vue';
-    import resolveConfig from 'tailwindcss/resolveConfig';
-    import tailwindConfig from '/tailwind.config.js';
-    import { useDark } from '@vueuse/core';
-    import dayjs from '../../../libs/dayjs.js';
-
-    defineProps({
-        issues: {
-            type: Array,
-            required: true,
-            default: [],
-            validator: function (value) {
-                return value.every(item => {
-                return typeof item === 'object' && item.hasOwnProperty('id');
-              });
-            }
-        },
-    });
-
-    const { theme } = resolveConfig(tailwindConfig);
-    const isDark = useDark();
-
-    const getIconStrokeColor = (isFavorite, isDisabled) => {
-      if (isDark.value) {
-        if (isDisabled) return theme.colors.mondo;
-        return isFavorite ? theme.colors.green : theme.colors['spun-pearl'];
-      }
-      if (isDisabled) {
-        return theme.colors['spun-pearl'];
-      }
-      return isFavorite ? theme.colors['ocean-green'] : theme.colors.tundora;
-    }
-
-    const getIconFillColor = (isFavorite, isDisabled) => {
-      if (isDark.value) {
-        if (isDisabled) return theme.colors.mondo;
-        return isFavorite ? theme.colors.green : 'none';
-      }
-      if (isDisabled) {
-        return theme.colors['spun-pearl'];
-      }
-      return isFavorite ? theme.colors['ocean-green'] : 'none';
-    }
-</script>
-
 <template>
   <table class="border-separate border-spacing-x-0 border-spacing-y-4">
       <thead>
           <tr class="text-tundora dark:text-spun-pearl uppercase text-xs text-left">
-              <th class="pb-5 min-w-[80px] font-normal">State</th>
+              <th class="pb-5 min-w-[5rem] font-normal">State</th>
               <th class="pb-5 font-normal">Name</th>
               <th class="pb-5 font-normal">Labels</th>
               <th class="pb-5 font-normal">Repository</th>
@@ -60,9 +11,10 @@
               <th></th>
           </tr>
       </thead>
-
       <tbody>
-          <tr 
+        <TableRowSkeleton v-if="!issues.length" v-for="index in 10" :key="index" />
+        <tr 
+            v-else
             v-for="issue in issues"
             :key="issue.id"
             :class="['text-sm bg-white dark:bg-charcoal-gray border-separate', {
@@ -72,24 +24,24 @@
               <td :class="['rounded-bl-md font-medium overflow-hidden border-l-[6px] border-ocean-green dark:border-green pl-3.5 py-6 rounded-tl-md', {
                 '!border-tundora': issue.state === 'closed'
               }]">
-                  <Link 
+                <div 
                   :class="['text-ocean-green dark:text-green', {
                     '!text-spun-pearl': issue.state === 'closed'
                   }]"
-                  href="/issue/123" 
-                  target="_blank"
                 >
-                {{ issue.state }}
-              </Link>
+                  {{ issue.state }}
+                </div>
               </td>
               <td class="py-6">
-                <div 
-                  :class="['dark:text-white text-base pr-4', {
+                <Link 
+                  :class="['dark:text-white dark:hover:text-green hover:text-green text-base pr-4', {
                     '!text-spun-pearl': issue.state === 'closed'
                   }]"
+                  href="/issue/123"
+                  target="_blank"
                   >
                   {{ issue.title }}
-                </div>
+                </Link>
                 <div class="flex gap-1 mt-3">
                   <Avatar :url="issue.user.user_avatar" size="sm" />
                   <span class="dark:text-spun-pearl text-tundora text-xs font-medium">{{ issue.user.username }}</span>
@@ -101,7 +53,7 @@
                   <Pill 
                     v-for="label in issue.labels"
                     :key="label"
-                    color="secondary"
+                    color="present"
                     size="sm"
                     :disabled="issue.state === 'closed'"
                   >
@@ -115,7 +67,7 @@
                     <Pill 
                       v-for="lang in issue.languages" 
                       :key="lang"
-                      color="secondary" 
+                      color="present" 
                       size="sm" 
                       :disabled="issue.state === 'closed'"
                     >
@@ -135,12 +87,61 @@
               <td class="rounded-br-md rounded-tr-md pr-6">
                   <Icon 
                     name="star" 
-                    :stroke="getIconStrokeColor(issue.favorite, issue.state === 'closed')"
-                    :fill="getIconFillColor(issue.favorite, issue.state === 'closed')"
-                    :disabled="issue.state === 'closed'" 
+                    :class="getIconStrokeColor(issue.favorite, issue.state === 'closed')"
+                    :disabled="issue.state === 'closed'"
+                    @click="addFavorites(issue)"
                   />
               </td>
           </tr>
+          <tr v-intersection-observer="onIntersectionObserver"></tr>
       </tbody>
   </table>
 </template>
+
+<script setup>
+    import TableRowSkeleton from './TableRowSkeleton.vue'
+    import { Link } from '@inertiajs/vue3';
+    import Pill from '@/Components/Form/Pill.vue';
+    import Icon from '@/Components/Icon.vue';
+    import Avatar from '@/Components/Avatar.vue';
+    import { useDark } from '@vueuse/core';
+    import { vIntersectionObserver } from '@vueuse/components'
+    import dayjs from '../../../libs/dayjs.js';
+
+    defineProps({
+        issues: {
+            type: Array,
+            required: true,
+            default: [],
+            validator: function (value) {
+                return value.every(item => {
+                return typeof item === 'object' && item.hasOwnProperty('id');
+              });
+            }
+        },
+    });
+
+    const isDark = useDark();
+    const emit = defineEmits(['onLazyLoading']);
+ 
+    const getIconStrokeColor = (isFavorite, isDisabled) => {
+      if (isDark.value) {
+        if (isDisabled) return 'dark:stroke-mondo dark:fill-mondo';
+        return isFavorite ? 'dark:stroke-green dark:fill-green' : 'dark:stroke-spun-pearl dark:hover:stroke-green';
+      }
+      if (isDisabled) {
+        return 'stroke-spun-pearl dark:fill-spun-pearl';
+      }
+      return isFavorite ? 'stroke-ocean-green fill-ocean-green' : 'stroke-tundora hover:stroke-ocean-green';
+    }
+
+    const onIntersectionObserver = ([{ isIntersecting }]) => {
+      if (isIntersecting) {
+        emit('onLazyLoading');
+      }
+    }
+
+    const addFavorites = (issue) => {
+      issue.favorite = !issue.favorite;
+    }
+</script>

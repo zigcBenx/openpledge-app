@@ -2,7 +2,7 @@
     <Row class="dark:bg-rich-black xl:gap-1 bg-seashell p-6 rounded-md">
         <Col>
             <div class="items-center flex dark:bg-charcoal-gray bg-seashell p-4 rounded-md">
-                <div class="w-[68px]">
+                <div class="w-[4.25rem]">
                     <img src="/images/avatar.png" class="rounded-full float-right" />
                 </div>
                 <div class="pl-4">
@@ -13,10 +13,10 @@
         </Col>
         <Col>
             <DropdownLink class="dark:text-platinum rounded-sm text-rich-black" :href="route('profile.show')">
-                <Icon name="settings" :stroke="isDark ? colors?.platinum : colors['rich-black']"></Icon> <span class="pl-2">Settings</span>
+                <Icon name="settings" class="dark:stroke-platinum stroke-rich-black"></Icon> <span class="pl-2">Settings</span>
             </DropdownLink>
             <DropdownLink class="dark:text-platinum rounded-sm text-rich-black" v-if="$page.props.jetstream.hasApiFeatures" :href="route('api-tokens.index')">
-                <Icon name="key" :stroke="isDark ? colors?.platinum : colors['rich-black']"></Icon> <span class="pl-2">API Tokens</span>
+                <Icon name="key" class="dark:stroke-platinum stroke-rich-black"></Icon> <span class="pl-2">API Tokens</span>
             </DropdownLink>
         </Col>
         <Col>
@@ -44,10 +44,6 @@
             isDark: {
                 type: Boolean,
                 default: false
-            },
-            colors: {
-                type: Object,
-                required: false
             }
         },
         components: {

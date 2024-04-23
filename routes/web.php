@@ -66,6 +66,7 @@ Route::middleware([
 
 });
 
+Route::inertia('/error', 'Error')->name('error');
 
 Route::get('/auth/github/callback', [GithubController::class, 'callback'])->name('callback');
 Route::get('/auth/github', [GithubController::class, 'redirect'])->name('redirect');

@@ -1,18 +1,11 @@
 <template>
-  <span 
+  <component
+    :class="[{ 
+      'pointer-events-all !cursor-default': disabled 
+    }]"
     class="cursor-pointer"
-  >
-    <component
-      :class="[{ 
-        'pointer-events-all !cursor-default': disabled 
-      }]"
-      :is="icon"      
-      @mouseover="handleMouseOver()"
-      @mouseleave="handleMouseLeave()"
-      :stroke="stroke"
-      :fill="fillColor"
-    />
-  </span>
+    :is="icon"
+  />
 </template>
 <script>
   import Bell from './../assets/icons/bell.svg';
@@ -24,24 +17,14 @@
   import Vertical from './../assets/icons/vertical.svg';
   import Close from './../assets/icons/close.svg';
   import Star from './../assets/icons/star.svg';
-  import { ref, watch, onMounted, onUnmounted } from 'vue';
+  import Error from './../assets/icons/error.svg';
+
+  import { ref } from 'vue';
 
   export default {
     props: {
       name:{
         type:String
-      },
-      stroke: {
-        type: String,
-        default: 'none'
-      },
-      fill: {
-        type: String,
-        default: 'none'
-      },
-      hover: {
-        type: String,
-        default: 'none'
       },
       disabled: {
         type: Boolean,
@@ -57,27 +40,26 @@
       Search,
       Vertical,
       Close,
-      Star
+      Star,
+      Error
     },
     setup(props) {
-      const components = { search: Search, bell: Bell, user: User, moon: Moon, settings: Settings, key: Key, vertical: Vertical, close:Close, star: Star };
+      const components = { 
+        search: Search, 
+        bell: Bell, 
+        user: User, 
+        moon: Moon, 
+        settings: Settings, 
+        key: Key, 
+        vertical: Vertical, 
+        close:Close, 
+        star: Star, 
+        error: Error 
+      };
       const icon = components[props.name];
-      const fillColor = ref(props.fill);
-
-      const handleMouseOver = (type) => {
-        if(props.hover !== 'none') {
-          fillColor.value = props.hover;
-        }
-      }
-      const handleMouseLeave = () => {
-        fillColor.value = props.fill !== 'none' ? props.fill : 'none';
-      }
-
+      
       return {
         components,
-        handleMouseOver,
-        handleMouseLeave,
-        fillColor,
         icon
       }
     }
