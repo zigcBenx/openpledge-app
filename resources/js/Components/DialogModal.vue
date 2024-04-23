@@ -8,10 +8,8 @@
         <div>
             <div class="float-left w-full p-4">
                 <Icon @click="close" 
-                    class="float-right cursor-pointer" 
+                    class="float-right cursor-pointer hover:fill-green fill-spun-pearl" 
                     name="close"
-                    :hover="colors.green"
-                    :fill="colors['spun-pearl']"
                 />
             </div>
             <div class="p-10">
@@ -48,10 +46,6 @@
             closeable: {
                 type: Boolean,
                 default: true,
-            },
-            colors: {
-                type: Object,
-                required: false
             }
         },
         emits: ['close'],

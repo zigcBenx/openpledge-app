@@ -2,18 +2,18 @@
   <span
     class="inline-flex cursor-pointer items-center rounded text-sm font-medium"
     :class="[{
-      'bg-platinum hover:bg-grayish hover:dark:bg-gunmetal text-primary-800 dark:bg-charcoal-gray dark:text-spun-pearl': color === 'primary',
+      'bg-platinum hover:bg-grayish hover:dark:bg-gunmetal dark:bg-charcoal-gray dark:text-spun-pearl': color === 'primary',
       'bg-platinum hover:dark:bg-gunmetal bg-grayish bg-green text-dark-green dark:bg-shade-green dark:text-green': color === 'secondary',
-      '!px-1.5 !py-1 text-xs': size === 'sm',
+      'dark:bg-gunmetal dark:text-spun-pearl !cursor-default': color === 'present',
+      '!px-1.5 !py-0.5 text-xs': size === 'sm',
       '!pointer-events-all !cursor-default': disabled
     }, ...contentClasses]"
     @click="selectHandler"
   >
     <slot />
     <Icon
-      class="pl-2"
+      class="ml-2 fill-green dark:fill-green"
       v-if="dismissable"
-      :fill="colors.green"
       name="close"
       @click="clickHandler"
       >
@@ -34,7 +34,7 @@ export default {
       type: String,
       default: "primary",
       validator: (value) =>
-        ["primary", "secondary", "success", "danger", "warning", "info"].includes(value),
+        ["primary", "secondary", "success", "danger", "warning", "info", "present"].includes(value),
     },
     dismissable: {
       type: Boolean,
@@ -43,9 +43,6 @@ export default {
     contentClasses: {
       type: Array,
       default: ['px-4 py-2']
-    },
-    colors: {
-      type: Object,
     },
     disabled: {
       type: Boolean
@@ -67,7 +64,6 @@ export default {
     };
 
     return {
-      disabled: props.disabled,
       clickHandler,
       selectHandler
     };

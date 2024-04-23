@@ -11,7 +11,7 @@
         type: String,
         default: 'md',
         validator: (value) =>
-          ["md", "sm"].includes(value),
+          ["lg", "md", "sm"].includes(value),
     },
     alt: {
       type: String
@@ -22,7 +22,8 @@
 <template>
   <img 
     :class="['w-8 h-8 rounded-full object-covers', {
-      '!w-4 !h-4': size === 'sm'
+      '!w-4 !h-4': size === 'sm',
+      '!w-11 !h-11': size === 'lg'
     }]" 
     :src="url" 
     :alt="alt || 'Avatar'"

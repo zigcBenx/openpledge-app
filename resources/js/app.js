@@ -8,6 +8,8 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
+import "vue-loading-skeleton/dist/style.css";
+import '@vuepic/vue-datepicker/dist/main.css';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 

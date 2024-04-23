@@ -27,46 +27,44 @@
 
                         <div class="hidden sm:flex sm:items-center gap-8">
                             <div class="space-x-8 sm:-my-px sm:ms-10 content-center">
-                                <Dropdown align="right" width="710px">
+                                <Dropdown align="right" width="44.375rem">
                                     <template #trigger>
-                                        <div class="relative">
-                                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                                <Icon name="search" />
-                                            </div>
-                                            <input type="search" class="w-80 focus:w-[710px] search-cancel:appearance-none search-cancel:w-6 search-cancel:h-6 search-cancel:bg-[url('/images/close.svg')] placeholder-spun-pearl ps-11 dark:text-lavender-mist h-12 focus:ring-0 dark:bg-oil bg-lavender-mist dark:focus:border-green focus:border-green rounded-md transition-all" placeholder="Search" />
-                                        </div>
+                                        <Input 
+                                            inputClass="focus:w-[44.375rem]"
+                                            placeholder="Search" 
+                                            type="search" 
+                                            icon="search"
+                                            :closeOnOutside="true"
+                                        />
                                     </template>
 
                                     <template #content>
-                                        <SearchCard :isDark="isDark" class="w-[710px]"/>
+                                        <SearchCard :isDark="isDark" class="w-[44.375rem]"/>
                                     </template>
                                 </Dropdown>                                
                             </div>
                             <div>
                                 <Icon name="bell" 
-                                    :hover="theme.colors?.green"
-                                    :stroke="isDark ? theme.colors['spun-pearl'] : theme.colors?.tundora"  
+                                    class="dark:stroke-spun-pearl hover:fill-green stroke-tundora"  
                                 />
                             </div>
                             <div class="relative">
                                 <Dropdown align="right" width="400px">
                                     <template #trigger>
                                         <Icon name="user" 
-                                            :hover="theme.colors?.green"
-                                            :stroke="isDark ? theme.colors['spun-pearl'] : theme.colors?.tundora" 
+                                            class="dark:stroke-spun-pearl hover:fill-green stroke-tundora"
                                         />
                                     </template>
 
                                     <template #content>
-                                        <MenuCard :colors="theme.colors" :isDark="isDark" class="w-[400px]"/>
+                                        <MenuCard :isDark="isDark" class="w-[25rem]"/>
                                     </template>
                                 </Dropdown>
                             </div>
                             <div>
                                 <Icon name="moon" 
-                                    :hover="theme.colors?.green"
+                                    class="dark:stroke-spun-pearl hover:fill-green stroke-tundora"
                                     @click="toggleDark()" 
-                                    :stroke="isDark ? theme.colors['spun-pearl'] : theme.colors?.tundora" 
                                 />
                             </div>
                         </div>
@@ -201,8 +199,7 @@
     import Icon from '@/Components/Icon.vue';
     import MenuCard from './Partials/MenuCard.vue';
     import SearchCard from './Partials/SearchCard.vue';
-    import resolveConfig from 'tailwindcss/resolveConfig';
-    import tailwindConfig from '../../../tailwind.config.js';
+    import Input from '@/Components/Input.vue';
 
     export default {
         props: {
@@ -218,10 +215,10 @@
             ResponsiveNavLink,
             Icon,
             MenuCard,
-            SearchCard
+            SearchCard,
+            Input
         },
         setup(props) {
-            const { theme } = resolveConfig(tailwindConfig);
             const isDark = useDark();
             const toggleDark = useToggle(isDark);
 
@@ -235,7 +232,6 @@
 
             return {
                 showingNavigationDropdown,
-                theme,
                 logout,
                 user,
                 toggleDark,

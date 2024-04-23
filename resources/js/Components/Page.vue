@@ -1,11 +1,11 @@
 <template>
-    <div class="space-y-6">
+    <div class="space-y-6 w-full">
       <div class="flex flex-col">
         <header
           class="space-y-2 items-center justify-between sm:flex sm:space-y-0 sm:space-x-4 sm:py-4"
         >
           <div>
-            <h1 class="dark:text-lavender-mist text-[40px]">
+            <h1 class="dark:text-lavender-mist text-[2.5rem]">
               {{ title }}
             </h1>
             <p v-if="description" class="ext-tundora dark:text-spun-pearl text-sm">
