@@ -26,10 +26,6 @@ Route::get('/', function () {
     return Redirect::route('login');
 });
 
-// Route::get('/register', function () {
-//     return Redirect::route('login');
-// });
-
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
