@@ -145,7 +145,7 @@
                         </div>
 
                         <div class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('profile.show')" :active="route().current('profile.show')">
+                            <ResponsiveNavLink :href="route('profile.settings')" :active="route().current('profile.settings')">
                                 Profile
                             </ResponsiveNavLink>
 
