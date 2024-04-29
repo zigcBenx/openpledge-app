@@ -53,7 +53,7 @@
                         </div>
                     </template>
                     <template v-slot="">
-                        <IssuesTable :issues="issues" @onLazyLoading="handleLazyLoadingIssues"  class="hidden md:block"/>
+                        <IssuesTable :issues="issues" @onLazyLoading="handleLazyLoadingIssues"  class="hidden md:table"/>
                     </template>
                 </Page>
                 </div>
