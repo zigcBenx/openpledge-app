@@ -37,8 +37,7 @@
                   :class="['dark:text-white dark:hover:text-green hover:text-green text-base pr-4', {
                     '!text-spun-pearl': issue.state === 'closed'
                   }]"
-                  href="/issue/123"
-                  target="_blank"
+                  href="/issues/1"
                   >
                   {{ issue.title }}
                 </Link>
