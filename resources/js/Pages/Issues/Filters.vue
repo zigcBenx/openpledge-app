@@ -56,7 +56,7 @@
         <template #footer>
             <Row class="pt-9">
                 <Col :span="{sm:6}">
-                    <Button @click="clearFilters" color="secondary">
+                    <Button @click="clearFilters" color="outline">
                         Clear
                     </Button>
                 </Col>
