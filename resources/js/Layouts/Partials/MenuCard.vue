@@ -4,7 +4,7 @@
             <Link :href="route('profile.show')">
                 <div class="items-center flex dark:bg-charcoal-gray bg-seashell p-4 rounded-md">
                     <div class="w-[4.25rem]">
-                        <img src="/images/avatar.png" class="rounded-full float-right" />
+                        <img :src="$page.props.auth.user.profile_photo_url" class="rounded-full float-right" />
                     </div>
                     <div class="pl-4">
                         <div class="dark:text-lavender-mist text-xl text-oil brake-all">{{ $page.props.auth.user.name }}</div>
