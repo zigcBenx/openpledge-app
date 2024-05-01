@@ -16,7 +16,7 @@
                             </div>
                             <!-- Navigation Links -->
                             <div class="space-x-8 sm:-my-px sm:ms-10 content-center">
-                                <NavLink :href="route('issues.index')" :active="route().current('issues.index')">
+                                <NavLink :href="route('discover.issues')" :active="route().current('discover.issues')">
                                     Discover
                                 </NavLink>
                                 <NavLink :href="route('donations.index')" :active="route().current('donations.index')">
@@ -101,29 +101,11 @@
                 <!-- Responsive Navigation Menu -->
                 <div :class="{'block': showingNavigationDropdown, 'hidden': ! showingNavigationDropdown}" class="sm:hidden">
                     <div class="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
-                            Home
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('repositories.index')" :active="route().current('repositories.index')">
-                            Repositories
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('issues.index')" :active="route().current('issues.index')">
-                            Issues
+                        <ResponsiveNavLink :href="route('discover.issues')" :active="route().current('discover.issues')">
+                            Discover
                         </ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('donations.index')" :active="route().current('donations.index')">
-                            Donations
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('repositories-request-get')" :active="route().current('repositories-request-get')">
-                            Request repository
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                            Dashboard
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink v-if="$page.props.user.roles.includes('admin')" :href="route('subscribers')" :active="route().current('subscribers')">
-                            Subscribers
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink v-if="$page.props.user.roles.includes('admin')" :href="route('campaigns.index')" :active="route().current('campaigns.index')">
-                            Campaigns
+                            Leaderboard
                         </ResponsiveNavLink>
                     </div>
 
