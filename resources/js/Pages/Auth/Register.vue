@@ -7,13 +7,13 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import ApplicationMark from '@/Components/ApplicationMark.vue';
+import Button from '@/Components/Button.vue';
 
 const form = useForm({
     name: '',
     email: '',
     password: '',
-    password_confirmation: '',
-    terms: false,
 });
 
 const submit = () => {
@@ -30,6 +30,22 @@ const submit = () => {
         <template #logo>
             <AuthenticationCardLogo />
         </template>
+
+        <div class="border-b border-gray-100 py-4 mb-7">
+            <ApplicationMark :isDark="false" />
+        </div>
+
+        <p class="text-xl mb-3">Sign up to Open Pledge</p>
+        <p class="text-xs text-gray-500 mb-8">If you intend to contribute and earn pledges, please sign up using your GitHub account.</p>
+
+        <div class="flex items-center justify-end mt-4 border-t-white">
+            <a href="/auth/github" class="flex items-center justify-center w-full py-5 h-9 rounded-full font-medium text-sm focus:outline-none focus:ring-0 transition duration-150 ease-in-out dark:bg-turquoise bg-dark-green text-white dark:text-dark-black dark:hover:border-green hover:border-green hover:border-2">
+                <i class="fa-brands fa-github mr-1 text-lg"></i>
+                <p>Sign Up with GitHub</p>
+            </a>
+        </div>
+
+        <p class="text-gray-500 text-xs text-center my-6">OR</p>
 
         <form @submit.prevent="submit">
             <div>
@@ -55,6 +71,7 @@ const submit = () => {
                     class="mt-1 block w-full"
                     required
                     autocomplete="username"
+                    placeholder="Enter email"
                 />
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
@@ -68,45 +85,21 @@ const submit = () => {
                     class="mt-1 block w-full"
                     required
                     autocomplete="new-password"
+                    placeholder="Enter password"
                 />
                 <InputError class="mt-2" :message="form.errors.password" />
             </div>
 
-            <div class="mt-4">
-                <InputLabel for="password_confirmation" value="Confirm Password" />
-                <TextInput
-                    id="password_confirmation"
-                    v-model="form.password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="new-password"
-                />
-                <InputError class="mt-2" :message="form.errors.password_confirmation" />
-            </div>
-
-            <div v-if="$page.props.jetstream.hasTermsAndPrivacyPolicyFeature" class="mt-4">
-                <InputLabel for="terms">
-                    <div class="flex items-center">
-                        <Checkbox id="terms" v-model:checked="form.terms" name="terms" required />
-
-                        <div class="ms-2">
-                            I agree to the <a target="_blank" :href="route('terms.show')" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">Terms of Service</a> and <a target="_blank" :href="route('policy.show')" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">Privacy Policy</a>
-                        </div>
-                    </div>
-                    <InputError class="mt-2" :message="form.errors.terms" />
-                </InputLabel>
-            </div>
-
             <div class="flex items-center justify-end mt-4">
-                <Link :href="route('login')" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
-                    Already registered?
-                </Link>
-
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Register
-                </PrimaryButton>
+                <Button color="secondary" type="submit" class="text-xs" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                    Create Account
+                </Button>
             </div>
         </form>
+
+        <div class="border-t border-gray-100 mt-6">
+            <p class="text-xs text-gray-500 mt-6">By creating account you agree to OpenPledge's <b>Terms & Conditions</b> and <b>Privacy Policy</b></p>
+            <p class="mt-5 text-xs text-gray-400">Already have an account? <a href="/login" class="text-dark-green font-medium">Log In</a></p>
+        </div>
     </AuthenticationCard>
 </template>

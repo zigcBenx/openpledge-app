@@ -7,6 +7,9 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import Button from '@/Components/Button.vue';
+import ApplicationMark from '@/Components/ApplicationMark.vue';
+
 
 defineProps({
     canResetPassword: Boolean,
@@ -16,7 +19,7 @@ defineProps({
 const form = useForm({
     email: '',
     password: '',
-    remember: false,
+    remember: true,
 });
 
 const submit = () => {
@@ -41,6 +44,19 @@ const submit = () => {
             {{ status }}
         </div>
 
+        <div class="border-b border-gray-100 py-4 mb-7">
+            <ApplicationMark :isDark="false" />
+        </div>
+        <p class="text-xl mb-6">Log in</p>
+        <div class="flex items-center justify-end mt-4 border-t-white">
+            <a href="/auth/github" class="flex items-center justify-center w-full py-5 h-9 rounded-full font-medium text-sm focus:outline-none focus:ring-0 transition duration-150 ease-in-out dark:bg-turquoise bg-dark-green text-white dark:text-dark-black dark:hover:border-green hover:border-green hover:border-2">
+                <i class="fa-brands fa-github mr-1 text-lg"></i>
+                <p class="mt-1">Login with GitHub</p>
+            </a>
+        </div>
+
+        <p class="text-gray-500 text-xs text-center my-6">OR</p>
+
         <form @submit.prevent="submit">
             <div>
                 <InputLabel for="email" value="Email" />
@@ -49,6 +65,7 @@ const submit = () => {
                     v-model="form.email"
                     type="email"
                     class="mt-1 block w-full"
+                    placeholder="Enter email"
                     required
                     autofocus
                     autocomplete="username"
@@ -63,35 +80,27 @@ const submit = () => {
                     v-model="form.password"
                     type="password"
                     class="mt-1 block w-full"
+                    placeholder="Enter password"
                     required
                     autocomplete="current-password"
                 />
                 <InputError class="mt-2" :message="form.errors.password" />
             </div>
 
-            <div class="block mt-4">
-                <label class="flex items-center">
-                    <Checkbox v-model:checked="form.remember" name="remember" />
-                    <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">Remember me</span>
-                </label>
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
-                <Link v-if="canResetPassword" :href="route('password.request')" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
-                    Forgot your password?
+            <div class="mt-2 flex items-center justify-end">
+                <Link v-if="canResetPassword" :href="route('password.request')" class="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+                    Forgot password?
                 </Link>
-
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Log in
-                </PrimaryButton>
             </div>
-        
-            <div class="flex items-center justify-end mt-4 border-t-white">
-                <a href="/auth/github" class="flex items-center justify-center w-full py-2 px-4 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                    <i class="fa-brands fa-github mr-1"></i>
-                    Login with GitHub
-                </a>
+            <div class="flex items-center justify-end mt-4">
+
+                <Button color="secondary" class="text-xs" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                    Log in
+                </Button>
             </div>
         </form>
+        <div class="border-t border-gray-100 mt-6">
+            <p class="mt-5 text-xs text-gray-400">Don't have an account? <a href="/register" class="text-dark-green font-medium">Sign Up</a></p>
+        </div>
     </AuthenticationCard>
 </template>
