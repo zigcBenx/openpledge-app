@@ -87,7 +87,7 @@ import Row from '@/Components/Grid/Row.vue';
 import Col from '@/Components/Grid/Col.vue';
 import Icon from '@/Components/Icon.vue';
 import { useDark } from '@vueuse/core';
-import Filters from './Filters.vue';
+import Filters from '../Discover/Filters.vue';
 import Page from '@/Components/Page.vue';
 import IssuesTable from './Partials/IssuesTable.vue'
 import Sidebar from './Partials/Sidebar.vue';
