@@ -27,12 +27,13 @@ class GithubController extends Controller
         if (!$dbUser) {
             $avatar = file_get_contents($user->avatar);
 
-            // Store the image in Laravel storage
-            $fileName = 'profile-' . $user->id . '.jpg'; // You can change the file name as per your preference
+            $fileName = 'profile-' . $user->id . '.jpg';
             Storage::put('profile_images/' . $fileName, $avatar);
 
+            $name = $user->name ? $user->name : explode('@', $user->email)[0];
+
             $dbUser = User::create([
-                'name' => $user->name,
+                'name' => $name,
                 'email' => $user->email,
                 'github_id' => $user->id,
                 'auth_type' => 'github',
