@@ -49,7 +49,7 @@ const submit = () => {
         </div>
         <p class="text-xl mb-6">Log in</p>
         <div class="flex items-center justify-end mt-4 border-t-white">
-            <a href="/auth/github" class="flex items-center justify-center w-full py-5 h-9 rounded-full font-medium text-sm focus:outline-none focus:ring-0 transition duration-150 ease-in-out dark:bg-turquoise bg-dark-green text-white dark:text-dark-black dark:hover:border-green hover:border-green hover:border-2">
+            <a href="/auth/github" class="flex items-center justify-center w-full py-5 h-9 rounded-full font-medium text-sm focus:outline-none focus:ring-0 transition duration-150 ease-in-out dark:bg-turquoise bg-dark-green text-white dark:text-dark-black dark:hover:border-green">
                 <i class="fa-brands fa-github mr-1 text-lg"></i>
                 <p class="mt-1">Login with GitHub</p>
             </a>
