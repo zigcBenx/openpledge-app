@@ -10,15 +10,8 @@ import TextInput from '@/Components/TextInput.vue';
 import Button from '@/Components/Button.vue';
 import ApplicationMark from '@/Components/ApplicationMark.vue';
 import { useDark } from '@vueuse/core';
-import { ref } from 'vue';
 
-const isDark = ref(false);
-
-useDark({
-    onChanged(dark) {
-        isDark.value = dark;
-    },
-});
+const isDark = useDark();
 
 defineProps({
     canResetPassword: Boolean,
@@ -43,7 +36,6 @@ const submit = () => {
 
 <template>
     <Head title="Log in" />
-
     <AuthenticationCard>
         <template #logo>
             <AuthenticationCardLogo />

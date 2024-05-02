@@ -10,14 +10,9 @@ import TextInput from '@/Components/TextInput.vue';
 import ApplicationMark from '@/Components/ApplicationMark.vue';
 import Button from '@/Components/Button.vue';
 import { useDark } from '@vueuse/core';
-import { ref } from 'vue';
 
-const isDark = ref(false);
-useDark({
-onChanged(dark) {
-    isDark.value = dark;
-},
-});
+const isDark = useDark();
+
 const form = useForm({
     name: '',
     email: '',
