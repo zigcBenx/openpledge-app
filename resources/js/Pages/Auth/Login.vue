@@ -103,7 +103,7 @@ const submit = () => {
             </div>
             <div class="flex items-center justify-end mt-4">
 
-                <Button color="secondary" class="text-xs" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                <Button color="secondary" type="submit" class="text-xs" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     Log in
                 </Button>
             </div>
