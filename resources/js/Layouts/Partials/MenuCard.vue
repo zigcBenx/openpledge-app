@@ -22,10 +22,10 @@
             </DropdownLink>
         </Col>
         <Col>
-            <form @submit.prevent="logout">
-                <DropdownLink as="button" class="text-sm dark:text-green text-dark-green text-center rounded-full dark:bg-shade-green bg-pale-aqua">
+            <form method="POST" @submit.prevent="logout">
+                <Button color="secondary" type="submit" class="rounded-md">
                     Sign Out
-                </DropdownLink>
+                </Button>
             </form>
         </Col>
         <Col class="dark:text-seashell text-sm py-2">
@@ -35,26 +35,22 @@
         </Col>
     </Row>
 </template>
-<script>
+<script setup>
     import DropdownLink from '@/Components/DropdownLink.vue';
+    import Button from '@/Components/Button.vue';
     import Row from '@/Components/Grid/Row.vue';
     import Col from '@/Components/Grid/Col.vue';
     import Icon from '@/Components/Icon.vue';
-    import { Link } from '@inertiajs/vue3';
+    import { Link, router } from '@inertiajs/vue3';
 
-    export default {
-        props: {
-            isDark: {
-                type: Boolean,
-                default: false
-            }
-        },
-        components: {
-            DropdownLink,
-            Row,
-            Col,
-            Icon,
-            Link
-        },
-    }
+    const logout = () => {
+        router.post(route('logout'));
+    };
+
+    defineProps({
+        isDark: {
+            type: Boolean,
+            default: false
+        }
+    });
 </script>
