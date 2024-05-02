@@ -47,7 +47,7 @@ const submit = () => {
         <p class="text-xs text-tundora dark:text-spun-pearl mb-8">If you intend to contribute and earn pledges, please sign up using your GitHub account.</p>
 
         <div class="flex items-center justify-end mt-4">
-            <a href="/auth/github" class="flex items-center justify-center w-full py-5 h-9 rounded-full font-medium text-sm focus:outline-none focus:ring-0 transition duration-150 ease-in-out dark:bg-turquoise bg-dark-green text-white dark:text-black dark:text-dark-black dark:hover:border-green hover:border-green hover:border-2">
+            <a href="/auth/github" class="flex items-center justify-center w-full py-5 h-9 rounded-full font-medium text-sm focus:outline-none focus:ring-0 transition duration-150 ease-in-out dark:bg-turquoise bg-dark-green text-white dark:text-black dark:text-dark-black">
                 <i class="fa-brands fa-github mr-1 text-lg"></i>
                 <p>Sign Up with GitHub</p>
             </a>
