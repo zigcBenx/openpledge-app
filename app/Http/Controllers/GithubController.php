@@ -28,7 +28,7 @@ class GithubController extends Controller
             $avatar = file_get_contents($user->avatar);
 
             $fileName = 'profile-' . $user->id . '.jpg';
-            Storage::put('profile_images/' . $fileName, $avatar);
+            Storage::put('profile-photos/' . $fileName, $avatar);
 
             $name = $user->name ? $user->name : explode('@', $user->email)[0];
 
@@ -37,7 +37,7 @@ class GithubController extends Controller
                 'email' => $user->email,
                 'github_id' => $user->id,
                 'auth_type' => 'github',
-                'profile_photo_path' => 'profile_images/' . $fileName
+                'profile_photo_path' => 'profile-photos/' . $fileName
             ]);
         }
 
