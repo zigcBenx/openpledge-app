@@ -37,7 +37,7 @@ Route::middleware([
     Route::get('/dashboard', [MainController::class, 'dashboard'])->name('dashboard');
     Route::get('/subscribers', [SubscriberController::class, 'index'])->name('subscribers');
 
-    Route::get('/discover/isuess', [MainController::class, 'discoverIssues'])->name('discover.issues');
+    Route::get('/discover/issues', [MainController::class, 'discoverIssues'])->name('discover.issues');
 
 
 
