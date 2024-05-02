@@ -47,9 +47,12 @@ Route::middleware([
     // but mybe it would be better when 0 results to request all github repos with certain filters
     // and if found automatically add and show index page...
     Route::get('/repositories/request', [RepositoryController::class, 'getRequestNew'])->name('repositories-request-get');
+    
+    
+    Route::get('/repositories/{githubUser}/{repository}', [RepositoryController::class, 'show'])->name('repositories.show');
 
 
-    Route::resource('repositories', RepositoryController::class)->only('index','show', 'store');
+    Route::resource('repositories', RepositoryController::class)->only('index', 'store');
     Route::resource('issues', IssueController::class)->only('index', 'show', 'store');
     Route::resource('campaigns', CampaignController::class);
     Route::resource('donations', DonationController::class)->only('index', 'show', 'store');

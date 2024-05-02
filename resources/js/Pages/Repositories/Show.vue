@@ -17,10 +17,16 @@
                             <p class="dark:text-lavender-mist text-oil text-2xl">{{ repository.title }}</p>
                         </div>
                     
-                        <Icon 
-                            name="star" 
-                            class="dark:stroke-mondo dark:fill-mondo"
-                        />
+                        <div>
+                            <Button v-if="repository.direct_from_github" color="primary" class="px-8 h-11">
+                                Connect
+                            </Button>
+                            <Icon 
+                                v-else
+                                name="star" 
+                                class="dark:stroke-mondo dark:fill-mondo"
+                            />
+                        </div>
                     </div>
                     <div>
                         <div class="w-full flex mt-8 items-center">
@@ -91,6 +97,7 @@ import GithubIssueConnect from '@/Components/Custom/GithubIssueConnect.vue';
 import { ref, onMounted } from 'vue';
 import Pill from '@/Components/Form/Pill.vue';
 import TopList from '@/Components/Custom/TopList.vue';
+import Button from '@/Components/Button.vue';
 import {
     trendingToday,
 } from '../../assets/mockedData.js'
