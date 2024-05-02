@@ -9,7 +9,15 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import ApplicationMark from '@/Components/ApplicationMark.vue';
 import Button from '@/Components/Button.vue';
+import { useDark } from '@vueuse/core';
+import { ref } from 'vue';
 
+const isDark = ref(false);
+useDark({
+onChanged(dark) {
+    isDark.value = dark;
+},
+});
 const form = useForm({
     name: '',
     email: '',
@@ -31,21 +39,21 @@ const submit = () => {
             <AuthenticationCardLogo />
         </template>
 
-        <div class="border-b border-gray-100 py-4 mb-7">
-            <ApplicationMark :isDark="false" />
+        <div class="border-b border-whitish-gray dark:border-oil py-4 mb-7">
+            <ApplicationMark :isDark="isDark" />
         </div>
 
-        <p class="text-xl mb-3">Sign up to Open Pledge</p>
-        <p class="text-xs text-gray-500 mb-8">If you intend to contribute and earn pledges, please sign up using your GitHub account.</p>
+        <p class="text-xl mb-3 dark:text-whitish-gray">Sign up to Open Pledge</p>
+        <p class="text-xs text-tundora dark:text-spun-pearl mb-8">If you intend to contribute and earn pledges, please sign up using your GitHub account.</p>
 
-        <div class="flex items-center justify-end mt-4 border-t-white">
-            <a href="/auth/github" class="flex items-center justify-center w-full py-5 h-9 rounded-full font-medium text-sm focus:outline-none focus:ring-0 transition duration-150 ease-in-out dark:bg-turquoise bg-dark-green text-white dark:text-dark-black dark:hover:border-green hover:border-green hover:border-2">
+        <div class="flex items-center justify-end mt-4">
+            <a href="/auth/github" class="flex items-center justify-center w-full py-5 h-9 rounded-full font-medium text-sm focus:outline-none focus:ring-0 transition duration-150 ease-in-out dark:bg-turquoise bg-dark-green text-white dark:text-black dark:text-dark-black dark:hover:border-green hover:border-green hover:border-2">
                 <i class="fa-brands fa-github mr-1 text-lg"></i>
                 <p>Sign Up with GitHub</p>
             </a>
         </div>
 
-        <p class="text-gray-500 text-xs text-center my-6">OR</p>
+        <p class="text-tundora dark:text-spun-pearl text-xs text-center mt-9 mb-6">OR</p>
 
         <form @submit.prevent="submit">
             <div>
@@ -58,6 +66,7 @@ const submit = () => {
                     required
                     autofocus
                     autocomplete="name"
+                    placeholder="Enter name"
                 />
                 <InputError class="mt-2" :message="form.errors.name" />
             </div>
@@ -97,9 +106,9 @@ const submit = () => {
             </div>
         </form>
 
-        <div class="border-t border-gray-100 mt-6">
-            <p class="text-xs text-gray-500 mt-6">By creating account you agree to OpenPledge's <b>Terms & Conditions</b> and <b>Privacy Policy</b></p>
-            <p class="mt-5 text-xs text-gray-400">Already have an account? <a href="/login" class="text-dark-green font-medium">Log In</a></p>
+        <div class="border-t border-whitish-gray dark:border-oil mt-6">
+            <p class="text-xs text-spun-pearl mt-6">By creating account you agree to OpenPledge's <b>Terms & Conditions</b> and <b>Privacy Policy</b></p>
+            <p class="mt-5 text-xs text-spun-pearl">Already have an account? <a href="/login" class="text-green font-bold">Log In</a></p>
         </div>
     </AuthenticationCard>
 </template>

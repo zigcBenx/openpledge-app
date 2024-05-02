@@ -24,7 +24,6 @@ export default {
                 secondary: '#541F5C',
             },
             colors: {
-                'icon-idle-gray': '#666666',
                 'lavender-mist': '#F0EFF1',
                 'ghost-white': '#F7F7F8',
                 'seashell': '#FCFCFD',
@@ -52,6 +51,8 @@ export default {
                 'stylish-red': '#3F1645',
                 'shade-green': '#152824',
                 'magic-mint': '#3AD4B0',
+                'icon-idle-gray': '#666666',
+                'whitish-gray': '#F0EFF1',
             },
         },
     },
