@@ -1,10 +1,17 @@
 <script setup>
 import Pill from "@/Components/Form/Pill.vue";
+import Icon from "@/Components/Icon.vue";
+import { Link } from '@inertiajs/vue3';
 
 </script>
 
 <template>
   <div class="flex flex-col items-center dark:bg-charcoal-gray bg-seashell p-4 rounded-md">
+    <div class="w-full flex flex-row-reverse">
+      <Link :href="route('profile.settings')">
+        <Icon name="pencil" class="stroke-icon-idle-gray fill-icon-idle-gray hover:fill-green"/>
+      </Link>
+    </div>
     <div class="w-[8.25rem]">
         <img :src="$page.props.auth.user.profile_photo_url" class="rounded-full float-right" />
     </div>

@@ -18,6 +18,7 @@
   import Close from './../assets/icons/close.svg';
   import Star from './../assets/icons/star.svg';
   import Error from './../assets/icons/error.svg';
+  import Pencil from './../assets/icons/pencil.svg';
 
   import { ref } from 'vue';
 
@@ -41,7 +42,8 @@
       Vertical,
       Close,
       Star,
-      Error
+      Error,
+      Pencil
     },
     setup(props) {
       const components = { 
@@ -54,7 +56,8 @@
         vertical: Vertical, 
         close:Close, 
         star: Star, 
-        error: Error 
+        error: Error,
+        pencil: Pencil
       };
       const icon = components[props.name];
       
