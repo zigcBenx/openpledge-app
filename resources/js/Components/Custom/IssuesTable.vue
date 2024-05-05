@@ -1,5 +1,5 @@
 <template>
-  <table class="border-separate border-spacing-x-0 border-spacing-y-4">
+  <table class="w-full border-separate border-spacing-x-0 border-spacing-y-4">
       <thead>
           <tr class="text-tundora dark:text-spun-pearl uppercase text-xs text-left">
               <th class="pb-5 min-w-[5rem] font-normal">State</th>
@@ -12,9 +12,9 @@
           </tr>
       </thead>
       <tbody>
-        <TableRowSkeleton v-if="!issues.length" v-for="index in 10" :key="index" />
+        <!-- <TableRowSkeleton v-if="!issues.length" v-for="index in 10" :key="index" /> -->
         <tr 
-            v-else
+            v-if="issues.length"
             v-for="issue in issues"
             :key="issue.id"
             :class="['text-sm bg-white dark:bg-charcoal-gray border-separate', {
@@ -43,15 +43,15 @@
                   {{ issue.title }}
                 </Link>
                 <div class="flex gap-1 mt-3">
-                  <Avatar :url="issue.user.user_avatar" size="sm" />
-                  <span class="dark:text-spun-pearl text-tundora text-xs font-medium">{{ issue.user.username }}</span>
+                  <Avatar :url="issue.user_avatar" size="sm" />
+                  <span class="dark:text-spun-pearl text-tundora text-xs font-medium">{{ issue.github_username }}</span>
                   <span class="dark:text-spun-pearl text-tundora text-xs font-light">{{ dayjs(issue.created_at).fromNow() }}</span>
                 </div>
             </td>
               <td class="py-6 pr-4 align-middle">
                 <div class="flex flex-wrap gap-1">
                   <Pill 
-                    v-for="label in issue.labels"
+                    v-for="label in issue.labels.split(',')"
                     :key="label"
                     color="present"
                     size="sm"
@@ -65,13 +65,13 @@
               <td class="py-6 pr-4 align-middle">
                   <div class="flex flex-wrap gap-1">
                     <Pill 
-                      v-for="lang in issue.languages" 
+                      v-for="lang in issue.repository.programming_languages" 
                       :key="lang"
                       color="present" 
                       size="sm" 
                       :disabled="issue.state === 'closed'"
                     >
-                      {{ lang }}
+                      {{ lang.name }}
                     </Pill>
                   </div>
               </td>
@@ -81,7 +81,7 @@
                     '!dark:text-spun-pearl text-tundora': issue.state === 'closed'
                   }]"
                 >
-                  {{ issue.donations }}
+                  {{ issue.donations_sum_amount ?? 0 }} €
                 </span>
               </td>
               <td class="rounded-br-md rounded-tr-md pr-6">
@@ -99,14 +99,14 @@
 </template>
 
 <script setup>
-    import TableRowSkeleton from './TableRowSkeleton.vue'
+    import TableRowSkeleton from '@/Components/Custom/TableRowSkeleton.vue'
     import { Link } from '@inertiajs/vue3';
     import Pill from '@/Components/Form/Pill.vue';
     import Icon from '@/Components/Icon.vue';
     import Avatar from '@/Components/Avatar.vue';
     import { useDark } from '@vueuse/core';
     import { vIntersectionObserver } from '@vueuse/components'
-    import dayjs from '../../../libs/dayjs.js';
+    import dayjs from '@/libs/dayjs';
 
     defineProps({
         issues: {
