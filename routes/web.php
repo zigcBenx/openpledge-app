@@ -11,6 +11,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RepositoryController;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,6 +48,8 @@ Route::middleware([
     // but mybe it would be better when 0 results to request all github repos with certain filters
     // and if found automatically add and show index page...
     Route::get('/repositories/request', [RepositoryController::class, 'getRequestNew'])->name('repositories-request-get');
+
+    Route::post('/repositories/connect', [RepositoryController::class, 'connect'])->name('repositories.connect');
     
     
     Route::get('/repositories/{githubUser}/{repository}', [RepositoryController::class, 'show'])->name('repositories.show');
@@ -72,9 +75,13 @@ Route::middleware([
 
 });
 
-Route::inertia('/error', 'Error')->name('error');
-
 Route::get('/auth/github/callback', [GithubController::class, 'callback'])->name('callback');
 Route::get('/auth/github', [GithubController::class, 'redirect'])->name('redirect');
 
 Route::get('/unsubscribe-user', [SubscriberController::class, 'unsubscribe'])->name('unsubscribe');
+
+
+
+Route::get('/{any}', function () {
+    return Inertia::render('Error');
+})->where('any', '.*');
