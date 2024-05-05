@@ -18,7 +18,7 @@
                         </div>
                     
                         <div>
-                            <Button v-if="repository.direct_from_github" color="primary" class="px-8 h-11">
+                            <Button v-if="repository.direct_from_github" @click="connect" :loading="loadingConnect" color="primary" class="px-8 h-11">
                                 Connect
                             </Button>
                             <Icon 
@@ -102,49 +102,30 @@ import {
     trendingToday,
 } from '../../assets/mockedData.js'
 
-defineProps
+const props = defineProps
 ({
     repository: Object,
 });
 
-const openIssues = ref([]);
+const openIssues = ref([])
+const loadingConnect = ref(false)
 
-// onMounted(() => {
-//     getIssues()
-// });
-
-// const getIssues = () => {
-//     axios.get('/github/issues', {
-//         params: {
-//             q: `repo:${repository.title}`,
-//         },
-//     })
-//     .then(response => {
-//         openIssues = response.data.items.filter(issue => !repository.issues.map((issue) => Number(issue.github_id)).includes(issue.id));
-//     })
-//     .catch(error => {
-//         console.log(error);
-//     });
-// };
-
-// const initialPledge = (issue) => {
-//     axios.post('/issues', {
-//         title: issue.title,
-//         github_id: issue.id,
-//         github_url: issue.html_url,
-//         user_avatar: issue.user.avatar_url,
-//         repository_id: this.repository.id,
-//     })
-//     .then((response) => {
-//         const toast = useToast()
-//         toast.success('Issue added to OpenPledge!')
-//         router.visit(route('issues.show', { id: response.data.id }))
-//     }).catch((err) => {
-//         const toast = useToast()
-//         toast.error(err?.response.data.message)
-//     }).finally(() => {
-//         // this.loading = false
-//     });
-// };
-
+const connect = () => {
+    loadingConnect.value = true
+    axios.post('/repositories/connect', {
+            repository: props.repository.title,
+        })
+        .then((response) => {
+            const toast = useToast()
+            toast.success(`Repository ${props.repository.title} is now available on OpenPledge!`)
+            const username = props.repository.title.split('/')[0]
+            const repo = props.repository.title.split('/')[1]
+            router.visit(route('repositories.show', { githubUser: username, repository: repo }))
+        }).catch((err) => {
+            const toast = useToast()
+            toast.error(err.response.data.message)
+        }).finally(() => {
+            loadingConnect.value = false
+        })
+}
 </script>

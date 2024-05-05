@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Github\GetGithubRepositories;
+use App\Actions\Github\GetGithubRepositoryByName;
+use App\Actions\Repository\ConnectRepository;
 use App\Actions\Repository\CreateNewRepository;
 use App\Actions\Repository\GetRepositories;
-use App\Actions\Repository\GetRepositoryById;
 use App\Actions\Repository\GetRepositoryByTitle;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
 class RepositoryController extends Controller
@@ -30,6 +32,11 @@ class RepositoryController extends Controller
         ]);
     }
 
+    public function connect(Request $request)
+    {
+        return ConnectRepository::connect($request->all());
+    }
+
     /**
      * This function searches database for matching repository,
      * if none is found it tries searching Github database.
@@ -40,13 +47,11 @@ class RepositoryController extends Controller
         $repository = GetRepositoryByTitle::get($githubUser . '/' . $repositoryName);
 
         if (!$repository) {
-            $githubResult = GetGithubRepositories::run('repo:' . $githubUser . '/' . $repositoryName);
-            if (!$githubResult['total_count']) {
-                logger("Fail to find");
-                return;
+            try {
+                $githubRepo = GetGithubRepositoryByName::run($githubUser, $repositoryName);
+            } catch(Exception $e) {
+                return Redirect::route('error', ['any' => 'error']);
             }
-            $githubRepo = $githubResult['items'][0];
-
             $repository = [
                 'title'              => $githubRepo['full_name'],
                 'github_url'         => $githubRepo['html_url'],
