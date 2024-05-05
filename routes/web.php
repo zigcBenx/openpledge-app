@@ -84,4 +84,4 @@ Route::get('/unsubscribe-user', [SubscriberController::class, 'unsubscribe'])->n
 
 Route::get('/{any}', function () {
     return Inertia::render('Error');
-})->where('any', '.*');
+})->where('any', '.*')->name('error');
