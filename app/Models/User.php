@@ -65,4 +65,9 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public function programmingLanguages()
+    {
+        return $this->morphToMany(ProgrammingLanguage::class, 'programming_languageable');
+    }
 }
