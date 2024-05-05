@@ -57,7 +57,7 @@
                                 <Pill 
                                     color="secondary"
                                 >
-                                    Pledged 10
+                                    Pledged {{ repository.issues_count }}
                                 </Pill>
                                 <Pill 
                                     color="primary"
@@ -67,7 +67,7 @@
                             </div>
                         </div>
                         <div>
-                            <IssuesTable :issues="repository.issues" />
+                            <IssuesTable :issues="listOfIssues" />
                         </div>
                     </div>
                 </div>
@@ -113,6 +113,10 @@ const props = defineProps
 
 const openIssues = ref([])
 const loadingConnect = ref(false)
+
+// this variable is by default issues from OpenPledge (that are pledged),
+// but can be later switched if "open" is pressed to all issues from github and from OpenPledge that are not pledged
+const listOfIssues = ref(props.repository.issues)
 
 const connect = () => {
     loadingConnect.value = true

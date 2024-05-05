@@ -10,7 +10,15 @@ class GetRepositoryByTitle
     {
         return Repository::with(['programmingLanguages:id,name','issues' => function ($query) {
             $query->with('repository.programmingLanguages:id,name')
-                ->withSum('donations', 'amount');
-        }])->where('title', $title)->first();
+                ->withSum('donations', 'amount')
+                ->whereHas('donations', function ($query) {
+                    $query->where('amount', '>', 0);
+                });;
+        }])->withCount(['issues' => function ($query) {
+            $query->whereHas('donations', function ($query) {
+                $query->where('amount', '>', 0);
+            });
+        }])
+        ->where('title', $title)->first();
     }
 }
