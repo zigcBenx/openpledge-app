@@ -8,8 +8,9 @@ class GetRepositoryByTitle
 {
     public static function get($title)
     {
-        return Repository::with(['issues' => function ($query) {
-            $query->withSum('donations', 'amount');
+        return Repository::with(['programmingLanguages:id,name','issues' => function ($query) {
+            $query->with('repository.programmingLanguages:id,name')
+                ->withSum('donations', 'amount');
         }])->where('title', $title)->first();
     }
 }
