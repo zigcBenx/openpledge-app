@@ -89,7 +89,7 @@ import Icon from '@/Components/Icon.vue';
 import { useDark } from '@vueuse/core';
 import Filters from './Filters.vue';
 import Page from '@/Components/Page.vue';
-import IssuesTable from './Partials/IssuesTable.vue'
+import IssuesTable from '@/Components/Custom/IssuesTable.vue'
 import Sidebar from './Partials/Sidebar.vue';
 import { parseQueryFilters, updateQueryFilters } from '../../libs/queryLibs.js'
 import { 

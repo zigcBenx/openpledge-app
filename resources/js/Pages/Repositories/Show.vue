@@ -38,11 +38,14 @@
                             <p class="w-2/12 text-tundora dark:text-spun-pearl uppercase text-xs">Languages</p>
                             <div class="w-10/12">
                                 <div class="flex gap-2 text-oil dark:text-lavender-mist">
-                                    <Pill color="present" :contentClasses="['px-2']">PHP</Pill>
-                                    <Pill color="present" :contentClasses="['px-2']">Vue</Pill>
-                                    <Pill color="present" :contentClasses="['px-2']">Laravel</Pill>
-                                    <Pill color="present" :contentClasses="['px-2']">Nuxt</Pill>
-                                    <Pill color="present" :contentClasses="['px-2']">Bash</Pill>
+                                    <Pill
+                                        v-for="language in repository.programming_languages"
+                                        :key="language.id"
+                                        color="present"
+                                        :contentClasses="['px-2']"
+                                    >
+                                        {{ language.name }}
+                                    </Pill>
                                 </div>
                             </div>
                         </div>
@@ -64,7 +67,7 @@
                             </div>
                         </div>
                         <div>
-                            <IssuesTable :issues="issues" />
+                            <IssuesTable :issues="repository.issues" />
                         </div>
                     </div>
                 </div>
@@ -94,13 +97,14 @@ import { useToast } from "vue-toastification";
 import { router } from '@inertiajs/vue3';
 import Icon from '@/Components/Icon.vue';
 import GithubIssueConnect from '@/Components/Custom/GithubIssueConnect.vue';
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import Pill from '@/Components/Form/Pill.vue';
 import TopList from '@/Components/Custom/TopList.vue';
 import Button from '@/Components/Button.vue';
 import {
     trendingToday,
 } from '../../assets/mockedData.js'
+import IssuesTable from '@/Components/Custom/IssuesTable.vue'
 
 const props = defineProps
 ({

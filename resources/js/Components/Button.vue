@@ -11,7 +11,7 @@
       :type="type"
       @click="clickHandler"
     >
-      <div class="flex items-center">
+      <div class="flex items-center justify-center">
         <template v-if="loading">
             <svg class="animate-spin" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <circle opacity="0.2" cx="12" cy="12" r="6" stroke="#FCFCFD" stroke-width="2"/>

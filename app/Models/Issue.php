@@ -14,7 +14,10 @@ class Issue extends Model
         'github_url',
         'github_id',
         'repository_id',
-        'user_avatar'
+        'user_avatar',
+        'state',
+        'labels',
+        'github_username'
     ];
 
     public function repository()
