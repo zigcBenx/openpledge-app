@@ -5,7 +5,7 @@
     <Input 
       inputClass="!w-full !bg-transparent border-spun-pearl placeholder-tundora focus:border-tundora dark:border-mondo dark:placeholder-spun-pearl" 
       placeholder="Paste URL" 
-      icon="open_in_new" 
+      icon="open-in-new" 
       iconPosition="right"
     />
   </div>

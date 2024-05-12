@@ -2,7 +2,7 @@
     <div class="space-y-6 w-full">
       <div class="flex flex-col">
         <header
-          class="space-y-2 items-center justify-between sm:flex sm:space-y-0 sm:space-x-4 sm:py-4"
+          class="space-y-2 items-center justify-between flex md:space-y-0 md:space-x-4 pb-8 md:py-6"
         >
           <div>
             <h1 class="dark:text-lavender-mist text-[2.5rem]">
@@ -17,9 +17,7 @@
             <slot name="actions" />
           </div>
         </header>
-        <div class="flex gap-2 flex-wrap">
-            <slot name="filters" />
-        </div>
+        <slot name="filters" />
       </div>
       <div class="flex flex-col">
         <slot />
