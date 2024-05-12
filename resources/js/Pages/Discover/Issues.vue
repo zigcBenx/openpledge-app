@@ -91,7 +91,7 @@ import Filters from './Filters.vue';
 import Page from '@/Components/Page.vue';
 import IssuesTable from './Partials/IssuesTable.vue'
 import Sidebar from './Partials/Sidebar.vue';
-import { parseQueryFilters, updateQueryFilters } from '../../libs/queryLibs.js'
+import { parseQueryFilters, updateQueryFilters } from '@/utils/parseQuery'
 import { 
     languages as languagesList, 
     labels as labelsList, 

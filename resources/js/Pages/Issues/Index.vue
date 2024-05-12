@@ -79,8 +79,8 @@
 </template>
 <script>
 import { onMounted, ref } from 'vue';
-import { parseQueryFilters } from '../../libs/queryLibs.js'
-  import { useElementSize } from '@vueuse/core';
+import { parseQueryFilters } from '@/utils/parseQuery'
+import { useElementSize } from '@vueuse/core';
 
   const keys = { labels: 'labels', languages: 'languages', range: 'range', date: 'date', storageDiscoverKey: 'discover' };
 
