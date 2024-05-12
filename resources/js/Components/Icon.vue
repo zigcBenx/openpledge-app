@@ -1,7 +1,8 @@
 <template>
   <component
-    :class="[{ 
-      'pointer-events-all !cursor-default': disabled 
+    :class="['min-w-5 min-h-5', { 
+      'pointer-events-all !cursor-default': disabled,
+      'w-7 h-7': size === 'lg' 
     }]"
     class="cursor-pointer"
     :is="icon"
@@ -20,8 +21,6 @@
   import Error from './../assets/icons/error.svg';
   import Pencil from './../assets/icons/pencil.svg';
 
-  import { ref } from 'vue';
-
   export default {
     props: {
       name:{
@@ -30,7 +29,13 @@
       disabled: {
         type: Boolean,
         default: false
-      }
+      },
+      size: {
+        type: String,
+        default: 'md',
+        validator: (value) =>
+          ["md", "lg"].includes(value),
+      },
     },
     components: {
       Bell,

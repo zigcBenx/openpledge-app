@@ -1,0 +1,1 @@
+export const preventStringInputWithNumber = (value) => value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
