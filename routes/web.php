@@ -7,6 +7,7 @@ use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RepositoryController;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
@@ -36,6 +37,7 @@ Route::middleware([
     Route::get('/dashboard', [MainController::class, 'dashboard'])->name('dashboard');
     Route::get('/subscribers', [SubscriberController::class, 'index'])->name('subscribers');
 
+    Route::get('/discover/issues', [MainController::class, 'discoverIssues'])->name('discover.issues');
 
 
 
@@ -59,6 +61,11 @@ Route::middleware([
     Route::get('/github/issues', [GithubController::class, 'getIssues'])->name('github-issues-get');
 
     Route::post('/get-payment-intent', [PaymentController::class, 'getPaymentIntent'])->name('get-payment-intent');
+
+
+    // override of profile route
+    Route::get('/user/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/user/profile/settings', [ProfileController::class, 'settings'])->name('profile.settings');
 
 });
 

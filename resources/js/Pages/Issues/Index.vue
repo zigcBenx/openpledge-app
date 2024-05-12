@@ -77,34 +77,18 @@
         />
     </AppLayout>
 </template>
-<script setup>
-  import { ref, onMounted, watch } from 'vue';
-  import { parseQueryFilters, updateQueryFilters } from '../../utils/parseQuery.js';
-  import { languages as languagesList, labels as labelsList, issues as issuesList, trendingToday, topContributors, topDonators } from '../../assets/mockedData.js';
-
-  import Page from '@/Components/Page.vue';
-  import Filters from './Filters.vue';
-  import Icon from '@/Components/Icon.vue';
-  import Pill from '@/Components/Form/Pill.vue';
-  import AppLayout from '@/Layouts/AppLayout.vue';
-  import IssuesTable from './Partials/IssuesTable.vue';
-  import Sidebar from './Partials/Sidebar.vue';
-  import { useElementSize } from '@vueuse/core';
+<script>
+import { onMounted, ref } from 'vue';
+import { parseQueryFilters } from '@/utils/parseQuery'
+import { useElementSize } from '@vueuse/core';
 
   const keys = { labels: 'labels', languages: 'languages', range: 'range', date: 'date', storageDiscoverKey: 'discover' };
 
-  const labels = ref(labelsList);
-  const languages = ref(languagesList);
-  const pagedIssues = ref(0);
-  const issues = ref([]);
-  const displayFilterModal = ref(false);
   const queryFilters = ref({});
-  const removedFilters = ref(0);
   const count = ref(0);
 
   const el = ref(null)  
   const { width } = useElementSize(el);
-  const hiddenFilters = ref(true);
   const childNodesWidth = ref(0);
   const isMobile = () => {
     var check = false;
@@ -127,30 +111,6 @@
     }); 
   });
 
-  const updateFilterList = (value) => {
-    updateQueryFilters(value);
-    queryFilters.value = [...value];
-  };
-
-  const handleRemoveOption = (value, key) => {
-    let filterToRemove = queryFilters.value.findIndex(item => item.key === key && item.value === value.value);
-    if(filterToRemove !== -1) {
-        queryFilters.value.splice(filterToRemove, 1);
-    }
-
-    updateQueryFilters(queryFilters.value);
-    removedFilters.value++;
-  };
-
-  const handleDisplayModal = () => {
-    displayFilterModal.value = !displayFilterModal.value;
-  };
-
-  const handleLazyLoadingIssues = () => {
-    pagedIssues.value = pagedIssues.value + 1;
-    issues.value = issuesList.slice(pagedIssues.value, pagedIssues.value * 10 + 20);
-  };
-
   onMounted(() => {
     if(localStorage.getItem(keys.storageDiscoverKey)) {
         queryFilters.value = JSON.parse(localStorage.getItem(keys.storageDiscoverKey));
@@ -158,21 +118,4 @@
         queryFilters.value = parseQueryFilters();
     }
   });
-
-  const showMoreFilters = () => {
-    hiddenFilters.value = !hiddenFilters.value;
-  }
-
-  const getValue = (value) => {
-    if(labels.value.find(item => keys.labels === value.key && item.value === value.value)) {
-        return labels.value.find(item => keys.labels === value.key && item.value === value.value).label;
-    } else if(languages.value.find(item => keys.languages === value.key && item.value === value.value)) {
-        return languages.value.find(item => keys.languages === value.key && item.value === value.value).label;
-    } else if(value.key === keys.range) {
-        return '$'+value.value.start +'-$'+value.value.end;
-    } else if(value.key === keys.date) {
-        return value.value.year;
-    }
-    return false;
-  }
 </script>

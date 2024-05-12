@@ -56,6 +56,8 @@ export default {
                 'valhalla': '#2E1332',
                 'stylish-red': '#3F1645',
                 'magic-mint': '#3AD4B0',
+                'icon-idle-gray': '#666666',
+                'whitish-gray': '#F0EFF1',
             },
         },
     },

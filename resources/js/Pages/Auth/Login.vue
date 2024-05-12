@@ -9,7 +9,9 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import Button from '@/Components/Button.vue';
 import ApplicationMark from '@/Components/ApplicationMark.vue';
+import { useDark } from '@vueuse/core';
 
+const isDark = useDark();
 
 defineProps({
     canResetPassword: Boolean,
@@ -34,7 +36,6 @@ const submit = () => {
 
 <template>
     <Head title="Log in" />
-
     <AuthenticationCard>
         <template #logo>
             <AuthenticationCardLogo />
@@ -44,12 +45,12 @@ const submit = () => {
             {{ status }}
         </div>
 
-        <div class="border-b border-gray-100 py-4 mb-7">
-            <ApplicationMark :isDark="false" />
+        <div class="border-b border-whitish-gray dark:border-oil py-4 mb-7">
+            <ApplicationMark :isDark="isDark" />
         </div>
-        <p class="text-xl mb-6">Log in</p>
-        <div class="flex items-center justify-end mt-4 border-t-white">
-            <a href="/auth/github" class="flex items-center justify-center w-full py-5 h-9 rounded-full font-medium text-sm focus:outline-none focus:ring-0 transition duration-150 ease-in-out dark:bg-turquoise bg-dark-green text-white dark:text-dark-black dark:hover:border-green hover:border-green hover:border-2">
+        <p class="text-xl mb-6 dark:text-whitish-gray">Log in</p>
+        <div class="flex items-center justify-end mt-4">
+            <a href="/auth/github" class="flex items-center justify-center w-full py-5 h-9 rounded-full font-medium text-sm focus:outline-none focus:ring-0 transition duration-150 ease-in-out dark:bg-turquoise bg-dark-green text-white dark:text-black dark:text-dark-black dark:hover:border-green">
                 <i class="fa-brands fa-github mr-1 text-lg"></i>
                 <p class="mt-1">Login with GitHub</p>
             </a>
@@ -88,19 +89,19 @@ const submit = () => {
             </div>
 
             <div class="mt-2 flex items-center justify-end">
-                <Link v-if="canResetPassword" :href="route('password.request')" class="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+                <Link v-if="canResetPassword" :href="route('password.request')" class="text-xs text-tundora dark:text-spun-pearl hover:text-gray-900 dark:hover:text-gray-100">
                     Forgot password?
                 </Link>
             </div>
             <div class="flex items-center justify-end mt-4">
 
-                <Button color="secondary" class="text-xs" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                <Button color="secondary" type="submit" class="text-xs" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     Log in
                 </Button>
             </div>
         </form>
-        <div class="border-t border-gray-100 mt-6">
-            <p class="mt-5 text-xs text-gray-400">Don't have an account? <a href="/register" class="text-dark-green font-medium">Sign Up</a></p>
+        <div class="border-t border-whitish-gray dark:border-oil mt-6">
+            <p class="mt-5 text-xs text-spun-pearl">Don't have an account? <a href="/register" class="text-green font-bold">Sign Up</a></p>
         </div>
     </AuthenticationCard>
 </template>

@@ -19,19 +19,7 @@
   import Close from './../assets/icons/close.svg';
   import Star from './../assets/icons/star.svg';
   import Error from './../assets/icons/error.svg';
-  import Github from './../assets/icons/github.svg';
-  import ChevronRight from './../assets/icons/chevron_right.svg';
-  import OpenInNew from './../assets/icons/open_in_new.svg';
-  import ChevronDown from './../assets/icons/chevron_down.svg';
-  import Link from './../assets/icons/link.svg';
-  import Clock from './../assets/icons/clock.svg';
-  import Dollar from './../assets/icons/dollar.svg';
-  import Sun from './../assets/icons/sun.svg';
-  import Up from './../assets/icons/up.svg';
-  import Down from './../assets/icons/down.svg';
-  import Letter from './../assets/icons/letter.svg';
-  import Master from './../assets/icons/master.svg';
-  import Visa from './../assets/icons/visa.svg';
+  import Pencil from './../assets/icons/pencil.svg';
 
   export default {
     props: {
@@ -60,20 +48,7 @@
       Close,
       Star,
       Error,
-      Github,
-      Github,
-      ChevronRight,
-      OpenInNew,
-      ChevronDown,
-      Link,
-      Clock,
-      Dollar,
-      Sun,
-      Up,
-      Down,
-      Letter,
-      Master,
-      Visa
+      Pencil
     },
     setup(props) {
       const components = { 
@@ -87,19 +62,7 @@
         close:Close, 
         star: Star, 
         error: Error,
-        github: Github,
-        link: Link,
-        clock: Clock,
-        dollar: Dollar,
-        sun: Sun,
-        up: Up,
-        down: Down,
-        letter: Letter,
-        master: Master,
-        visa: Visa,
-        'chevron-right': ChevronRight,
-        'chevron-down': ChevronDown,
-        'open-in-new': OpenInNew,
+        pencil: Pencil
       };
       const icon = components[props.name];
       
