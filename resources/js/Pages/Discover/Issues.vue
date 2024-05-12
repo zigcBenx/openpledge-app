@@ -99,7 +99,7 @@ import {
     trendingToday, 
     topContributors, 
     topDonators
-} from '../../assets/mockedData.js'
+} from '@/assets/mockedData.js'
 
 export default {
     components: {

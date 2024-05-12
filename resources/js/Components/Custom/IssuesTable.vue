@@ -12,9 +12,8 @@
           </tr>
       </thead>
       <tbody>
-        <!-- <TableRowSkeleton v-if="!issues.length" v-for="index in 10" :key="index" /> -->
+        <TableRowSkeleton v-if="!issues.length" v-for="index in 10" :key="index" />
         <tr 
-            v-if="issues.length"
             v-for="issue in issues"
             :key="issue.id"
             :class="['text-sm bg-white dark:bg-charcoal-gray border-separate', {
@@ -46,7 +45,7 @@
                   <span class="dark:text-spun-pearl text-tundora text-xs font-medium">{{ issue.github_username }}</span>
                   <span class="dark:text-spun-pearl text-tundora text-xs font-light">{{ dayjs(issue.created_at).fromNow() }}</span>
                 </div>
-            </td>
+              </td>
               <td class="py-6 pr-4 align-middle">
                 <div class="flex flex-wrap gap-1">
                   <Pill 
@@ -115,8 +114,8 @@
             default: [],
             validator: function (value) {
                 return value.every(item => {
-                return typeof item === 'object' && item.hasOwnProperty('id');
-              });
+                  return typeof item === 'object' && item.hasOwnProperty('id');
+                });
             }
         },
     });
