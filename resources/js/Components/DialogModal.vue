@@ -12,7 +12,7 @@
                     name="close"
                 />
             </div>
-            <div class="p-10">
+            <div class="p-8 md:p-10">
                 <div class="text-xl dark:text-lavender-mist text-oil">
                     <slot name="title" />
                 </div>

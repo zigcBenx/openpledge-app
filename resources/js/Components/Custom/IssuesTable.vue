@@ -37,8 +37,7 @@
                   :class="['dark:text-white dark:hover:text-green hover:text-green text-base pr-4', {
                     '!text-spun-pearl': issue.state === 'closed'
                   }]"
-                  href="/issue/123"
-                  target="_blank"
+                  href="/issues/1"
                   >
                   {{ issue.title }}
                 </Link>
@@ -86,7 +85,8 @@
               </td>
               <td class="rounded-br-md rounded-tr-md pr-6">
                   <Icon 
-                    name="star" 
+                    name="star"
+                    width="1.375rem"
                     :class="getIconStrokeColor(issue.favorite, issue.state === 'closed')"
                     :disabled="issue.state === 'closed'"
                     @click="addFavorites(issue)"
