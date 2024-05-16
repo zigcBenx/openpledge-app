@@ -187,4 +187,8 @@ return [
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 
+    'stripe_secret' => env('STRIPE_SECRET', ''),
+    'stripe_connect_url' => env('STRIPE_CONNECT_URL', ''),
+    'stripe_currency' => env('CASHIER_CURRENCY', 'EUR'),
+    'stripe_key' => env('STRIPE_KEY', '')
 ];

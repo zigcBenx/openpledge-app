@@ -211,7 +211,7 @@
             SearchCard,
             Input
         },
-        setup(props) {
+        setup() {
             const isDark = useDark();
             const toggleDark = useToggle(isDark);
 

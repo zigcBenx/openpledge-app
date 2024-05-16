@@ -27,7 +27,8 @@ class IssueController extends Controller
     {
         $issue = GetIssueById::get($id);
         return Inertia::render('Issues/Show', [
-            'issue' => $issue
+            'issue' => $issue,
+            'stripePublicKey' => config('app.stripe_key')
         ]);
     }
 

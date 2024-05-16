@@ -95,3 +95,23 @@ export const topDonators = [{
       languages: ['Ruby', 'Java', 'Go'],
       donations: '$350'
   }];
+
+  export const pledgesHistory = {
+    amount: '$220',
+    minAmount: '$50',
+    validUntil: 'Fri Apr 19 2024',
+    amountAfter: '$150',
+    history: [{
+      id: 1,
+      amount: '$200',
+      donatedBy: 'username',
+      donatedAt: 'Apr 25 2024',
+      validUntil: 'Fri Apr 29 2024',
+    }, {
+      id: 2,
+      amount: '$30 0',
+      donatedBy: 'username 2',
+      donatedAt: 'Apr 22 2024',
+      validUntil: 'Apr 28 2024',
+    }]
+  }

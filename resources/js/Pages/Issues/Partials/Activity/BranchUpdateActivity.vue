@@ -7,7 +7,7 @@
 <template>
   <div class="flex gap-3 pl-3 items-center">
       <Avatar url="/images/avatar.png" />
-      <p class="flex gap-1.5 text-sm text-tundora dark:text-spun-pearl">
+      <p class="flex gap-1.5 text-sm text-tundora dark:text-spun-pearl whitespace-nowrap">
         <span class="font-medium text-mondo dark:text-seashell">username</span>
         <span class="underline dark:text-green text-dark-green">force-pushed</span>
         the

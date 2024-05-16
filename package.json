@@ -37,6 +37,7 @@
         "@tiptap/pm": "^2.2.4",
         "@tiptap/starter-kit": "^2.2.4",
         "@tiptap/vue-3": "^2.2.4",
+        "@vue-stripe/vue-stripe": "^4.5.0",
         "@vueform/slider": "^2.1.10",
         "@vuepic/vue-datepicker": "^8.3.1",
         "@vueuse/components": "^10.9.0",
@@ -45,6 +46,7 @@
         "dayjs": "^1.11.10",
         "vue-intersect": "^3.0.0",
         "vue-loading-skeleton": "^2.0.0-beta.1",
+        "vue-select": "^4.0.0-beta.6",
         "vue-toastification": "^2.0.0-rc.5"
     }
 }

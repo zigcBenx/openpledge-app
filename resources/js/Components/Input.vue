@@ -13,13 +13,13 @@
         }, inputClass]"
         :required="required"
         :maxlength="maxlength"
-        @input="emit('onInput')"
+        @input="emit('onInput', $event)"
         @blur="emit('onBlur')"
       />
       <div v-if="icon && iconPosition === 'right' && type !== 'payment'" class="z-10 absolute inset-y-0 right-3 flex items-center pointer-events-none">
           <Icon :name="icon" :class="iconClass" />
       </div>
-      <div v-if="type === 'payment'" class="z-10 absolute inset-y-0 right-3 flex gap-1.5 items-center pointer-events-none">
+      <div v-if="type === 'payment'" class="z-10 absolute inset-y-0 right-3 flex gap-1.5 items-center pointer-events-none !z-0">
         <Icon name="master" />
         <Icon name="visa" />
       </div>
@@ -27,10 +27,10 @@
 </template>
 <script setup>
   import Icon from '@/Components/Icon.vue';
-  import { defineModel, defineEmits, defineProps } from 'vue';
+  import { defineModel } from 'vue';
   
   const input = defineModel('input');
-  const emit = defineEmits(['onBlur', 'onInput'])
+  const emit = defineEmits(['onBlur', 'onInput']);
 
   defineProps({
     inputClass: String,
