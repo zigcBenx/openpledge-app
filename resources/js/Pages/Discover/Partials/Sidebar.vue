@@ -33,8 +33,8 @@
   </TopList>
 </template>
 <script setup>
-  import GithubIssueConnect from './GithubIssueConnect.vue';
-  import TopList from './TopList.vue';
+  import GithubIssueConnect from '@/Components/Custom/GithubIssueConnect.vue';
+  import TopList from '@/Components/Custom/TopList.vue';
   import UserListItem from './UserListItem.vue';
 
   defineProps({

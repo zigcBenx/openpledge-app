@@ -12,6 +12,7 @@ use App\Http\Controllers\RepositoryController;
 use App\Http\Controllers\StripeConnectController;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,8 +50,13 @@ Route::middleware([
     // and if found automatically add and show index page...
     Route::get('/repositories/request', [RepositoryController::class, 'getRequestNew'])->name('repositories-request-get');
 
+    Route::post('/repositories/connect', [RepositoryController::class, 'connect'])->name('repositories.connect');
+    
+    
+    Route::get('/repositories/{githubUser}/{repository}', [RepositoryController::class, 'show'])->name('repositories.show');
 
-    Route::resource('repositories', RepositoryController::class)->only('index','show', 'store');
+
+    Route::resource('repositories', RepositoryController::class)->only('index', 'store');
     Route::resource('issues', IssueController::class)->only('index', 'show', 'store');
     Route::resource('campaigns', CampaignController::class);
     Route::resource('donations', DonationController::class)->only('index', 'show', 'store');
@@ -73,9 +79,13 @@ Route::middleware([
     Route::post('/payment-process', [PaymentController::class, 'process'])->name('payment-process');
 });
 
-Route::inertia('/error', 'Error')->name('error');
-
 Route::get('/auth/github/callback', [GithubController::class, 'callback'])->name('callback');
 Route::get('/auth/github', [GithubController::class, 'redirect'])->name('redirect');
 
 Route::get('/unsubscribe-user', [SubscriberController::class, 'unsubscribe'])->name('unsubscribe');
+
+
+
+Route::get('/{any}', function () {
+    return Inertia::render('Error');
+})->where('any', '.*')->name('error');

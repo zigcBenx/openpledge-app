@@ -18,9 +18,9 @@
             str-head-tail
         </Pill>
         branch from
-        <Link to="/" class="underline dark:text-green text-dark-green">0e6703d</Link>
+        <Link href="/" class="underline dark:text-green text-dark-green">0e6703d</Link>
         branch from
-        <Link to="/" class="underline dark:text-green text-dark-green">496f4de</Link>
+        <Link href="/" class="underline dark:text-green text-dark-green">496f4de</Link>
       </p>
       <span class="text-xs text-tundora dark:text-spun-pearl ml-auto whitespace-nowrap">8 Days ago</span>
   </div>

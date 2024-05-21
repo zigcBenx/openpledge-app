@@ -4,7 +4,7 @@
   import { PAYMENT_FORM_METHODS } from '@/constants';
 
   defineProps({
-    pledgeMethod: Object
+    pledgeMethod: String
   });
 
   const emit = defineEmits(['onChange']);

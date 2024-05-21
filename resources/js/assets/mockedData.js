@@ -33,11 +33,12 @@ export const issues = [...new Array(100)].map((item, index) => ({
     },
     changed_at: 'Fri Apr 19 2024',
     created_at: 'Wed Apr 17 2024',
-    labels: ['bug', 'feature'],
+    labels: 'bug,feature',
     repository: 'strapi/strapi',
     languages: ['Javascript', 'Java', 'Python', 'Ruby', 'Go'],
     donations: `$${300 + index * 10}`,
     favorite: favorite[Math.floor(Math.random()*favorite.length)],
+    user_avatar: 'https://avatars.githubusercontent.com/u/32687182?v=4'
 }))
 
 export const trendingToday = [{

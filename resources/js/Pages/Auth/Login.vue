@@ -89,22 +89,20 @@ const submit = () => {
         <InputError class="mt-2" :message="form.errors.password"/>
       </div>
 
-      <div class="mt-2 flex items-center justify-end">
-        <Link v-if="canResetPassword" :href="route('password.request')"
-              class="text-xs text-tundora dark:text-spun-pearl hover:text-gray-900 dark:hover:text-gray-100">
-          Forgot password?
-        </Link>
-      </div>
-      <div class="flex items-center justify-end mt-4">
-        <Button type="submit" color="secondary" class="text-xs" :class="{ 'opacity-25': form.processing }"
-                :disabled="form.processing">
-          Log in
-        </Button>
-      </div>
-    </form>
-    <div class="border-t border-whitish-gray dark:border-oil mt-6">
-      <p class="mt-5 text-xs text-spun-pearl">Don't have an account? <a href="/register" class="text-green font-bold">Sign
-        Up</a></p>
-    </div>
-  </AuthenticationCard>
+            <div class="mt-2 flex items-center justify-end">
+                <Link v-if="canResetPassword" :href="route('password.request')" class="text-xs text-tundora dark:text-spun-pearl hover:text-gray-900 dark:hover:text-gray-100">
+                    Forgot password?
+                </Link>
+            </div>
+            <div class="flex items-center justify-end mt-4">
+
+                <Button color="secondary" type="submit" class="text-xs" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                    Log in
+                </Button>
+            </div>
+        </form>
+        <div class="border-t border-whitish-gray dark:border-oil mt-6">
+            <p class="mt-5 text-xs text-spun-pearl">Don't have an account? <Link href="/register" class="text-green font-bold">Sign Up</Link></p>
+        </div>
+    </AuthenticationCard>
 </template>
