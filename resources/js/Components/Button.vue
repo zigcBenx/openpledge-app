@@ -25,33 +25,20 @@
     </button>
   </template>
   
-  <script>
-  export default {
-    emits: ["click"],
-    props: {
-      type: {
-        type: String,
-        default: "button",
-        validator: (value) => ["button", "submit", "reset"].includes(value),
-      },
-      color: {
-        type: String,
-        default: "primary",
-        validator: (value) =>
-          ["primary", "secondary", "link", "outline"].includes(value),
-      },
-      plain: {
-        type: Boolean,
-        default: false,
-      },
-      disabled: {
-        type: Boolean,
-        default: false,
-      },
-      loading: {
-        type: Boolean,
-        default: false,
-      },
+<script>
+export default {
+  emits: ["click"],
+  props: {
+    type: {
+      type: String,
+      default: "button",
+      validator: (value) => ["button", "submit", "reset"].includes(value),
+    },
+    color: {
+      type: String,
+      default: "primary",
+      validator: (value) =>
+        ["primary", "secondary", "link", "outline"].includes(value),
     },
     plain: {
       type: Boolean,
@@ -61,16 +48,20 @@
       type: Boolean,
       default: false,
     },
-<<<<<<< HEAD
+    loading: {
+      type: Boolean,
+      default: false,
+    },
     size: {
       type: String,
-      validator: (value) =>
-          ["md", "lg"].includes(value),
-    }
+      validator: (value) => ["md", "lg"].includes(value),
+    },
   },
-  setup(props, {emit}) {
+  setup(props, { emit }) {
     const clickHandler = (event) => {
-      emit("click", event);
+      if (!props.disabled && !props.loading) {
+        emit("click", event);
+      }
     };
 
     return {
@@ -79,9 +70,6 @@
   },
 };
 </script>
-=======
-  };
-  </script>
 
 <style scoped>
     /* Styles for the loader */
@@ -99,4 +87,3 @@
       100% { transform: rotate(360deg); }
     }
 </style>
->>>>>>> origin
