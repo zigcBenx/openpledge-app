@@ -9,8 +9,8 @@
         },
         issue: {
             type: Object,
-            validator: (value) =>
-                value.id && value.description && value.user && value.changed_at && value.hasOwnProperty('state')
+            // validator: (value) =>
+            //     value.id && value.description && value.user && value.changed_at && value.hasOwnProperty('state')
         }
     });
 

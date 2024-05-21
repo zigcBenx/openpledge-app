@@ -13,7 +13,7 @@
   const form = reactive({
     type: 'pledge',
     pledgeMethod: 'infinite',
-    amount: '',
+    amount: 0,
     name: '',
     cardNumber: {
       value: '',
@@ -37,7 +37,7 @@
 <template>
   <div class="dark:bg-charcoal-gray bg-seashell mt-4 rounded-md">
     <FormTypeButtons :type="form.type" />
-    <PledgeMethod :pledgeMethod="form.pledgeMethod" />
+    <PledgeMethod :pledgeMethod="form.pledgeMethod" @changePledgeMethod="form.pledgeMethod = $event"/>
 
     <div>
       <div class="p-6 flex flex-col gap-6">
@@ -85,7 +85,7 @@
               v-model:input="form.cardNumber.value" 
               inputClass="w-full !bg-transparent border !border-slate-gray !focus:border-green" 
               type="payment" 
-              maxlength="16" 
+              :maxlength="16" 
               required
               placeholder="Card number"
               @onInput="form.cardNumber.value = preventStringInputWithNumber(form.cardNumber.value)"
@@ -100,7 +100,7 @@
                 v-model:input="form.cvc.value" 
                 inputClass="w-full !bg-transparent" 
                 placeholder="CVC" 
-                maxlength="3" 
+                :maxlength="3" 
                 required
                 @onInput="form.cvc.value = preventStringInputWithNumber(form.cvc.value)"
                 @onBlur="handleCvcValidation"      
@@ -118,4 +118,4 @@
       </div>
     </div>
   </div>
-</template>@/utils/preventStringInputWithNumber.js
+</template>

@@ -35,4 +35,9 @@ class Repository extends Model
     {
         return $this->issues()->donations()->sum('amount');
     }
+
+    public function programmingLanguages()
+    {
+        return $this->morphToMany(ProgrammingLanguage::class, 'programming_languageable');
+    }
 }

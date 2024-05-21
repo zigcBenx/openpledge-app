@@ -3,8 +3,10 @@
   import Icon from '@/Components/Icon.vue';
 
   defineProps({
-    pledgeMethod: Object
+    pledgeMethod: String
   });
+
+  defineEmits(['changePledgeMethod']);
 
 </script>
 <template>
@@ -15,7 +17,7 @@
       :class="['text-left rounded-md p-4 mt-2.5 cursor-pointer hover:dark:bg-gunmetal hover:bg-lavender-mist', {
         'dark:bg-shade-green bg-pale-aqua': pledgeMethod === 'infinite'
       }]"
-      @click="pledgeMethod = 'infinite'"
+      @click="$emit('changePledgeMethod', 'infinite')"
     >
       <Icon name="link" class="dark:fill-green fill-dark-green" />
       <h4 class="mb-2.5 mt-3 text-dark-green dark:text-green">Infinite Pledge</h4>
@@ -26,7 +28,7 @@
       :class="['text-left rounded-md p-4 mt-2.5 cursor-pointer hover:dark:bg-gunmetal hover:bg-lavender-mist', {
         'dark:bg-shade-green bg-pale-aqua': pledgeMethod === 'expireDate'
       }]"
-        @click="pledgeMethod = 'expireDate'"
+        @click="$emit('changePledgeMethod', 'expireDate')"
     >
       <Icon name="clock" class="dark:fill-green fill-dark-green" />
       <h4 class="mb-2.5 mt-3 text-dark-green dark:text-green">Pledge with Expiry Date</h4>
