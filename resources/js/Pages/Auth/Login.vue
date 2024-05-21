@@ -101,7 +101,7 @@ const submit = () => {
             </div>
         </form>
         <div class="border-t border-whitish-gray dark:border-oil mt-6">
-            <p class="mt-5 text-xs text-spun-pearl">Don't have an account? <a href="/register" class="text-green font-bold">Sign Up</a></p>
+            <p class="mt-5 text-xs text-spun-pearl">Don't have an account? <Link href="/register" class="text-green font-bold">Sign Up</Link></p>
         </div>
     </AuthenticationCard>
 </template>

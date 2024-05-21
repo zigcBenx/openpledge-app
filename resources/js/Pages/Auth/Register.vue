@@ -103,7 +103,7 @@ const submit = () => {
 
         <div class="border-t border-whitish-gray dark:border-oil mt-6">
             <p class="text-xs text-spun-pearl mt-6">By creating account you agree to OpenPledge's <b>Terms & Conditions</b> and <b>Privacy Policy</b></p>
-            <p class="mt-5 text-xs text-spun-pearl">Already have an account? <a href="/login" class="text-green font-bold">Log In</a></p>
+            <p class="mt-5 text-xs text-spun-pearl">Already have an account? <Link href="/login" class="text-green font-bold">Log In</Link></p>
         </div>
     </AuthenticationCard>
 </template>
