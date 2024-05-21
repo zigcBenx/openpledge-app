@@ -8,7 +8,7 @@
                 <Activity class="mt-14 pb-10" />
             </div>
             <div class="pt-[6.43rem]">
-                <IssueDetailsSidebar />
+                <IssueDetailsSidebar :issue="issue" :stripePublicKey="stripePublicKey" />
             </div>
         </div>
     </AppLayout>
@@ -17,7 +17,6 @@
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { ref } from 'vue';
-import { useToast } from "vue-toastification";
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import DialogModal from '@/Components/DialogModal.vue';
@@ -27,7 +26,6 @@ import Activity from './Partials/Activity/Activity.vue';
 import IssueDetailsSidebar from './Partials/IssueDetailsSidebar/IssueDetailsSidebar.vue';
 import MoneyInput from '@/Components/MoneyInput.vue';
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
-import { format } from 'date-fns';
 import StripePayment from '@/Components/Custom/StripePayment.vue';
 import { issues } from '../../assets/mockedData.js'
 
@@ -43,6 +41,7 @@ const breadcrumbsData = [{
 export default {
     props: {
         issue: Object,
+        stripePublicKey: String
     },
     components: { 
         AppLayout, 

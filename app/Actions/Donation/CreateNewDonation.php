@@ -17,12 +17,6 @@ class CreateNewDonation
             'donor_id'       => ['required', 'numeric', 'exists:users,id'],
         ])->validate();
 
-        return Donation::create([
-            'donatable_id'   => $input['donatable_id'],
-            'donatable_type' => $input['donatable_type'],
-            'amount'         => $input['amount'],
-            'transaction_id' => $input['transaction_id'],
-            'donor_id'       => $input['donor_id'],
-        ]);
+        return Donation::create($input);
     }
 }

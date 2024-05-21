@@ -34,6 +34,7 @@ class User extends Authenticatable
         'github_id',
         'profile_photo_path',
         'auth_type',
+        'stripe_id'
     ];
 
     /**

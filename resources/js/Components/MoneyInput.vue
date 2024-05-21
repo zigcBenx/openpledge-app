@@ -1,11 +1,13 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, defineModel, defineEmits } from 'vue';
 import Icon from '@/Components/Icon.vue';
+
+const input = defineModel('input');
+const emit = defineEmits(['onBlur', 'onInput']);
 
 defineProps({
     inputClass: String,
     wrapperClass: String,
-    modelValue: Number,
     icon: String,
     currency: {
         type: String,
@@ -25,17 +27,15 @@ defineProps({
     },
 });
 
-defineEmits(['update:modelValue']);
-
-const input = ref(null);
+const inputRef = ref(null);
 
 onMounted(() => {
-    if (input.value.hasAttribute('autofocus')) {
-        input.value.focus();
+    if (inputRef?.value?.hasAttribute('autofocus')) {
+        inputRef.value.focus();
     }
 });
 
-defineExpose({ focus: () => input.value.focus() });
+defineExpose({ focus: () => inputRef.value.focus() });
 </script>
 
 <template>
@@ -44,12 +44,12 @@ defineExpose({ focus: () => input.value.focus() });
           <Icon class="dark:text-spun-pearl text-tundora" :name="icon" />
         </div>
         <input
-            ref="input"
+            v-model="input"
+            :ref="inputRef"
             :class="['pr-9 placeholder-spun-pearl dark:text-lavender-mist h-12 focus:ring-0 dark:bg-oil bg-lavender-mist dark:focus:border-green focus:border-green rounded-md transition-all w-full', inputClass, {
                 'pl-8': icon
             }]"
-            :value="modelValue"
-            @input="$emit('update:modelValue', Number($event.target.value))"
+            @input="emit('onInput')"
             type="number"
             inputmode="decimal"
             step="0.01"

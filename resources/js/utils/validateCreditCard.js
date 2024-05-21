@@ -1,1 +1,1 @@
-export const validateCreditCard = (value) => /^(?:(?:4[0-9]{12}(?:[0-9]{3})?)|(?:5[1-5][0-9]{14}))?$/.test(value);
+export const validateCreditCard = (value) => /^(?:(?:4[0-9]{12}(?:[0-9]{3})?)|(?:5[1-5][0-9]{14}))?$/.test(value.replace(/\s/g, ''));

@@ -2,18 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Donation\CreateNewDonation;
+use App\Http\Requests\StoreProcessPaymentRequest;
+use App\Models\Issue;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Stripe\Exception\ApiErrorException;
 use Stripe\PaymentIntent;
-use Stripe\Stripe;
+use Stripe\StripeClient;
+use Carbon\Carbon;
 
 class PaymentController extends Controller
 {
-    public function getPaymentIntent(Request $request)
+    public function getPaymentIntent(Request $request): JsonResponse
     {
-        Stripe::setApiKey(env('STRIPE_SECRET'));
         $authUser = request()->user();
 
-        $donationAmount = $request->get('donation');
+        $donationAmount = $request->get('amount');
 
         try {
             $customer = \Stripe\Customer::retrieve($authUser->id, []);
@@ -22,21 +28,51 @@ class PaymentController extends Controller
                 "id" => $authUser->id,
                 "name" => $authUser->name,
                 "email" => $authUser->email,
-                // "phone" => $$authUser->phone,
             ]);
         }
 
-        // setup payment intent
         $paymentIntent = PaymentIntent::create([
             'amount' => number_format($donationAmount, 2, "", ""),
-            'currency' => 'eur',
+            'currency' => config('app.stripe_currency'),
             'automatic_payment_methods' => [
                 'enabled' => true,
             ],
             'customer' => $customer->id,
+            'capture_method' => 'manual',
             // 'payment_method' => '{{PAYMENT_METHOD_ID}}', // id of selected card
         ]);
 
-        return ['clientSecret' => $paymentIntent->client_secret];
+        return new JsonResponse(['paymentId' => $paymentIntent->id, 'clientSecret' => $paymentIntent->client_secret]);
+    }
+
+    public function process(StoreProcessPaymentRequest $request): JsonResponse
+    {
+        try {
+            $expireDate = null;
+            if($request->get('pledgeExpirationDate') && $request->get('pledgeExpirationYear')) {
+                $date = $request->get('pledgeExpirationDate');
+                $expireDate = date('Y-m-d', strtotime($date['value'].$request->get('pledgeExpirationYear')));
+            }
+
+            $stripe = new StripeClient(config('app.stripe_secret'));
+            $paymentDetail = $stripe->paymentIntents->retrieve($request->get('paymentId'));
+
+            $donation = CreateNewDonation::create(
+                [
+                    'donatable_type' => Issue::class,
+                    'donatable_id' => $request->get('issue_id'),
+                    'amount' => $request->get('amount'),
+                    'transaction_id' => $paymentDetail->id,
+                    'donor_id' => Auth::id(),
+                    'expire_date' => $expireDate,
+                ]
+            );
+
+            $issue = Issue::query()->where('id' , $request->get('issue_id'))->first();
+
+            return new JsonResponse(['success' => true]);
+        } catch (ApiErrorException $e) {
+            return new JsonResponse(['success' => false, 'error' => $e->getMessage()]);
+        }
     }
 }

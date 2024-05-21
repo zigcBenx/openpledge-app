@@ -9,6 +9,7 @@ use App\Http\Controllers\MainController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RepositoryController;
+use App\Http\Controllers\StripeConnectController;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -68,11 +69,14 @@ Route::middleware([
 
     Route::post('/get-payment-intent', [PaymentController::class, 'getPaymentIntent'])->name('get-payment-intent');
 
-
     // override of profile route
     Route::get('/user/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/user/profile/settings', [ProfileController::class, 'settings'])->name('profile.settings');
 
+    Route::post('/subscribe-user', [SubscriberController::class, 'subscribeUser']);
+    Route::post('/stripe-connect', [StripeConnectController::class, 'handleStripeConnectCallback'])->name('stripe-connect');
+    Route::post('/stripe-redirect', [StripeConnectController::class, 'redirectToStripe'])->name('stripe-redirect');
+    Route::post('/payment-process', [PaymentController::class, 'process'])->name('payment-process');
 });
 
 Route::get('/auth/github/callback', [GithubController::class, 'callback'])->name('callback');
