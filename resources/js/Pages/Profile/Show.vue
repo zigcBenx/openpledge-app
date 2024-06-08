@@ -4,6 +4,7 @@ import Earnings from './Partials/Earnings.vue';
 import Graphs from './Partials/Graphs.vue';
 import IssueSummary from './Partials/IssueSummary.vue';
 import ProfileCard from './Partials/ProfileCard.vue';
+import InstalledRepositories from './Partials/InstalledRepositories.vue';
 defineProps({});
 </script>
 
@@ -29,7 +30,7 @@ defineProps({});
                     </div>
                 </div>
                 <div class="mt-4">
-                    <IssueSummary />
+                    <InstalledRepositories />
                 </div>
                 <div class="mt-4">
                     <IssueSummary />

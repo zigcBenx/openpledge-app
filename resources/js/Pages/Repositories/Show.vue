@@ -18,9 +18,11 @@
                         </div>
                     
                         <div>
-                            <Button v-if="repository.direct_from_github" @click="connect" :loading="loadingConnect" color="primary" class="px-8 h-11">
-                                Connect
-                            </Button>
+                            <a v-if="repository.direct_from_github" :loading="loadingConnect" :href="githubAppInstallationUrl">
+                                <Button color="primary" class="px-8 h-11">
+                                    Connect
+                                </Button>
+                            </a>
                             <Icon 
                                 v-else
                                 name="star" 
@@ -92,9 +94,6 @@
 
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import ListIssues from '@/Components/Custom/ListIssues.vue';
-import { useToast } from "vue-toastification";
-import { router } from '@inertiajs/vue3';
 import Icon from '@/Components/Icon.vue';
 import GithubIssueConnect from '@/Components/Custom/GithubIssueConnect.vue';
 import { ref } from 'vue';
@@ -111,29 +110,10 @@ const props = defineProps
     repository: Object,
 });
 
-const openIssues = ref([])
 const loadingConnect = ref(false)
 
 // this variable is by default issues from OpenPledge (that are pledged),
 // but can be later switched if "open" is pressed to all issues from github and from OpenPledge that are not pledged
 const listOfIssues = ref(props.repository.issues)
-
-const connect = () => {
-    loadingConnect.value = true
-    axios.post('/repositories/connect', {
-            repository: props.repository.title,
-        })
-        .then((response) => {
-            const toast = useToast()
-            toast.success(`Repository ${props.repository.title} is now available on OpenPledge!`)
-            const username = props.repository.title.split('/')[0]
-            const repo = props.repository.title.split('/')[1]
-            router.visit(route('repositories.show', { githubUser: username, repository: repo }))
-        }).catch((err) => {
-            const toast = useToast()
-            toast.error(err.response.data.message)
-        }).finally(() => {
-            loadingConnect.value = false
-        })
-}
+const githubAppInstallationUrl = import.meta.env.VITE_GITHUB_APP_INSTALLATION_URL
 </script>
