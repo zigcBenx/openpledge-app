@@ -91,7 +91,7 @@ Route::get('/auth/github', [GithubController::class, 'redirect'])->name('redirec
 Route::get('/unsubscribe-user', [SubscriberController::class, 'unsubscribe'])->name('unsubscribe');
 
 // GitHub App Webhook
-Route::post('/github/webhook', [GithubController::class, 'handleGithubWebhook'])->name('github.webhook');
+Route::post('/github/webhook', [GithubController::class, 'handleGithubAppWebhook'])->name('github.webhook');
 
 
 Route::get('/{any}', function () {
