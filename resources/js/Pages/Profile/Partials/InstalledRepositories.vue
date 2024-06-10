@@ -9,7 +9,11 @@
                 <div v-if="installedRepositories.length > 0">
                     <ul>
                         <li v-for="(installedRepository, index) in installedRepositories" :key="index">
-                            <a :href="getRepositoryUrlByTitle(installedRepository.title)" target="_blank" class="text-turquoise">{{ installedRepository.title }}</a>
+                            <Link
+                                :href="route('repositories.show', { githubUser: installedRepository.title.split('/')[0], repository: installedRepository.title.split('/')[1] })"
+                                class="text-turquoise">
+                            {{ installedRepository.title }}
+                            </Link>
                         </li>
                     </ul>
                 </div>
@@ -22,22 +26,18 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import { Link } from '@inertiajs/vue3';
 
-const appUrl = import.meta.env.VITE_APP_URL
 const installedRepositories = ref([]);
 
 const fetchRepositories = async () => {
     try {
-        const response = await axios.get(`/user/repositories`);
+        const response = await axios.get(route('profile.repositories'));
         installedRepositories.value = response.data;
     } catch (error) {
         console.error('Failed to fetch repositories:', error);
     }
 };
-
-const getRepositoryUrlByTitle = (title) => {
-    return appUrl + '/repositories/' + title
-}
 
 onMounted(() => {
     fetchRepositories();
