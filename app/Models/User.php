@@ -71,4 +71,9 @@ class User extends Authenticatable
     {
         return $this->morphToMany(ProgrammingLanguage::class, 'programming_languageable');
     }
+
+    public function githubInstallations()
+    {
+        return $this->hasOne(GitHubInstallation::class);
+    }
 }

@@ -72,11 +72,17 @@ Route::middleware([
     // override of profile route
     Route::get('/user/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/user/profile/settings', [ProfileController::class, 'settings'])->name('profile.settings');
+    
+    // Get installed repositories from currently authenticated user
+    Route::get('/user/repositories', [ProfileController::class, 'getInstalledRepositories'])->name('profile.repositories');
 
     Route::post('/subscribe-user', [SubscriberController::class, 'subscribeUser']);
     Route::post('/stripe-connect', [StripeConnectController::class, 'handleStripeConnectCallback'])->name('stripe-connect');
     Route::post('/stripe-redirect', [StripeConnectController::class, 'redirectToStripe'])->name('stripe-redirect');
     Route::post('/payment-process', [PaymentController::class, 'process'])->name('payment-process');
+
+    // GitHub App integration route
+    Route::get('/github/installation/callback', [GithubController::class, 'handleGithubAppCallback'])->name('github.installation.callback');
 });
 
 Route::get('/auth/github/callback', [GithubController::class, 'callback'])->name('callback');
@@ -84,6 +90,8 @@ Route::get('/auth/github', [GithubController::class, 'redirect'])->name('redirec
 
 Route::get('/unsubscribe-user', [SubscriberController::class, 'unsubscribe'])->name('unsubscribe');
 
+// GitHub App Webhook
+Route::post('/github/webhook', [GithubController::class, 'handleGithubAppWebhook'])->name('github.webhook');
 
 
 Route::get('/{any}', function () {

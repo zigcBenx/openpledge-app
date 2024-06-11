@@ -10,6 +10,7 @@ use Laravel\Jetstream\Http\Controllers\Inertia\Concerns\ConfirmsTwoFactorAuthent
 use Laravel\Jetstream\Agent;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
+use App\Actions\Repository\GetInstalledRepositories;
 
 /**
  * NOTE: Most of this code was copy pasted from vendor\Laravel\Jetstream\Http\Controllers\Inertia\UserProfileController.php
@@ -76,5 +77,10 @@ class ProfileController extends Controller
     protected function createAgent($session)
     {
         return tap(new Agent(), fn ($agent) => $agent->setUserAgent($session->user_agent));
+    }
+
+    public function getInstalledRepositories()
+    {
+        return GetInstalledRepositories::get();
     }
 }
