@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use App\Models\Issue;
-use App\Models\Donation;
 
 class handleGithubAppWebhook
 {
@@ -25,7 +24,7 @@ class handleGithubAppWebhook
             $issue = Issue::where('github_url', $issueUrl)->first();
 
             if ($issue) {
-                $issue->state = $action;
+                $issue->state = $action == "reopened" ? "open" : $action;
                 $issue->save();
 
                 // TODO: Implement the logic to pay out the person who resolved the issue
