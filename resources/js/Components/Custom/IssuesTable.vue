@@ -48,7 +48,8 @@
               </td>
               <td class="py-6 pr-4 align-middle">
                 <div class="flex flex-wrap gap-1">
-                  <Pill 
+                  <Pill
+                    v-if="issue.labels && issue.labels.length > 0"
                     v-for="label in issue.labels.split(',')"
                     :key="label"
                     color="present"
@@ -63,6 +64,7 @@
               <td class="py-6 pr-4 align-middle">
                   <div class="flex flex-wrap gap-1">
                     <Pill 
+                      v-if="issue.repository"
                       v-for="lang in issue.repository.programming_languages" 
                       :key="lang"
                       color="present" 

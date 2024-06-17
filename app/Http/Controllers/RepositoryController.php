@@ -7,6 +7,7 @@ use App\Actions\Repository\ConnectRepository;
 use App\Actions\Repository\CreateNewRepository;
 use App\Actions\Repository\GetRepositories;
 use App\Actions\Repository\GetRepositoryByTitle;
+use App\Actions\Issue\GetIssuesByName;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -59,10 +60,15 @@ class RepositoryController extends Controller
                 'user_avatar'        => $githubRepo['owner']['avatar_url'],
                 'direct_from_github' => true
             ];
+
+            $issues = GetIssuesByName::get($githubUser, $repositoryName, null);
+        } else {
+            $issues = GetIssuesByName::get($githubUser, $repositoryName, $repository->github_installation_id);
         }
 
         return Inertia::render('Repositories/Show', [
-            'repository' => $repository
+            'repository' => $repository,
+            'issues' => $issues
         ]);
     }
 }

@@ -108,12 +108,13 @@ import IssuesTable from '@/Components/Custom/IssuesTable.vue'
 const props = defineProps
 ({
     repository: Object,
+    issues: Array
 });
 
 const loadingConnect = ref(false)
 
 // this variable is by default issues from OpenPledge (that are pledged),
 // but can be later switched if "open" is pressed to all issues from github and from OpenPledge that are not pledged
-const listOfIssues = ref(props.repository.issues)
+const listOfIssues = ref(props.issues)
 const githubAppInstallationUrl = import.meta.env.VITE_GITHUB_APP_INSTALLATION_URL
 </script>

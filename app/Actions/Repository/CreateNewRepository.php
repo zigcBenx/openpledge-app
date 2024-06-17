@@ -14,7 +14,8 @@ class CreateNewRepository
             'github_url'  => ['required', 'string', 'url',],
             'github_id'   => ['required','unique:repositories,github_id'],
             'user_avatar' => ['string'],
-            'user_id' => ['required', 'integer', 'exists:users,id']
+            'user_id' => ['required', 'integer', 'exists:users,id'],
+            'github_installation_id' => ['string'],
         ])->validate();
 
         return Repository::create([
@@ -23,6 +24,7 @@ class CreateNewRepository
             'github_id'   => $input['github_id'],
             'user_avatar' => $input['user_avatar'],
             'user_id' => $input['user_id'],
+            'github_installation_id' => $input['github_installation_id']
         ]);
     }
 }

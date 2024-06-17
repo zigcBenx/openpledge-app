@@ -14,7 +14,8 @@ class Repository extends Model
         'github_url',
         'github_id',
         'user_avatar',
-        'user_id'
+        'user_id',
+        'github_installation_id'
     ];
 
     public function issues()
