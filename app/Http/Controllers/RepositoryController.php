@@ -46,7 +46,6 @@ class RepositoryController extends Controller
     public function show($githubUser, $repositoryName)
     {
         $repository = GetRepositoryByTitle::get($githubUser . '/' . $repositoryName);
-        $issues = GetIssuesByName::get($githubUser, $repositoryName);
 
         if (!$repository) {
             try {
@@ -61,6 +60,10 @@ class RepositoryController extends Controller
                 'user_avatar'        => $githubRepo['owner']['avatar_url'],
                 'direct_from_github' => true
             ];
+
+            $issues = GetIssuesByName::get($githubUser, $repositoryName, null);
+        } else {
+            $issues = GetIssuesByName::get($githubUser, $repositoryName, $repository->github_installation_id);
         }
 
         return Inertia::render('Repositories/Show', [

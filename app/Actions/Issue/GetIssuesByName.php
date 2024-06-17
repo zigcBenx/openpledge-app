@@ -4,7 +4,6 @@ namespace App\Actions\Issue;
 
 use App\Models\Issue;
 use App\Actions\Github\HandleGithubAppCallback;
-use App\Actions\Repository\GetRepositoryByTitle;
 use App\Models\GitHubInstallation;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -12,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class GetIssuesByName
 {
-    public static function get($githubUser, $repositoryName)
+    public static function get($githubUser, $repositoryName, $repositoryGithubInstallationId)
     {
         $pledgedIssues = Issue::query()
         ->where('github_url', 'LIKE', "https://github.com/$githubUser/$repositoryName/issues%")
@@ -20,10 +19,12 @@ class GetIssuesByName
         ->select('issues.*', DB::raw('SUM(donations.amount) as donations_sum_amount'))
         ->groupBy('issues.id')
         ->get();
-        
-        $repository = GetRepositoryByTitle::get($githubUser . '/' . $repositoryName);
 
-        $installation = GitHubInstallation::where('installation_id', $repository->github_installation_id)->first();
+        if(!isset($repositoryGithubInstallationId)) {
+            return $pledgedIssues;
+        } 
+        
+        $installation = GitHubInstallation::where('installation_id', $repositoryGithubInstallationId)->first();
         
         $installedRepositories = HandleGithubAppCallback::fetchGithubRepositories($installation->access_token, $installation->installation_id);
 
