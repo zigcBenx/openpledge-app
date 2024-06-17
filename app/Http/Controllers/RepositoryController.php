@@ -7,6 +7,7 @@ use App\Actions\Repository\ConnectRepository;
 use App\Actions\Repository\CreateNewRepository;
 use App\Actions\Repository\GetRepositories;
 use App\Actions\Repository\GetRepositoryByTitle;
+use App\Actions\Issue\GetIssuesByName;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -45,6 +46,7 @@ class RepositoryController extends Controller
     public function show($githubUser, $repositoryName)
     {
         $repository = GetRepositoryByTitle::get($githubUser . '/' . $repositoryName);
+        $issues = GetIssuesByName::get($githubUser, $repositoryName);
 
         if (!$repository) {
             try {
@@ -62,7 +64,8 @@ class RepositoryController extends Controller
         }
 
         return Inertia::render('Repositories/Show', [
-            'repository' => $repository
+            'repository' => $repository,
+            'issues' => $issues
         ]);
     }
 }

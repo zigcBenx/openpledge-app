@@ -51,15 +51,16 @@ class HandleGithubAppCallback
                     ]
                 );
 
-                array_map(function($repository) use ($user) {
+                foreach ($githubRepositoriesData as $repository) {
                     CreateNewRepository::create([
                         'title' => $repository['full_name'],
                         'github_url' => $repository['html_url'],
                         'github_id' => $repository['id'],
                         'user_avatar' => $repository['owner']['avatar_url'],
-                        'user_id' => $user->id
+                        'user_id' => $user->id,
+                        'github_installation_id' => $installationId
                     ]);
-                }, $githubRepositoriesData);
+                }
 
                 DB::commit();
 
@@ -87,7 +88,7 @@ class HandleGithubAppCallback
         }
     }
 
-    protected static function fetchGithubRepositories($accessToken, $installationId)
+    public static function fetchGithubRepositories($accessToken, $installationId)
     {
         $response = Http::withToken($accessToken)
             ->get("https://api.github.com/user/installations/{$installationId}/repositories");
