@@ -91,6 +91,11 @@
   import Sidebar from './Partials/Sidebar.vue';
   import { useElementSize } from '@vueuse/core';
 
+  const props = defineProps
+    ({
+        issues: Array
+    });
+
   const keys = { labels: 'labels', languages: 'languages', range: 'range', date: 'date', storageDiscoverKey: 'discover' };
 
   const labels = ref(labelsList);
@@ -147,16 +152,25 @@
   };
 
   const handleLazyLoadingIssues = () => {
-    pagedIssues.value = pagedIssues.value + 1;
-    issues.value = issuesList.slice(pagedIssues.value, pagedIssues.value * 10 + 20);
+    const start = pagedIssues.value * 10;
+    const end = start + 10;
+    const newIssues = props.issues.slice(start, end);
+
+    if (newIssues.length > 0) {
+        issues.value = [...issues.value, ...newIssues];
+        pagedIssues.value += 1;
+    }
   };
 
   onMounted(() => {
-    if(localStorage.getItem(keys.storageDiscoverKey)) {
-        queryFilters.value = JSON.parse(localStorage.getItem(keys.storageDiscoverKey));
-    } else {
-        queryFilters.value = parseQueryFilters();
-    }
+      const storedFilters = localStorage.getItem(keys.storageDiscoverKey);
+      if (storedFilters) {
+          queryFilters.value = JSON.parse(storedFilters);
+      } else {
+          queryFilters.value = parseQueryFilters();
+      }
+      // Initial load of issues
+      handleLazyLoadingIssues();
   });
 
   const showMoreFilters = () => {
