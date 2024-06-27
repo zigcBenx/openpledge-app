@@ -30,6 +30,11 @@ class Issue extends Model
         return $this->morphMany(Donation::class, 'donatable');
     }
 
+    public function programmingLanguages()
+    {
+        return $this->morphToMany(ProgrammingLanguage::class, 'programming_languageable');
+    }
+
     public function getDonationSumAttribute()
     {
         return $this->donations()->sum('amount');

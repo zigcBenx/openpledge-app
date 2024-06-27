@@ -42,4 +42,9 @@ class Repository extends Model
     {
         return $this->morphToMany(ProgrammingLanguage::class, 'programming_languageable');
     }
+
+    public function githubInstallation()
+    {
+        return $this->belongsTo(GithubInstallation::class, 'github_installation_id', 'installation_id');
+    }
 }
