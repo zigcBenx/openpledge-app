@@ -92,19 +92,25 @@ class HandleGithubAppWebhook
     private static function getAccessToken($repoUrl)
     {
         Log::info('getAccessToken method started', ['repo_url' => $repoUrl]);
-    
-        $repository = Repository::where('github_url', $repoUrl)
-            ->join('github_installations', 'repositories.github_installation_id', '=', 'github_installations.installation_id')
-            ->select('repositories.*', 'github_installations.access_token')
-            ->first();
-    
+
+        $repository = Repository::with('githubInstallation')
+        ->where('github_url', $repoUrl)
+        ->first();
+
         if (!$repository) {
             Log::error('Repository or GitHub installation not found', ['repo_url' => $repoUrl]);
             throw new \Exception("Repository or GitHub installation not found");
         }
     
-        Log::info('getAccessToken method completed', ['access_token' => $repository->access_token]);
-        return $repository->access_token;
+        $accessToken = optional($repository->githubInstallation)->access_token;
+        
+        if (!$accessToken) {
+            Log::error('Access token not found', ['repository' => $repository]);
+            throw new \Exception("Access token not found");
+        }
+    
+        Log::info('getAccessToken method completed', ['access_token' => $accessToken]);
+        return $accessToken;
     }
 
     private static function handleIssue(array $issuePayload, ?string $action)
@@ -122,8 +128,7 @@ class HandleGithubAppWebhook
         Log::info('processDonations method started', ['issue_id' => $issue->id, 'user_id' => $dbUser->id]);
 
         $today = Carbon::now()->toDateString();
-        $donationsSumAmount = Donation::query()
-            ->where('donatable_id', $issue->id)
+        $donationsSumAmount = Donation::where('donatable_id', $issue->id)
             ->where(function ($query) use ($today) {
                 $query->whereNull('expire_date')
                     ->orWhere('expire_date', '>', $today);

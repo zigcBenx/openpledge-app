@@ -21,7 +21,7 @@ class MainController extends Controller
 
     public function discoverIssues(Request $request)
     {
-        $issues = GetIssues::get(true);
+        $issues = GetIssues::getWithActiveDonations();
         return Inertia::render('Discover/Issues', [
             'issues' => $issues
         ]);
