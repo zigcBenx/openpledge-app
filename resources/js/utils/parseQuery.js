@@ -46,3 +46,33 @@ export const parseQueryFilters = () => {
     const newUrl = `${window.location.pathname}?${queryString.slice(0, -1)}`;
     window.history.replaceState(null, '', newUrl);
   };
+
+  export const prepareFiltersForQuery = (filters) => {
+    let formattedFilters = filters.reduce((acc, filter) => {
+        if (acc[filter.key]) {
+            acc[filter.key].push(filter.value);
+        } else {
+            acc[filter.key] = [filter.value];
+        }
+        return acc;
+    }, {});
+
+    for (let key in formattedFilters) {
+        if (key === "range" || key === "date") {
+            const filterValue = formattedFilters[key][0];
+            if (key === "range") {
+                formattedFilters[
+                    key
+                ] = `${filterValue.start}-${filterValue.end}`;
+            } else if (key === "date") {
+                formattedFilters[key] = `${filterValue.month + 1}-${
+                    filterValue.year
+                }`;
+            }
+        } else {
+            formattedFilters[key] = formattedFilters[key].join(",");
+        }
+    }
+
+    return formattedFilters;
+  };
