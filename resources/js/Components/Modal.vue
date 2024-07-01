@@ -14,6 +14,10 @@ const props = defineProps({
         type: Boolean,
         default: true,
     },
+    overflowVisible: {
+        type: Boolean,
+        default: false,
+    }
 });
 
 const emit = defineEmits(['close']);
@@ -81,7 +85,7 @@ const maxWidthClass = computed(() => {
                     leave-from-class="opacity-100 translate-y-0 sm:scale-100"
                     leave-to-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                 >
-                    <div v-show="show" class="mb-6 bg-lavender-mist dark:bg-oil rounded-lg overflow-hidden transform transition-all sm:w-full sm:mx-auto shadow-lg" :class="maxWidthClass">
+                    <div v-show="show" class="mb-6 bg-lavender-mist dark:bg-oil rounded-lg transform transition-all sm:w-full sm:mx-auto shadow-lg" :class="[maxWidthClass, overflowVisible ? 'overflow-visible' : 'overflow-hidden']">
                         <slot v-if="show" />
                     </div>
                 </transition>
