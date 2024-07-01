@@ -8,10 +8,10 @@
       <div>
           <h1 class='dark:text-lavender-mist text-[1.75rem]'>{{ issue.title }}</h1>
           <div class='flex items-center gap-3'>
-              <span class='font-medium bg:text-green text-ocean-green'>Open</span>
+              <span class='font-medium bg:text-green text-ocean-green'>{{issue.state}}</span>
               <div class='flex gap-1.5 items-center'>
-                  <Avatar url='/images/avatar.png' size='sm' />
-                  <span class='dark:text-spun-pearl font-medium text-tundora'>Username</span>
+                  <Avatar :url='issue.user_avatar' size='sm' />
+                  <span class='dark:text-spun-pearl font-medium text-tundora'>{{issue.github_username}}</span>
                   <span class='dark:text-spun-pearl text-tundora whitespace-nowrap font-light'>opened this issue {{ dayjs(issue.created_at).fromNow() }}</span>
               </div>
               <div class='flex gap-1'>

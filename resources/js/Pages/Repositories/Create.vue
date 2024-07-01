@@ -57,6 +57,7 @@ export default {
             github_id: this.selectedRepository.id,
             github_url: this.selectedRepository.html_url,
             user_avatar: this.selectedRepository.owner.avatar_url,
+            user_id: this.$page.props.auth.user.id
         })
         .then((response) => {
             const toast = useToast()

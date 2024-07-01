@@ -47,7 +47,8 @@ class HandleGithubAppCallback
                     [
                         'installation_id' => $installationId,
                         'setup_action' => $setupAction,
-                        'access_token' => $accessToken
+                        'access_token' => $accessToken,
+                        'github_data'  => '{}' // so installation callback does not fails
                     ]
                 );
 

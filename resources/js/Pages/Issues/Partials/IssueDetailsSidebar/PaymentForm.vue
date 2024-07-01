@@ -98,11 +98,13 @@ import dayjs from '@/libs/dayjs.js'
 import SolveIssue from './SolveIssue.vue';
 import { ref, onMounted } from "vue"
 import { useDark } from '@vueuse/core';
+import { useToast } from 'vue-toastification';
 
 const stripe = ref(null);
 const elements = ref(null);
 const paymentId = ref(null);
 const isDark = useDark();
+const toast = useToast()
 
 onMounted(() => {
   paymentIntent();
@@ -212,6 +214,7 @@ const handleFormSubmit = async () => {
             };
             form.pledgeExpirationYear = '';
             paymentIntent();
+            toast.success('Pledge submitted! You are awesome!')
           }
         }).catch(error => {
           form.errors = error.response?.data?.errors;

@@ -15,7 +15,8 @@ class GitHubInstallation extends Model
         'user_id',
         'installation_id',
         'setup_action',
-        'access_token'
+        'access_token',
+        'github_data'
     ];
 
     public function user()

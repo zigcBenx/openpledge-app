@@ -57,19 +57,22 @@
                             <p class="text-2xl dark:text-lavender-mist text-oil">Issues</p>
                             <div class="flex gap-2">
                                 <Pill 
-                                    color="secondary"
+                                    :color="selectedPledgedIssues ? 'secondary' : 'primary'"
+                                    @click="selectedPledgedIssues = !selectedPledgedIssues"
                                 >
                                     Pledged {{ repository.issues_count }}
                                 </Pill>
                                 <Pill 
-                                    color="primary"
+                                    :color="selectedPledgedIssues ? 'primary' : 'secondary'"
+                                    @click="selectedPledgedIssues = !selectedPledgedIssues"
                                 >
-                                    Open 576
+                                    Open {{listOfIssues.length}}
                                 </Pill>
                             </div>
                         </div>
                         <div>
-                            <IssuesTable :issues="listOfIssues" />
+                            <IssuesTable v-if="selectedPledgedIssues" :issues="repository.issues" :pledged="true" />
+                            <IssuesTable v-else :issues="listOfIssues" />
                         </div>
                     </div>
                 </div>
@@ -112,6 +115,7 @@ const props = defineProps
 });
 
 const loadingConnect = ref(false)
+const selectedPledgedIssues = ref(true)
 
 // this variable is by default issues from OpenPledge (that are pledged),
 // but can be later switched if "open" is pressed to all issues from github and from OpenPledge that are not pledged

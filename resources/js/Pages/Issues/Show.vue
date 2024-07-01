@@ -1,10 +1,10 @@
 <template>
     <AppLayout title="Issue Details">
-        <div class="flex gap-10">
+        <div class="flex gap-10" v-if="issue">
             <div>
                 <Breadcrumbs :links="breadcrumbsData" wrapperClass="mb-[5.25rem]" />
-                <IssueTopDetails :issue="issueState" @onFavoriteClick="handleFavoriteClick" />
-                <IssueDetails :issue="issueState" class="mt-[3.375rem]" />
+                <IssueTopDetails :issue="issue" @onFavoriteClick="handleFavoriteClick" />
+                <IssueDetails :issue="issue" class="mt-[3.375rem]" />
                 <Activity class="mt-14 pb-10" />
             </div>
             <div class="pt-[6.43rem]">
@@ -14,9 +14,9 @@
     </AppLayout>
 </template>
 
-<script>
+<script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { ref } from 'vue';
+import { ref, defineProps } from 'vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import DialogModal from '@/Components/DialogModal.vue';
@@ -29,43 +29,27 @@ import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import StripePayment from '@/Components/Custom/StripePayment.vue';
 import { issues } from '../../assets/mockedData.js'
 
+const props = defineProps({
+    issue: {
+        type: Object,
+        required: true,
+        default: () => {
+            return {}
+        }
+    },
+    stripePublicKey: String
+})
+
 const issueState = ref(issues[0]);
 const breadcrumbsData = [{
     title: 'Discover',
     url: '/issues'
 }, {
-    title: issueState.value.title,
-    url: `/issues/${issueState.value.id}`
+    title: props.issue?.title,
+    url: `/issues/${props.issue.id}`
 }];
 
-export default {
-    props: {
-        issue: Object,
-        stripePublicKey: String
-    },
-    components: { 
-        AppLayout, 
-        PrimaryButton, 
-        DialogModal, 
-        MoneyInput, 
-        SecondaryButton, 
-        StripePayment,
-        IssueTopDetails,
-        IssueDetails,
-        Activity,
-        Breadcrumbs,
-        IssueDetailsSidebar
-     },
-    data() {
-        return {
-            issueState,
-            breadcrumbsData
-        };
-    },
-    methods: {
-        handleFavoriteClick() {
-            issueState.value.favorite = !issueState.value.favorite;
-        }
-    }
+function handleFavoriteClick() {
+    issueState.value.favorite = !issueState.value.favorite;
 }
 </script>
