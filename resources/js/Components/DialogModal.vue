@@ -4,6 +4,7 @@
         :max-width="maxWidth"
         :closeable="closeable"
         @close="close"
+        :overflow-visible="overflowVisible"
     >
         <div>
             <div class="float-left w-full p-4">
@@ -46,6 +47,10 @@
             closeable: {
                 type: Boolean,
                 default: true,
+            },
+            overflowVisible: {
+                type: Boolean,
+                default: false,
             }
         },
         emits: ['close'],

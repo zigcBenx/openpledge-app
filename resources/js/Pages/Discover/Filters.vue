@@ -1,5 +1,5 @@
 <template>
-    <DialogModal max-width="xl" :show="displayFilterModal" @close="displayHandler(false)" :closeable="true">
+    <DialogModal max-width="xl" :show="displayFilterModal" @close="displayHandler(false)" :closeable="true" overflow-visible>
         <template #title>
             <span>Filters</span>
         </template>

@@ -13,11 +13,11 @@ class GetIssues
         return Issue::withSum('donations', 'amount', 'programmingLanguages')->get();
     }
 
-    public static function getWithActiveDonations()
+    public static function getWithActiveDonations($filters = null)
     {
         $today = Carbon::now()->toDateString();
 
-        return Issue::query()
+        $query = Issue::query()
             ->with('programmingLanguages')
             ->withSum(['donations' => function ($query) use ($today) {
                 $query->where(function ($query) use ($today) {
@@ -25,7 +25,33 @@ class GetIssues
                         ->orWhere('expire_date', '>', $today);
                 });
             }], 'amount')
-            ->having('donations_sum_amount', '>', 0)
-            ->get();
+            ->having('donations_sum_amount', '>', 0);
+
+        if ($filters) {
+            if (isset($filters['range'])) {
+                list($minRange, $maxRange) = explode('-', $filters['range']);
+                $query->having('donations_sum_amount', '>=', (int)$minRange)
+                      ->having('donations_sum_amount', '<=', (int)$maxRange);
+            }
+
+            if (isset($filters['date'])) {
+                list($month, $year) = explode('-', $filters['date']);
+                $query->whereMonth('created_at', $month)->whereYear('created_at', $year);
+            }
+
+            if (isset($filters['languages'])) {
+                $languagesArray = explode(',', $filters['languages']);
+                $query->whereHas('programmingLanguages', function ($query) use ($languagesArray) {
+                    $query->whereIn('name', $languagesArray);
+                });
+            }
+
+            if (isset($filters['labels'])) {
+                $labelsArray = explode(',', $filters['labels']);
+                $query->whereIn('labels', $labelsArray);
+            }
+        }
+
+        return $query->get();
     }
 }

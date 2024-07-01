@@ -79,9 +79,9 @@
 </template>
 <script setup>
   import { ref, onMounted, watch } from 'vue';
-  import { parseQueryFilters, updateQueryFilters } from '../../utils/parseQuery.js';
+  import { parseQueryFilters, updateQueryFilters, prepareFiltersForQuery } from '../../utils/parseQuery.js';
   import { languages as languagesList, labels as labelsList, issues as issuesList, trendingToday, topContributors, topDonators } from '../../assets/mockedData.js';
-
+  import { router } from '@inertiajs/vue3'
   import Page from '@/Components/Page.vue';
   import Filters from './Filters.vue';
   import Icon from '@/Components/Icon.vue';
@@ -132,8 +132,18 @@
     }); 
   });
 
-  const updateFilterList = (value) => {
+  const getFilteredIssues = (value) => {
     updateQueryFilters(value);
+
+    router.get(route('discover.issues'), prepareFiltersForQuery(value), {
+        preserveState: false,
+        replace: true,
+        preserveScroll: true
+    });
+  }
+
+  const updateFilterList = (value) => {
+    getFilteredIssues(value);
     queryFilters.value = [...value];
   };
 
@@ -143,7 +153,7 @@
         queryFilters.value.splice(filterToRemove, 1);
     }
 
-    updateQueryFilters(queryFilters.value);
+    getFilteredIssues(queryFilters.value);
     removedFilters.value++;
   };
 

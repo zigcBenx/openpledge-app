@@ -1,5 +1,12 @@
 <template>
-  <table class="w-full border-separate border-spacing-x-0 border-spacing-y-4">
+  <div v-if="!issues.length" class="flex flex-col items-center justify-center w-full h-screen">
+    <div class="flex flex-col items-center gap-1 mt-20">
+      <Icon name="error" class="fill-tundora dark:fill-spun-pearl"></Icon>
+    </div>
+    <div class="text-[1.56rem] text-oil dark:text-lavender-mist mt-7 text-center">Oops! No matches found...</div>
+    <div class="dark:text-spun-pearl text-tundora text-xs text-center">We couldn’t find any matches for your current filters. Please try changing your search criteria or clear the filters to see more issues.</div>
+  </div>
+  <table v-else class="w-full border-separate border-spacing-x-0 border-spacing-y-4">
       <thead>
           <tr class="text-tundora dark:text-spun-pearl uppercase text-xs text-left">
               <th class="pb-5 min-w-[5rem] font-normal">State</th>
@@ -12,7 +19,6 @@
           </tr>
       </thead>
       <tbody>
-        <TableRowSkeleton v-if="!issues.length" v-for="index in 10" :key="index" />
         <tr 
             v-for="issue in issues"
             :key="issue.id"
@@ -110,7 +116,6 @@
 </template>
 
 <script setup>
-    import TableRowSkeleton from '@/Components/Custom/TableRowSkeleton.vue'
     import { Link } from '@inertiajs/vue3';
     import Pill from '@/Components/Form/Pill.vue';
     import Icon from '@/Components/Icon.vue';
