@@ -12,19 +12,20 @@ class CreateNewRepository
         Validator::make($input, [
             'title'       => ['required', 'string', 'max:255'],
             'github_url'  => ['required', 'string', 'url',],
-            'github_id'   => ['required','unique:repositories,github_id'],
+            'github_id'   => ['required'],
             'user_avatar' => ['string'],
             'user_id' => ['required', 'integer', 'exists:users,id'],
             'github_installation_id' => ['string'],
         ])->validate();
 
-        return Repository::create([
+        return Repository::updateOrCreate([
+            'github_id'   => $input['github_id'],
+        ],[
             'title'       => $input['title'],
             'github_url'  => $input['github_url'],
-            'github_id'   => $input['github_id'],
             'user_avatar' => $input['user_avatar'],
             'user_id' => $input['user_id'],
-            'github_installation_id' => $input['github_installation_id']
+            'github_installation_id' => $input['github_installation_id'] ?? null
         ]);
     }
 }

@@ -44,7 +44,7 @@
       </div>
       <div class="flex mt-8">
           <span class="dark:text-spun-pearl text-tundora text-xs capitalize min-w-[10.75rem]">REPOSITORY</span> 
-          <span class='dark:text-seashell text-mondo text-sm font-medium'>strapi/strapi</span>
+          <span class='dark:text-seashell text-mondo text-sm font-medium'>{{issue.repository.title}}</span>
       </div>
       <div class="flex mt-8">
           <span class="dark:text-spun-pearl text-tundora text-xs capitalize min-w-[10.75rem]">LANGUAGES</span> 

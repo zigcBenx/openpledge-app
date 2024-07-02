@@ -38,14 +38,25 @@
                 </div>
               </td>
               <td class="py-6">
-                <Link 
-                  :class="['dark:text-white dark:hover:text-green hover:text-green text-base pr-4', {
-                    '!text-spun-pearl': issue.state === 'closed'
-                  }]"
-                  href="/issues/1"
-                  >
-                  {{ issue.title }}
-                </Link>
+                <Link v-if="pledged"
+                    :class="['dark:text-white dark:hover:text-green hover:text-green text-base pr-4', {
+                      '!text-spun-pearl': issue.state === 'closed'
+                    }]"
+                    :href="'/issues/' + issue.id"
+                    >
+                    {{ issue.title }}
+                  </Link>
+                  <a
+                    v-else
+                    :href="issue.github_url"
+                    :class="['dark:text-white dark:hover:text-green hover:text-green text-base pr-4', {
+                      '!text-spun-pearl': issue.state === 'closed'
+                    }]"
+                    >
+                      {{ issue.title }}
+                  </a>
+                <a v-if="pledged" :href="issue.github_url" target="_blank"><i class="fa-brands fa-github"/></a>
+                
                 <div class="flex gap-1 mt-3">
                   <Avatar :url="issue.user_avatar" size="sm" />
                   <span class="dark:text-spun-pearl text-tundora text-xs font-medium">{{ issue.github_username }}</span>
@@ -54,7 +65,7 @@
               </td>
               <td class="py-6 pr-4 align-middle">
                 <div class="flex flex-wrap gap-1">
-                  <Pill
+                  <!-- <Pill
                     v-if="issue.labels && issue.labels.length > 0"
                     v-for="label in issue.labels.split(',')"
                     :key="label"
@@ -63,7 +74,7 @@
                     :disabled="issue.state === 'closed'"
                   >
                     {{ label }}
-                  </Pill>
+                  </Pill> -->
                 </div>
               </td>
               <td class="py-6"><span class="dark:text-white font-medium text-xs pr-4">strapi/strapi</span></td>
@@ -135,6 +146,13 @@
                 });
             }
         },
+        pledged: {
+          type: Boolean,
+          required: true,
+          default: () => {
+            return false
+          }
+        }
     });
 
     const isDark = useDark();
