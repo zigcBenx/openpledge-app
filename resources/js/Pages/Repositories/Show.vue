@@ -58,13 +58,13 @@
                             <div class="flex gap-2">
                                 <Pill 
                                     :color="selectedPledgedIssues ? 'secondary' : 'primary'"
-                                    @click="selectedPledgedIssues = !selectedPledgedIssues"
+                                    @click="selectedPledgedIssues = true"
                                 >
                                     Pledged {{ repository.issues_count }}
                                 </Pill>
                                 <Pill 
                                     :color="selectedPledgedIssues ? 'primary' : 'secondary'"
-                                    @click="selectedPledgedIssues = !selectedPledgedIssues"
+                                    @click="selectedPledgedIssues = false"
                                 >
                                     Open {{listOfIssues.length}}
                                 </Pill>

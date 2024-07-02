@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Donation extends Model
@@ -19,7 +20,13 @@ class Donation extends Model
         'expire_date'
     ];
 
-    public function donatable(): MorphTo {
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'donor_id');
+    }
+
+    public function donatable(): MorphTo
+    {
         return $this->morphTo();
     }
 }

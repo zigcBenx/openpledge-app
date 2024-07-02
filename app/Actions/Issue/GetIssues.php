@@ -18,7 +18,7 @@ class GetIssues
         $today = Carbon::now()->toDateString();
 
         $query = Issue::query()
-            ->with('programmingLanguages')
+            ->with('programmingLanguages', 'repository')
             ->withSum(['donations' => function ($query) use ($today) {
                 $query->where(function ($query) use ($today) {
                     $query->whereNull('expire_date')

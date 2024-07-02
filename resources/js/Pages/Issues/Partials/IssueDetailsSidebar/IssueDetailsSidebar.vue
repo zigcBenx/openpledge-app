@@ -14,7 +14,7 @@
 </script>
 <template>
   <div class="mb-10">
-    <PledgesHistory :data="data.pledges" />
+    <PledgesHistory :issue="issue" />
     <PaymentForm :issue="issue" :stripePublicKey="stripePublicKey" />
   </div>
 </template>

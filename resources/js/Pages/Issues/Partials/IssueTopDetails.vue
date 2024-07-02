@@ -53,8 +53,7 @@
   const props = defineProps({
     issue: {
       type: Object,
-      validator: (value) =>
-          value.id && value.title && value.user && value.hasOwnProperty('state')
+      required: true
     }
   });
 
