@@ -15,14 +15,6 @@ class IssueController extends Controller
         return CreateNewIssue::create($request->all());
     }
 
-    public function index()
-    {
-        $issues = GetIssues::get();
-        return Inertia::render('Issues/Index', [
-            'issues' => $issues
-        ]);
-    }
-
     public function show($id)
     {
         $issue = GetIssueById::get($id);
