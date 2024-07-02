@@ -12,9 +12,9 @@
               <th class="pb-5 min-w-[5rem] font-normal">State</th>
               <th class="pb-5 font-normal">Name</th>
               <th class="pb-5 font-normal">Labels</th>
-              <th class="pb-5 font-normal">Repository</th>
+              <th v-if="pledged" class="pb-5 font-normal">Repository</th>
               <th class="pb-5 font-normal">Languages</th>
-              <th class="pb-5 font-normal">Donations</th>
+              <th v-if="pledged" class="pb-5 font-normal">Donations</th>
               <th></th>
           </tr>
       </thead>
@@ -26,7 +26,8 @@
               'dark:bg-rich-black bg-ghost-white': issue.state === 'closed'
             }]"
           >
-              <IssueItemPledged :issue="issue"/>
+              <IssueItemPledged v-if="pledged" :issue="issue"/>
+              <IssueItemExternal v-else :issue="issue"/>
           </tr>
           <tr v-intersection-observer="onIntersectionObserver"></tr>
       </tbody>
@@ -38,6 +39,7 @@
     import Avatar from '@/Components/Avatar.vue'
     import { vIntersectionObserver } from '@vueuse/components'
     import IssueItemPledged from '@/Components/Custom/IssueItemPledged.vue'
+    import IssueItemExternal from '@/Components/Custom/IssueItemExternal.vue'
 
     defineProps({
         issues: {
