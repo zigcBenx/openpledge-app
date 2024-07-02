@@ -29,16 +29,16 @@
     </td>
     <td class="py-6 pr-4 align-middle">
         <div class="flex flex-wrap gap-1">
-            <!-- <Pill
-            v-if="issue.labels && issue.labels.length > 0"
-            v-for="label in issue.labels.split(',')"
-            :key="label"
-            color="present"
-            size="sm"
-            :disabled="issue.state === 'closed'"
+            <Pill
+                v-if="issue.labels && issue.labels.length > 0"
+                v-for="label in issue.labels.split(',')"
+                :key="label"
+                color="present"
+                size="sm"
+                :disabled="issue.state === 'closed'"
             >
             {{ label }}
-            </Pill> -->
+            </Pill>
         </div>
     </td>
     <td class="py-6">
