@@ -6,14 +6,8 @@ use App\Models\Issue;
 
 class GetIssueById
 {
-    public static function get($id, $withDonationsSum = false)
+    public static function get($id)
     {
-        $issue = Issue::with('repository', 'donations')->find($id);
-
-        if ($withDonationsSum) {
-            $issue->append('donation_sum');    
-        }
-        
-        return $issue;
+        return Issue::with('repository', 'donations.user')->find($id)->append('donation_sum');
     }
 }
