@@ -120,6 +120,5 @@ const selectedPledgedIssues = ref(true)
 // this variable is by default issues from OpenPledge (that are pledged),
 // but can be later switched if "open" is pressed to all issues from github and from OpenPledge that are not pledged
 const listOfIssues = ref(props.issues)
-const appEnvironment = import.meta.env.VITE_APP_ENV
-const githubAppInstallationUrl = appEnvironment === "local" ? import.meta.env.VITE_DEV_GITHUB_APP_INSTALLATION_URL : import.meta.env.VITE_GITHUB_APP_INSTALLATION_URL
+const githubAppInstallationUrl = import.meta.env.VITE_GITHUB_APP_INSTALLATION_URL
 </script>

@@ -35,8 +35,8 @@ return [
         'client_id' => env('GITHUB_CLIENT_ID'),
         'client_secret' => env('GITHUB_CLIENT_SECRET'),
         'redirect' => env('GITHUB_CALLBACK_URL'),
-        'app_client_id' => env('APP_ENV') === "local" ? env('DEV_GITHUB_APP_CLIENT_ID') : env('GITHUB_APP_CLIENT_ID'),
-        'app_client_secret' => env('APP_ENV') === "local" ? env('DEV_GITHUB_APP_CLIENT_SECRET') : env('GITHUB_APP_CLIENT_SECRET'),
+        'app_client_id' => env('GITHUB_APP_CLIENT_ID'),
+        'app_client_secret' => env('GITHUB_APP_CLIENT_SECRET'),
         'app_callback' => env('GITHUB_APP_CALLBACK_URL')
     ],
 
