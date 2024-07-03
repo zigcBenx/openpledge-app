@@ -97,6 +97,18 @@ For example of "issues":
 As you will find out, we are not consistent on using Options or Composition API in Vue components. This is because of my habbit of using options API and Jetstream came with Composition API presets...
 
 
+### GitHub Application
+This project also includes a [GitHub Application](https://github.com/apps/openpledge-io), which we use to receive webhook payloads from installed repositories events (e.g. Pull Request is merged, Issue is closed, ...).
+
+For local development, we use a webhook payload delivery service [Smee](https://smee.io/) which is used to capture and forward webhook payloads to our local development environment from our [development Github Application](https://github.com/apps/dev-openpledge-io).
+
+Brief explanation of the code regarding the Github Application :
+
+- `VITE_GITHUB_APP_INSTALLATION_URL` .env.example variable is used only as a link where the user installs our GitHub Application.
+- `github.installation.callback` web route handles the callback after a user authorizes an installation to our GitHub Application.
+- `github.webhook` web route handles received webhook payloads from installed repositories events (e.g. Pull Request is merged, Issue is closed, ...).
+
+
 ### Other
 
 #### Permissions and roles
