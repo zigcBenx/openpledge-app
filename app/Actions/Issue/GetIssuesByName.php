@@ -65,7 +65,15 @@ class GetIssuesByName
         $response = Http::get($issuesUrl);
 
         if ($response->successful()) {
-            return $response->json();
+            $issuesAndPullRequests = $response->json();
+            $issues = [];
+            foreach ($issuesAndPullRequests as $issueOrPullRequest) {
+                if (isset($issueOrPullRequest['pull_request'])) {
+                    $issues[] = $issueOrPullRequest;
+                }
+            }
+
+            return $issues;
         } else {
             Log::error('Failed to fetch GitHub issues', ['response' => $response->body()]);
             return [];
