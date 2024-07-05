@@ -72,7 +72,7 @@
                         </div>
                         <div>
                             <IssuesTable v-if="selectedPledgedIssues" :issues="repository.issues" :pledged="true" />
-                            <IssuesTable v-else :issues="listOfIssues" />
+                            <IssuesTable v-else :issues="listOfIssues" :repository="repository" />
                         </div>
                     </div>
                 </div>

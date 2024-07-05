@@ -14,6 +14,7 @@
     <td class="py-6">
         <a
           :href="issue.github_url"
+          target="_blank"
           :class="['dark:text-white dark:hover:text-green hover:text-green text-base pr-4', {
             '!text-spun-pearl': issue.state === 'closed'
           }]"
@@ -87,6 +88,7 @@
         </div>
     </td>
     <td class="rounded-br-md rounded-tr-md pr-6">
+      <div class="flex justify-end">
         <Icon 
           name="star"
           width="1.375rem"
@@ -94,6 +96,14 @@
           :disabled="issue.state === 'closed'"
           @click="addFavorites(issue)"
         />
+        <Pill 
+          color="secondary"
+          class="ml-4"
+          @click="pledgeExternalIssue(issue)"
+        >
+          Pledge
+        </Pill>
+      </div>
     </td>
 </template>
 
@@ -104,12 +114,14 @@
     import Avatar from '@/Components/Avatar.vue'
     import { Link } from '@inertiajs/vue3'
     import Pill from '@/Components/Form/Pill.vue'
+    import { router } from '@inertiajs/vue3'
 
     const props = defineProps({
         issue: {
             type: Object,
             required: true,
         },
+        repository: Object,
     })
 
     const isDark = useDark()
@@ -128,5 +140,16 @@
 
     const addFavorites = (issue) => {
         issue.favorite = !issue.favorite;
+    }
+    
+    const pledgeExternalIssue = (issue) => {
+      router.post(route('issues.pledge-external-issue'), {
+        title: issue.title,
+        github_url: issue.github_url,
+        github_id: issue.github_id ?? issue.id,
+        repository_id: props.repository.id,
+        user_avatar: issue.user_avatar,
+        github_username: props.repository.title.split('/')[0]
+      })
     }
 </script>

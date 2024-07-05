@@ -15,6 +15,7 @@ class CreateNewIssue
             'github_id'     => ['required','unique:issues,github_id'],
             'repository_id' => ['required','exists:repositories,id'],
             'user_avatar'   => ['string'],
+            'github_username' => ['string']
         ])->validate();
 
         return Issue::create([
@@ -23,6 +24,7 @@ class CreateNewIssue
             'github_id'     => $input['github_id'],
             'repository_id' => $input['repository_id'],
             'user_avatar'   => $input['user_avatar'],
+            'github_username'   => $input['github_username']
         ]);
     }
 }
