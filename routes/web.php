@@ -58,6 +58,7 @@ Route::middleware([
 
     Route::resource('repositories', RepositoryController::class)->only('index', 'store');
     Route::resource('issues', IssueController::class)->only('show', 'store');
+    Route::post('issues/pledgeExternalIssue', [IssueController::class, 'pledgeExternalIssue'])->name('issues.pledge-external-issue');
     Route::resource('campaigns', CampaignController::class);
     Route::resource('donations', DonationController::class)->only('index', 'show', 'store');
 

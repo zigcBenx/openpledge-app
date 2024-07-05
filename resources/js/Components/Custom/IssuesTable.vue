@@ -27,7 +27,7 @@
             }]"
           >
               <IssueItemPledged v-if="pledged" :issue="issue"/>
-              <IssueItemExternal v-else :issue="issue"/>
+              <IssueItemExternal v-else :issue="issue" :repository="repository"/>
           </tr>
           <tr v-intersection-observer="onIntersectionObserver"></tr>
       </tbody>
@@ -58,7 +58,8 @@
           default: () => {
             return false
           }
-        }
+        },
+        repository: Object,
     })
 
     const emit = defineEmits(['onLazyLoading'])
