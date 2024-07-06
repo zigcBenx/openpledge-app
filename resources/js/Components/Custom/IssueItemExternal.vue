@@ -25,7 +25,7 @@
       <div class="flex gap-1 mt-3">
         <Avatar :url="issue.user_avatar" size="sm" />
         <span class="dark:text-spun-pearl text-tundora text-xs font-medium">{{ issue.github_username }}</span>
-        <span class="dark:text-spun-pearl text-tundora text-xs font-light">{{ dayjs(issue.created_at).fromNow() }}</span>
+        <span class="dark:text-spun-pearl text-tundora text-xs font-light">{{ issue.github_created_at ? dayjs(issue.github_created_at).fromNow() : dayjs(issue.created_at).fromNow() }}</span>
       </div>
     </td>
 
@@ -149,7 +149,8 @@
         github_id: issue.github_id ?? issue.id,
         repository_id: props.repository.id,
         user_avatar: issue.user_avatar,
-        github_username: props.repository.title.split('/')[0]
+        github_username: props.repository.title.split('/')[0],
+        github_created_at: issue.created_at
       })
     }
 </script>

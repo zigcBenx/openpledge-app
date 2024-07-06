@@ -12,7 +12,7 @@
               <div class='flex gap-1.5 items-center'>
                   <Avatar :url='issue.user_avatar' size='sm' />
                   <span class='dark:text-spun-pearl font-medium text-tundora'>{{issue.github_username}}</span>
-                  <span class='dark:text-spun-pearl text-tundora whitespace-nowrap font-light'>opened this issue {{ dayjs(issue.created_at).fromNow() }}</span>
+                  <span class='dark:text-spun-pearl text-tundora whitespace-nowrap font-light'>opened this issue {{ dayjs(issue.github_created_at).fromNow() }}</span>
               </div>
               <div class='flex gap-1'>
                   <Pill 
