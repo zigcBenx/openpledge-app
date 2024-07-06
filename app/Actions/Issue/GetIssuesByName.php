@@ -68,7 +68,7 @@ class GetIssuesByName
             $issuesAndPullRequests = $response->json();
             $issues = [];
             foreach ($issuesAndPullRequests as $issueOrPullRequest) {
-                if (isset($issueOrPullRequest['pull_request'])) {
+                if (!isset($issueOrPullRequest['pull_request'])) {
                     $issues[] = $issueOrPullRequest;
                 }
             }
