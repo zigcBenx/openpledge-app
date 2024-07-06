@@ -115,7 +115,7 @@ const props = defineProps
 });
 
 const loadingConnect = ref(false)
-const selectedPledgedIssues = ref(true)
+const selectedPledgedIssues = ref(props.repository.issues_count > 0)
 
 // this variable is by default issues from OpenPledge (that are pledged),
 // but can be later switched if "open" is pressed to all issues from github and from OpenPledge that are not pledged
