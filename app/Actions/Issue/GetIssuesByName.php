@@ -29,7 +29,7 @@ class GetIssuesByName
         $installedRepositories = HandleGithubAppCallback::fetchGithubRepositories($installation->access_token, $installation->installation_id);
 
         $repositoryData = array_filter($installedRepositories, function($installedRepository) use ($githubUser, $repositoryName) {
-            return $installedRepository['full_name'] == $githubUser . '/' . $repositoryName;
+            return strtolower($installedRepository['full_name']) == strtolower($githubUser . '/' . $repositoryName);
         });
         
         $repositoryData = array_values($repositoryData);
