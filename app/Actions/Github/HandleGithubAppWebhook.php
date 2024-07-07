@@ -22,8 +22,6 @@ class HandleGithubAppWebhook
 
         $payload = $request->all();
 
-        Log::info('Webhook received from repository', ['repository' => $payload['repository']['full_name']]);
-
         DB::beginTransaction();
         try {
             $action = $payload['action'] ?? null;
