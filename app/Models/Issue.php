@@ -17,7 +17,8 @@ class Issue extends Model
         'user_avatar',
         'state',
         'labels',
-        'github_username'
+        'github_username',
+        'github_created_at'
     ];
 
     public function repository()

@@ -24,7 +24,7 @@
         <div class="flex gap-1 mt-3">
             <Avatar :url="issue.user_avatar" size="sm" />
             <span class="dark:text-spun-pearl text-tundora text-xs font-medium">{{ issue.github_username }}</span>
-            <span class="dark:text-spun-pearl text-tundora text-xs font-light">{{ dayjs(issue.created_at).fromNow() }}</span>
+            <span class="dark:text-spun-pearl text-tundora text-xs font-light">{{ dayjs(issue.github_created_at).fromNow() }}</span>
         </div>
     </td>
     <td class="py-6 pr-4 align-middle">
