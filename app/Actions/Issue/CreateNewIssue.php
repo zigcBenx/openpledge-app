@@ -17,7 +17,9 @@ class CreateNewIssue
             'repository_id'      => ['required','exists:repositories,id'],
             'user_avatar'        => ['string'],
             'github_username'    => ['string'],
-            'github_created_at'  => ['required', 'date']
+            'github_created_at'  => ['required', 'date'],
+            'resolver_github_id' => ['string'],
+            'resolved_at'        => ['date']
         ])->validate();
 
         return Issue::create([
@@ -28,6 +30,8 @@ class CreateNewIssue
             'user_avatar'        => $input['user_avatar'],
             'github_username'    => $input['github_username'],
             'github_created_at'  => Carbon::parse($input['github_created_at']),
+            'resolver_github_id' => $input['resolver_github_id'] ?? null,
+            'resolved_at'        => Carbon::parse($input['resolved_at']) ?? null,
         ]);
     }
 }

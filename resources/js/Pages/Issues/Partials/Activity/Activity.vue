@@ -1,27 +1,48 @@
 <script setup>
-  import { Link } from '@inertiajs/vue3';
-  import Avatar from '@/Components/Avatar.vue';
-  import Pill from '@/Components/Form/Pill.vue';
-  import BranchUpdateActivity from './BranchUpdateActivity.vue';
-  import CommentActivity from './CommentActivity.vue';
-  import IssueUpdateActivity from './IssueUpdateActivity.vue';
-  import PledgeActivity from './PledgeActivity.vue';
+import CommentActivity from './CommentActivity.vue';
+import PullRequestActivity from './PullRequestActivity.vue';
+import IssueActivity from './IssueActivity.vue';
+import { computed } from 'vue';
 
-  defineProps({
-    class: {
-      type: String
-    }
-  });
+const props = defineProps({
+  class: {
+    type: String,
+  },
+  issue: {
+    type: Object,
+    required: true,
+    default: () => {
+      return {};
+    },
+  },
+});
+
+const getActivityComponent = (activity) => {
+  if (activity.event === 'reopened' || activity.event === 'closed') {
+    return { component: IssueActivity, prop: 'issueActivity' };
+  } else if (activity.event === 'connected' || activity.event === 'disconnected') {
+    return { component: PullRequestActivity, prop: 'pullRequestActivity' };
+  } else if (activity.body && typeof activity.body === 'string') {
+    return { component: CommentActivity, prop: 'commentActivity' };
+  }
+
+  return null;
+};
+
+const activityCount = computed(() => {
+  return props.issue.issueResolver ? props.issue.issueActivity.length + 1 : props.issue.issueActivity.length;
+});
 
 </script>
 <template>
   <div :class="class">
-    <p class="mb-10 text-oil dark:text-lavender-mist">Activity (4)</p>
+    <p class="mb-10 text-oil dark:text-lavender-mist">Activity ({{ activityCount }})</p>
     <div class="flex flex-col gap-9">
-      <BranchUpdateActivity />
-      <CommentActivity />
-      <IssueUpdateActivity />
-      <PledgeActivity />
+      <IssueActivity v-if="issue.issueResolver" :issue="issue" />
+      <div v-for="activity in issue.issueActivity" :key="activity.id">
+        <component :is="getActivityComponent(activity)?.component"
+          v-bind:[getActivityComponent(activity)?.prop]="activity" v-if="getActivityComponent(activity)" />
+      </div>
     </div>
   </div>
 </template>

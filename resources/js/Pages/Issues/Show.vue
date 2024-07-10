@@ -5,7 +5,7 @@
                 <Breadcrumbs :links="breadcrumbsData" wrapperClass="mb-[5.25rem]" />
                 <IssueTopDetails :issue="issue" @onFavoriteClick="handleFavoriteClick" />
                 <IssueDetails :issue="issue" class="mt-[3.375rem]" />
-                <Activity class="mt-14 pb-10" />
+                <Activity :issue="issue" class="mt-14 pb-10" />
             </div>
             <div class="pt-[6.43rem]">
                 <IssueDetailsSidebar :issue="issue" :stripePublicKey="stripePublicKey" />

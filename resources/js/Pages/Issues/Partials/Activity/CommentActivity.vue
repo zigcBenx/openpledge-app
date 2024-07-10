@@ -1,19 +1,30 @@
 <script setup>
   import Avatar from '@/Components/Avatar.vue';
+  import dayjs from 'dayjs';
+
+  const props = defineProps({
+    commentActivity: {
+        type: Object,
+        required: true,
+        default: () => {
+            return {}
+        }
+    },
+  })
 </script>
 
 <template>
   <div class="flex gap-3 pl-3">
-      <Avatar url="/images/avatar.png" />
+      <Avatar :url="commentActivity.actor.avatar_url" />
       <div class="pt-1.5">
         <p class="flex gap-1.5 mb-4 text-sm text-tundora dark:text-spun-pearl">
-          <span class="font-medium text-mondo dark:text-seashell">username</span>
+          <span class="font-medium text-mondo dark:text-seashell">{{ commentActivity.actor.login }}</span>
           commented
         </p>
         <p class="text-sm text-oil dark:text-lavender-mist">
-          These could simply be syntactic sugar for .str.slice(0, n) and .str.slice(-n), but they are pretty common string operations and make the code a bit more obvious when used.
+          {{ commentActivity.body }}
         </p>
       </div>
-      <span class="pt-1.5 text-xs text-tundora dark:text-spun-pearl ml-auto whitespace-nowrap">8 Days ago</span>
+      <span class="pt-1.5 text-xs text-tundora dark:text-spun-pearl ml-auto whitespace-nowrap">{{ dayjs(commentActivity.created_at).fromNow() }}</span>
   </div>
 </template>
