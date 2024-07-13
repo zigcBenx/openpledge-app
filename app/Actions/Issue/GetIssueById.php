@@ -8,6 +8,11 @@ class GetIssueById
 {
     public static function get($id)
     {
-        return Issue::with('repository', 'donations.user')->find($id)->append('donation_sum');
+        return Issue::with([
+            'repository' => function ($query) {
+                $query->with('githubInstallation');
+            },
+            'donations.user'
+        ])->find($id)->append('donation_sum');
     }
 }

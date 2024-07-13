@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Donation\CreateNewDonation;
+use App\Actions\Issue\GetIssueById;
 use App\Http\Requests\StoreProcessPaymentRequest;
 use App\Models\Issue;
 use Illuminate\Http\JsonResponse;
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Stripe\Exception\ApiErrorException;
 use Stripe\PaymentIntent;
 use Stripe\StripeClient;
-use Carbon\Carbon;
+use App\Actions\Github\CommentOnIssue;
 
 class PaymentController extends Controller
 {
@@ -56,11 +57,12 @@ class PaymentController extends Controller
 
             $stripe = new StripeClient(config('app.stripe_secret'));
             $paymentDetail = $stripe->paymentIntents->retrieve($request->get('paymentId'));
+            $issueId = $request->get('issue_id');
 
             $donation = CreateNewDonation::create(
                 [
                     'donatable_type' => Issue::class,
-                    'donatable_id' => $request->get('issue_id'),
+                    'donatable_id' => $issueId,
                     'amount' => $request->get('amount'),
                     'transaction_id' => $paymentDetail->id,
                     'donor_id' => Auth::id(),
@@ -68,7 +70,19 @@ class PaymentController extends Controller
                 ]
             );
 
-            $issue = Issue::query()->where('id' , $request->get('issue_id'))->first();
+            $issue = GetIssueById::get($issueId);
+
+            list($owner, $repo) = explode('/', $issue['repository']['title']);
+            $issueNumber = basename(parse_url($issue['github_url'], PHP_URL_PATH));
+
+            $installationId = $issue['repository']['githubInstallation']['installation_id'];
+            $token = CommentOnIssue::getInstallationAccessToken($installationId);
+
+            $amount = $request->get('amount');
+            $donorName = Auth::user()->name;
+            $comment = CommentOnIssue::constructPledgeComment($amount, $donorName, $issueId);
+
+            CommentOnIssue::run($token, $owner, $repo, $issueNumber, $comment);
 
             return new JsonResponse(['success' => true]);
         } catch (ApiErrorException $e) {
