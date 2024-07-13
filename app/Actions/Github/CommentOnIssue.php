@@ -4,6 +4,7 @@ namespace App\Actions\Github;
 
 use Firebase\JWT\JWT;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class CommentOnIssue
 {
@@ -21,7 +22,7 @@ class CommentOnIssue
         if ($response->successful()) {
             return $response->json();
         } else {
-            throw new \Exception('Failed to post comment on GitHub issue: ' . $response->body());
+            Log::error('Failed to post comment on GitHub issue: ', ['response' => $response->body()]);
         }
     }
     public static function constructPledgeComment($amount, $donorName, $issueId)
