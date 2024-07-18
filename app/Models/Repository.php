@@ -45,6 +45,6 @@ class Repository extends Model
 
     public function githubInstallation()
     {
-        return $this->belongsTo(GithubInstallation::class, 'github_installation_id', 'installation_id');
+        return $this->belongsTo(GitHubInstallation::class, 'github_installation_id', 'installation_id');
     }
 }
