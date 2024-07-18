@@ -18,7 +18,9 @@ class Issue extends Model
         'state',
         'labels',
         'github_username',
-        'github_created_at'
+        'github_created_at',
+        'resolver_github_id',
+        'resolved_at'
     ];
 
     public function repository()
