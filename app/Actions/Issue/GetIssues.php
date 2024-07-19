@@ -22,7 +22,7 @@ class GetIssues
             ->withSum(['donations' => function ($query) use ($today) {
                 $query->where(function ($query) use ($today) {
                     $query->whereNull('expire_date')
-                        ->orWhere('expire_date', '>', $today);
+                        ->orWhere('expire_date', '<', $today);
                 });
             }], 'amount')
             ->having('donations_sum_amount', '>', 0);

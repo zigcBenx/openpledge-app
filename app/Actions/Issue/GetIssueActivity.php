@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Log;
 
 class GetIssueActivity
 {
-    public static function get($issueGithubUrl, $githubAccessToken)
+    public static function get($issueGithubUrl, $githubAccessToken, $donations)
     {
         $issueDetails = self::parseIssueUrl($issueGithubUrl);
 
@@ -16,7 +16,7 @@ class GetIssueActivity
             return null;
         }
 
-        return self::fetchIssueActivity($issueDetails, $githubAccessToken);
+        return self::fetchIssueActivity($issueDetails, $githubAccessToken, $donations);
     }
 
     private static function parseIssueUrl($url)
@@ -28,13 +28,17 @@ class GetIssueActivity
         return null;
     }
 
-    private static function fetchIssueActivity($issueDetails, $accessToken)
+    private static function fetchIssueActivity($issueDetails, $accessToken, $donations)
     {
         $url = "https://api.github.com/repos/{$issueDetails['user']}/{$issueDetails['repo']}/issues/{$issueDetails['issueNumber']}/timeline";
         $response = Http::withToken($accessToken)->get($url);
 
         if ($response->successful()) {
             $activities = $response->json();
+
+            if (isset($donations)) {
+                $activities = array_merge($activities, $donations->toArray());
+            }
 
             // Get the latest activities first
             usort($activities, function ($a, $b) {
