@@ -13,7 +13,7 @@ const props = defineProps({
 })
 
 const formatExpireDate = (date) => {
-  return dayjs(date, 'YYYY-DD-MM').format('MMM D YYYY');
+  return dayjs(date, 'YYYY-MM-DD').format('MMM D YYYY');
 };
 </script>
 
