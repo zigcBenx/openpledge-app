@@ -21,10 +21,46 @@ class MainController extends Controller
 
     public function discoverIssues(Request $request)
     {
-        $filters = $request->query();
-        $issues = GetIssues::getWithActiveDonations($filters);
-        return Inertia::render('Discover/Issues', [
-            'issues' => $issues
+        $filters = $request->query('filters', []);
+        $existingUrls = $request->query('existingUrls', []);
+        $page = $request->query('page', 1);
+        $perPage = 10;
+        $offset = ($page - 1) * $perPage;
+
+        $pledgedIssues = GetIssues::getWithActiveDonations($filters, $offset, $perPage);
+    
+        // Immediately return if filters are present
+        if (!empty($filters)) {
+            return Inertia::render('Discover/Issues', [
+                'issues' => $pledgedIssues,
+            ]);
+        }
+
+        if (empty($existingUrls)) {
+            $existingUrls = array_map(function ($issue) {
+                return $issue['github_url'];
+            }, $pledgedIssues->toArray());
+        }
+    
+        if (count($pledgedIssues) < $perPage) {
+            $neededIssues = $perPage - count($pledgedIssues);
+
+            $externalIssues = GetIssues::getRepositoryConnectedIssues($neededIssues, $existingUrls);
+            $combinedIssues = array_merge($pledgedIssues->toArray(), $externalIssues);
+        }
+    
+        $paginatedIssues = array_slice($combinedIssues, 0, $perPage);
+    
+        // For the first page, use Inertia to render the page
+        if ($page === 1) {
+            return Inertia::render('Discover/Issues', [
+                'issues' => $paginatedIssues,
+            ]);
+        }
+    
+        // If the initial page is already loaded, return a JSON response that will combine already displayed issues with freshly queried issues
+        return response()->json([
+            'issues' => $paginatedIssues,
         ]);
-    }
+    }    
 }

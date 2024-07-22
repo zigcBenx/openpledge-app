@@ -1,5 +1,5 @@
 <template>
-  <tr>
+  <tr class="flex justify-between items-center">
     <td>
       <div class="flex gap-3 items-center">
         <SkeletonLoader class="w-1 h-20" />

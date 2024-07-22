@@ -23,11 +23,11 @@
             v-for="issue in issues"
             :key="issue.id"
             :class="['text-sm bg-white dark:bg-charcoal-gray border-separate', {
-              'dark:bg-rich-black bg-ghost-white': issue.state === 'closed'
+              'dark:bg-rich-black bg-ghost-white': issue.isExternal
             }]"
           >
-              <IssueItemPledged v-if="pledged" :issue="issue"/>
-              <IssueItemExternal v-else :issue="issue" :repository="repository"/>
+              <IssueItemPledged v-if="pledged && !issue.isExternal" :issue="issue"/>
+              <IssueItemExternal v-else :issue="issue" :repository="repository ?? issue.repository"/>
           </tr>
           <tr v-intersection-observer="onIntersectionObserver"></tr>
       </tbody>
