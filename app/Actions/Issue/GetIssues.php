@@ -2,6 +2,7 @@
 
 namespace App\Actions\Issue;
 
+use App\Actions\Github\HandleGithubAppWebhook;
 use App\Models\Issue;
 use App\Models\Repository;
 use Carbon\Carbon;
@@ -67,10 +68,16 @@ class GetIssues
         $connectedRepositories = Repository::inRandomOrder()->get();
         $allConnectedIssues = [];
 
+        if ($connectedRepositories->isEmpty()) {
+            return [];
+        }
+
+        $accessToken = HandleGithubAppWebhook::getAccessToken($connectedRepositories[0]['github_url']);
+
         $client = new Client([
             'base_uri' => 'https://api.github.com',
             'headers' => [
-                'Authorization' => 'Bearer ' . config('services.github.personal_access_token')
+                'Authorization' => 'Bearer ' . $accessToken
             ]
         ]);
 

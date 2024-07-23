@@ -89,7 +89,7 @@ class HandleGithubAppWebhook
         Log::info('handlePullRequest method completed');
     }
 
-    private static function getAccessToken($repoUrl)
+    public static function getAccessToken($repoUrl)
     {
         Log::info('getAccessToken method started', ['repo_url' => $repoUrl]);
 
