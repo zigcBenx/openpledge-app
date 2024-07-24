@@ -52,7 +52,8 @@ class GetIssuesByName
                     'state' => $issue['state'],
                     'labels' => $issue['labels'],
                     'user_avatar' => $issue['user']['avatar_url'],
-                    'created_at' => $issue['created_at']
+                    'created_at' => $issue['created_at'],
+                    'isExternal' => true
                 ];
             }
         }

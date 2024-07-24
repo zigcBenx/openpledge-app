@@ -33,7 +33,12 @@ const getActivityComponent = (activity) => {
 };
 
 const activityCount = computed(() => {
-  return props.issue.issueResolver ? props.issue.issueActivity.length + 1 : props.issue.issueActivity.length;
+  if (!props.issue.issueActivity) {
+    return 0;
+  }
+  return props.issue.issueActivity.reduce((count, activity) => {
+    return count + (getActivityComponent(activity) !== null ? 1 : 0);
+  }, 0);
 });
 
 </script>

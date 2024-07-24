@@ -54,6 +54,7 @@
                     </template>
                     <template v-slot="">
                         <IssuesTable :issues="issues" @onLazyLoading="handleLazyLoadingIssues" :pledged="true" class="hidden md:table"/>
+                        <TableRowSkeleton v-if="loading" />
                     </template>
                 </Page>
                 </div>
@@ -80,7 +81,7 @@
 <script setup>
   import { ref, onMounted, watch } from 'vue';
   import { parseQueryFilters, updateQueryFilters, prepareFiltersForQuery } from '../../utils/parseQuery.js';
-  import { languages as languagesList, labels as labelsList, issues as issuesList, trendingToday, topContributors, topDonators } from '../../assets/mockedData.js';
+  import { languages as languagesList, labels as labelsList, trendingToday, topContributors, topDonators } from '../../assets/mockedData.js';
   import { router } from '@inertiajs/vue3'
   import Page from '@/Components/Page.vue';
   import Filters from './Filters.vue';
@@ -90,6 +91,8 @@
   import IssuesTable from '@/Components/Custom/IssuesTable.vue';
   import Sidebar from './Partials/Sidebar.vue';
   import { useElementSize } from '@vueuse/core';
+  import SkeletonLoader from '@/Components/SkeletonLoader.vue';
+import TableRowSkeleton from '@/Components/Custom/TableRowSkeleton.vue';
 
   const props = defineProps
     ({
@@ -101,11 +104,13 @@
   const labels = ref(labelsList);
   const languages = ref(languagesList);
   const pagedIssues = ref(0);
-  const issues = ref([]);
+  const issues = ref(props.issues);
   const displayFilterModal = ref(false);
   const queryFilters = ref({});
   const removedFilters = ref(0);
   const count = ref(0);
+  const loading = ref(false);
+  const page = ref(1);
 
   const el = ref(null)  
   const { width } = useElementSize(el);
@@ -135,7 +140,7 @@
   const getFilteredIssues = (value) => {
     updateQueryFilters(value);
 
-    router.get(route('discover.issues'), prepareFiltersForQuery(value), {
+    router.get(route('discover.issues'), { filters: prepareFiltersForQuery(value) }, {
         preserveState: false,
         replace: true,
         preserveScroll: true
@@ -162,14 +167,23 @@
   };
 
   const handleLazyLoadingIssues = () => {
-    const start = pagedIssues.value * 10;
-    const end = start + 10;
-    const newIssues = props.issues.slice(start, end);
+    loading.value = true;
+    page.value++;
+    const existingIssueURLs = issues.value.map(issue => issue.github_url);
 
-    if (newIssues.length > 0) {
-        issues.value = [...issues.value, ...newIssues];
-        pagedIssues.value += 1;
-    }
+    axios.get(route('discover.issues'), {
+        params: {
+        filters: prepareFiltersForQuery(queryFilters.value),
+        page: page.value,
+        existingUrls: existingIssueURLs
+        }
+    }).then(response => {
+        issues.value = [...issues.value, ...response.data.issues];
+        loading.value = false;
+    }).catch(error => {
+        console.error('Failed to load issues:', error);
+        loading.value = false;
+    });
   };
 
   onMounted(() => {
@@ -179,8 +193,6 @@
       } else {
           queryFilters.value = parseQueryFilters();
       }
-      // Initial load of issues
-      handleLazyLoadingIssues();
   });
 
   const showMoreFilters = () => {
