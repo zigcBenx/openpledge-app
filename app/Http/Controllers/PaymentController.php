@@ -51,8 +51,9 @@ class PaymentController extends Controller
         try {
             $expireDate = null;
             if($request->get('pledgeExpirationDate') && $request->get('pledgeExpirationYear')) {
-                $date = $request->get('pledgeExpirationDate');
-                $expireDate = date('Y-m-d', strtotime($date['value'].$request->get('pledgeExpirationYear')));
+                // Extract day and month from 'DD/MM' format & combine with year to form 'Y-m-d' format
+                list($day, $month) = explode('/', $request->get('pledgeExpirationDate')['value']);
+                $expireDate = date('Y-m-d', strtotime("{$request->get('pledgeExpirationYear')}-$month-$day"));
             }
 
             $stripe = new StripeClient(config('app.stripe_secret'));
