@@ -2,6 +2,7 @@
 
 namespace App\Actions\Github;
 
+use App\Actions\Email\SendIssueResolverMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -142,7 +143,7 @@ class HandleGithubAppWebhook
 
         if (isset($destinationStripeId)) {
             Log::info('User has Stripe account, transferring funds', ['user_id' => $dbUser->id]);
-            self::transferFunds($destinationStripeId, $donationsSumAmount, $issue->id);
+            self::transferFunds($destinationStripeId, $donationsSumAmount, $issue->id, $dbUser->email, $dbUser->name);
         } else {
             Log::warning('User does not have a Stripe account connected', ['user_id' => $dbUser->id]);
             // TODO: Send email to notify the user to connect Stripe account to OpenPledge
@@ -151,7 +152,7 @@ class HandleGithubAppWebhook
         Log::info('processDonations method completed');
     }
 
-    private static function transferFunds(string $destinationStripeId, $amount, int $issueId)
+    private static function transferFunds(string $destinationStripeId, $amount, int $issueId, string $resolverMail, string $resolverName)
     {
         Log::info('transferFunds method started', ['issue_id' => $issueId, 'amount' => $amount]);
 
@@ -170,7 +171,7 @@ class HandleGithubAppWebhook
             ]);
 
             Log::info('Funds transferred', ['issue_id' => $issueId, 'amount' => $amount, 'stripe_transfer_id' => $transfer->id]);
-            // TODO: Send email to notify the user that the funds were transferred to his account, include the issue & pull request information
+            SendIssueResolverMail::send($resolverMail, $resolverName, $issueId);
 
             Donation::where('donatable_id', $issueId)->update(['paid' => true]);
         } catch (\Exception $e) {

@@ -99,6 +99,7 @@ import SolveIssue from './SolveIssue.vue';
 import { ref, onMounted } from "vue"
 import { useDark } from '@vueuse/core';
 import { useToast } from 'vue-toastification';
+import { router } from '@inertiajs/vue3'
 
 const stripe = ref(null);
 const elements = ref(null);
@@ -215,6 +216,7 @@ const handleFormSubmit = async () => {
             form.pledgeExpirationYear = '';
             paymentIntent();
             toast.success('Pledge submitted! You are awesome!')
+            router.reload();
           }
         }).catch(error => {
           form.errors = error.response?.data?.errors;
