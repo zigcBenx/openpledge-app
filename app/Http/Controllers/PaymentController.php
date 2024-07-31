@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Email\SendNewPledgeMail;
 use App\Actions\Donation\CreateNewDonation;
 use App\Actions\Issue\GetIssueById;
 use App\Http\Requests\StoreProcessPaymentRequest;
@@ -80,10 +81,12 @@ class PaymentController extends Controller
             $token = CommentOnIssue::getInstallationAccessToken($installationId);
 
             $amount = $request->get('amount');
+            $donorEmail = $request->get('email');
             $donorName = Auth::user()->name;
             $comment = CommentOnIssue::constructPledgeComment($amount, $donorName, $issueId);
 
             CommentOnIssue::run($token, $owner, $repo, $issueNumber, $comment);
+            SendNewPledgeMail::send($donorEmail, $donorName, $issueId);
 
             return new JsonResponse(['success' => true]);
         } catch (ApiErrorException $e) {

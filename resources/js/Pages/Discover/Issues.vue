@@ -91,8 +91,7 @@
   import IssuesTable from '@/Components/Custom/IssuesTable.vue';
   import Sidebar from './Partials/Sidebar.vue';
   import { useElementSize } from '@vueuse/core';
-  import SkeletonLoader from '@/Components/SkeletonLoader.vue';
-import TableRowSkeleton from '@/Components/Custom/TableRowSkeleton.vue';
+  import TableRowSkeleton from '@/Components/Custom/TableRowSkeleton.vue';
 
   const props = defineProps
     ({
@@ -167,6 +166,10 @@ import TableRowSkeleton from '@/Components/Custom/TableRowSkeleton.vue';
   };
 
   const handleLazyLoadingIssues = () => {
+    if (loading.value) {
+        return;
+    }
+
     loading.value = true;
     page.value++;
     const existingIssueURLs = issues.value.map(issue => issue.github_url);

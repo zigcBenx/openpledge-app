@@ -222,10 +222,12 @@
 																	<table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
 																		<tr>
 																			<td class="divider_inner" style="font-size: 1px; line-height: 1px; border-top: 3px solid #87F5DD;"><span>&#8202;</span></td>
-																			@php
-																			$token = hash('sha256',$email);
-																			@endphp
-																			<a style="font-size: 10px;" href="{{ route('unsubscribe') }}?token={{$token}}">Unsubscribe</a>
+																			@if(isset($email))
+																				@php
+																				$token = hash('sha256',$email);
+																				@endphp
+																				<a style="font-size: 10px;" href="{{ route('unsubscribe') }}?token={{$token}}">Unsubscribe</a>
+																			@endif
 																		</tr>
 																	</table>
 																</div>
