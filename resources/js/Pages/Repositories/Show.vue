@@ -57,12 +57,12 @@
                                     </div>
                                     <div class="mt-4">
                                         <p class="mt-2 font-semibold">- Look for the section labeled <em>Repository access</em> (as shown in the screenshot below).</p>
-                                        <img class="object-contain p-4 w-full" alt="Screenshot of the GitHub repository access section" src="https://github.com/user-attachments/assets/74c855b8-803d-47ed-98a2-1604f74d0fc7">
+                                        <img class="object-contain mt-2 rounded-md w-full rounded" alt="Screenshot of the GitHub repository access section" src="../../../img/github_repository_access_section.jpg">
                                         <p class="mt-4">You have two options:</p>
                                         <p class="mt-2"><span class="font-semibold">- All repositories:</span> This option gives the app access to all current and future repositories.</p>
                                         <p class="mt-2"><span class="font-semibold">- Only select repositories:</span> This option allows you to choose specific repositories. To connect another repository, select <span class="font-semibold">Only select repositories</span>. A list of your repositories will appear. Tick the box next to each repository you want to grant access to.</p>
                                         <p class="mt-4 font-semibold">Ensure you carefully select the repositories you want to grant access to. Granting access to the wrong repositories can lead to other OpenPledgers viewing your GitHub issues.</p>
-                                        <p class="mt-4 font-semibold">Once you've selected the desired repositories, click the <img class="inline pb-1" width="40" alt="Screenshot of the GitHub save button" src="https://github.com/user-attachments/assets/b6ea3463-3949-407f-809c-1b40dce39169"> button.</p>
+                                        <p class="mt-4 font-semibold">Once you've selected the desired repositories, click the <img class="inline pb-1" width="40" alt="Screenshot of the GitHub save button" src="../../../img/github_save_button.png"> button.</p>
                                     </div>
                                 </template>
 
