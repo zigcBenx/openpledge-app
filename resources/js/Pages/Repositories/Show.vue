@@ -18,16 +18,62 @@
                         </div>
                     
                         <div>
-                            <a v-if="repository.direct_from_github" :loading="loadingConnect" :href="githubAppInstallationUrl">
-                                <Button color="primary" class="px-8 h-11">
-                                    Connect
-                                </Button>
-                            </a>
+                            <Button v-if="repository.direct_from_github"
+                                    @click="isRepositoryOwner ? showConnectRepositoryModal = true : showContactOwnerModal = true"
+                                    :loading="loadingConnect" color="primary" class="px-8 h-11">
+                                Connect
+                            </Button>
+
                             <Icon 
                                 v-else
                                 name="star" 
                                 class="dark:stroke-mondo dark:fill-mondo"
                             />
+
+                            <!-- Contact Repository Owner Modal -->
+                            <DialogModal :show="showContactOwnerModal" @close="showContactOwnerModal = false">
+                                <template #title>
+                                    Request Repository Connection
+                                </template>
+
+                                <template #content>
+                                    <p>Sorry, this repository is not connected yet. If you would like to see it on OpenPledge, please request the repository owner to connect it.</p>
+                                    <p class="mt-4">If you are the repository owner, please log in using your GitHub account associated with this repository.</p>
+                                </template>
+                            </DialogModal>
+
+                            <!-- Repository Connect Modal -->
+                            <DialogModal :show="showConnectRepositoryModal" @close="showConnectRepositoryModal = false">
+                                <template #title>
+                                    Repository {{ isGithubAppConnected ? 'Reconnection' : 'Connection' }}
+                                </template>
+
+                                <template #content>
+                                    <div v-if="isGithubAppConnected">
+                                        Previously, you have not connected this repository to OpenPledge. To connect it, please follow these steps:
+                                    </div>
+                                    <div v-else>
+                                        To connect this repository, please follow these steps:
+                                    </div>
+                                    <div class="mt-4">
+                                        <p class="mt-2 font-semibold">- Look for the section labeled <em>Repository access</em> (as shown in the screenshot below).</p>
+                                        <img class="object-contain p-4 w-full" alt="Screenshot of the GitHub repository access section" src="https://github.com/user-attachments/assets/74c855b8-803d-47ed-98a2-1604f74d0fc7">
+                                        <p class="mt-4">You have two options:</p>
+                                        <p class="mt-2"><span class="font-semibold">- All repositories:</span> This option gives the app access to all current and future repositories.</p>
+                                        <p class="mt-2"><span class="font-semibold">- Only select repositories:</span> This option allows you to choose specific repositories. To connect another repository, select <span class="font-semibold">Only select repositories</span>. A list of your repositories will appear. Tick the box next to each repository you want to grant access to.</p>
+                                        <p class="mt-4 font-semibold">Ensure you carefully select the repositories you want to grant access to. Granting access to the wrong repositories can lead to other OpenPledgers viewing your GitHub issues.</p>
+                                        <p class="mt-4 font-semibold">Once you've selected the desired repositories, click the <img class="inline pb-1" width="40" alt="Screenshot of the GitHub save button" src="https://github.com/user-attachments/assets/b6ea3463-3949-407f-809c-1b40dce39169"> button.</p>
+                                    </div>
+                                </template>
+
+                                <template #footer>
+                                    <a :href="githubAppInstallationUrl">
+                                        <PrimaryButton class="mt-9">
+                                            Connect
+                                        </PrimaryButton>
+                                    </a>
+                                </template>
+                            </DialogModal>
                         </div>
                     </div>
                     <div>
@@ -107,18 +153,23 @@ import {
     trendingToday,
 } from '../../assets/mockedData.js'
 import IssuesTable from '@/Components/Custom/IssuesTable.vue'
+import DialogModal from '@/Components/DialogModal.vue'
+import PrimaryButton from '@/Components/PrimaryButton.vue'
 
 const props = defineProps
 ({
     repository: Object,
-    issues: Array
+    issues: Array,
+    isRepositoryOwner: Boolean,
+    isGithubAppConnected: Boolean
 });
 
 const loadingConnect = ref(false)
 const selectedPledgedIssues = ref(props.repository.issues_count > 0)
-
-// this variable is by default issues from OpenPledge (that are pledged),
-// but can be later switched if "open" is pressed to all issues from github and from OpenPledge that are not pledged
 const listOfIssues = ref(props.issues)
+
 const githubAppInstallationUrl = import.meta.env.VITE_GITHUB_APP_INSTALLATION_URL
+
+const showConnectRepositoryModal = ref(false)
+const showContactOwnerModal = ref(false)
 </script>

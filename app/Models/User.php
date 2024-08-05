@@ -76,4 +76,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(GitHubInstallation::class);
     }
+
+    public function hasGitHubAppInstalled()
+    {
+        return $this->githubInstallations()->exists();
+    }
 }
