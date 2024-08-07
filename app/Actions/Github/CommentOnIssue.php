@@ -69,8 +69,7 @@ Ready to squash some bugs and earn some extra dough? Check out the issue on [Ope
 
     public static function generateJwtToken()
     {
-        $privateKeyPath = base_path(env('GITHUB_APP_PRIVATE_KEY_PATH'));
-        $privateKey = file_get_contents($privateKeyPath);
+        $privateKey = env('GITHUB_APP_PRIVATE_KEY');
         $payload = [
             'iat' => time(),
             'exp' => time() + (10 * 60), // 10 minutes expiration
