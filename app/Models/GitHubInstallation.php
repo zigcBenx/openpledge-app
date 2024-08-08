@@ -22,4 +22,11 @@ class GitHubInstallation extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public static function getRandomAccessToken()
+    {
+        $installation = self::inRandomOrder()->first();
+
+        return $installation->access_token;
+    }
 }
