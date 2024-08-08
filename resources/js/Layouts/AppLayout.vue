@@ -29,26 +29,17 @@
                             <div class="space-x-8 sm:-my-px sm:ms-10 content-center">
                                 <Dropdown align="right" width="44.375rem">
                                     <template #trigger>
-                                        <Input
-                                            v-model="searchQuery"
+                                        <Input 
                                             inputClass="focus:w-[44.375rem]"
                                             placeholder="Search" 
                                             type="search" 
                                             icon="search"
                                             :closeOnOutside="true"
-                                            @onInput="searchQuery = $event.target.value"
                                         />
                                     </template>
 
                                     <template #content>
-                                        <SearchCard 
-                                            :isDark="isDark"
-                                            class="w-[44.375rem]" 
-                                            :data="filteredData" 
-                                            checkboxLabel="Show GitHub results"
-                                            :getSearchItemHref="generateSearchItemHref"
-                                            @checkbox-toggled="includeGitHubResults = $event"
-                                        />
+                                        <SearchCard :isDark="isDark" class="w-[44.375rem]"/>
                                     </template>
                                 </Dropdown>                                
                             </div>
@@ -190,19 +181,18 @@
 </template>
 
 <script>
-    import { ref, computed, watch } from 'vue';
+    import { ref } from 'vue';
     import { Head, Link, router, usePage } from '@inertiajs/vue3';
     import ApplicationMark from '@/Components/ApplicationMark.vue';
     import Banner from '@/Components/Banner.vue';
     import Dropdown from '@/Components/Dropdown.vue';
     import NavLink from '@/Components/NavLink.vue';
     import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-    import { useDark, useDebounce, useToggle } from '@vueuse/core';
+    import { useDark, useToggle } from '@vueuse/core';
     import Icon from '@/Components/Icon.vue';
     import MenuCard from './Partials/MenuCard.vue';
     import SearchCard from './Partials/SearchCard.vue';
     import Input from '@/Components/Input.vue';
-    import axios from 'axios';
 
     export default {
         props: {
@@ -224,98 +214,22 @@
         setup() {
             const isDark = useDark();
             const toggleDark = useToggle(isDark);
+
             const showingNavigationDropdown = ref(false);
-            const searchQuery = ref('');
-            const debouncedSearchQuery = useDebounce(searchQuery, 300);
-            const data = ref({
-                repositories: [],
-                issues: []
-            });
-            const includeGitHubResults = ref(false);
-            const user = usePage().props.auth.user;
 
             const logout = () => {
                 router.post(route('logout'));
             };
 
-            const fetchSearchResults = async (query, includeGitHub) => {
-                try {
-                    const response = await axios.get(route('search'), {
-                        params: {
-                            query,
-                            includeGitHub
-                        }
-                    });
-                    data.value = response.data;
-                } catch (error) {
-                    console.error('Error fetching search data:', error);
-                }
-            };
-
-            watch([debouncedSearchQuery, includeGitHubResults], ([newQuery, includeGitHub]) => {
-                if (newQuery.length === 0) {
-                    data.value = { repositories: [], issues: [] };
-                } else {
-                    fetchSearchResults(newQuery, includeGitHub);
-                }
-            });
-
-            const filteredData = computed(() => {
-                const { repositories, issues } = data.value;
-
-                if (debouncedSearchQuery.value.length === 0) {
-                    return [];
-                }
-
-                if (repositories.length === 0 && issues.length === 0) {
-                    return [{ name: "No matches found" }];
-                }
-
-                return [
-                    {
-                        name: 'Repositories',
-                        values: repositories.map(repo => ({ id: repo.id, text: repo.title }))
-                    },
-                    {
-                        name: 'Issues',
-                        values: issues.map(issue => ({ id: issue.id, text: issue.title, repository_title: issue.repository_title }))
-                    }
-                ].filter(item => item.values.length > 0);
-            });
-
-            const handleInput = (event) => {
-                searchQuery.value = event.target.value;
-            };
-
-            const generateSearchItemHref = (name, value) => {
-                const appUrl = import.meta.env.VITE_APP_URL;
-
-                if (value.repository_title) {
-                    return `${appUrl}/repositories/${value.repository_title}`;
-                }
-
-                switch (name) {
-                    case 'Repositories':
-                        return `${appUrl}/repositories/${value.text}`;
-                    case 'Issues':
-                        return `${appUrl}/issues/${value.id}`;
-                    default:
-                        return '#';
-                }
-            }
+            const user = usePage().props.auth.user;
 
             return {
                 showingNavigationDropdown,
                 logout,
                 user,
                 toggleDark,
-                isDark,
-                searchQuery,
-                filteredData,
-                handleInput,
-                includeGitHubResults,
-                generateSearchItemHref
+                isDark
             };
         }
-    };
+    }
 </script>
