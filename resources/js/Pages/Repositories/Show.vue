@@ -50,10 +50,10 @@
 
                                 <template #content>
                                     <div v-if="isGithubAppConnected">
-                                        Previously, you have not connected this repository to OpenPledge. To connect it, please follow these steps:
+                                        You haven't connected this repository to OpenPledge yet. Click the 'Connect' button below and follow these steps to connect:
                                     </div>
                                     <div v-else>
-                                        To connect this repository, please follow these steps:
+                                        To connect this repository, click the 'Connect' button below and follow these steps:
                                     </div>
                                     <div class="mt-4">
                                         <p class="mt-2 font-semibold">- Look for the section labeled <em>Repository access</em> (as shown in the screenshot below).</p>
@@ -68,9 +68,9 @@
 
                                 <template #footer>
                                     <a :href="githubAppInstallationUrl">
-                                        <PrimaryButton class="mt-9">
+                                        <Button class="mt-9 px-8 h-11" color="primary">
                                             Connect
-                                        </PrimaryButton>
+                                        </Button>
                                     </a>
                                 </template>
                             </DialogModal>
@@ -154,7 +154,6 @@ import {
 } from '../../assets/mockedData.js'
 import IssuesTable from '@/Components/Custom/IssuesTable.vue'
 import DialogModal from '@/Components/DialogModal.vue'
-import PrimaryButton from '@/Components/PrimaryButton.vue'
 
 const props = defineProps
 ({
