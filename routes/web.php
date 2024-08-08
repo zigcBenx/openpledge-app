@@ -3,6 +3,7 @@
 use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\GithubController;
 use App\Http\Controllers\IssueController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\MainController;
@@ -84,6 +85,9 @@ Route::middleware([
 
     // GitHub App integration route
     Route::get('/github/installation/callback', [GithubController::class, 'handleGithubAppCallback'])->name('github.installation.callback');
+
+    // Search
+    Route::get('/search', [SearchController::class, 'getSearchResults'])->name('search');
 });
 
 Route::get('/auth/github/callback', [GithubController::class, 'callback'])->name('callback');
