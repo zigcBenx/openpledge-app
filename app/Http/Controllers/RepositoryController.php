@@ -11,6 +11,7 @@ use App\Actions\Issue\GetIssuesByName;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class RepositoryController extends Controller
@@ -45,6 +46,7 @@ class RepositoryController extends Controller
      */
     public function show($githubUser, $repositoryName)
     {
+        $authenticatedUser = Auth::user();
         $repository = GetRepositoryByTitle::get($githubUser . '/' . $repositoryName);
 
         if (!$repository) {
@@ -58,7 +60,8 @@ class RepositoryController extends Controller
                 'github_url'         => $githubRepo['html_url'],
                 'github_id'          => $githubRepo['id'],
                 'user_avatar'        => $githubRepo['owner']['avatar_url'],
-                'direct_from_github' => true
+                'direct_from_github' => true,
+                'owner_id' => (int) $githubRepo['owner']['id']
             ];
 
             $issues = GetIssuesByName::get($githubUser, $repositoryName, null);
@@ -66,9 +69,15 @@ class RepositoryController extends Controller
             $issues = GetIssuesByName::get($githubUser, $repositoryName, $repository->github_installation_id);
         }
 
+        $currentUserGithubId = (int) $authenticatedUser->github_id;
+        $isRepositoryOwner = isset($repository['owner_id']) && $repository['owner_id'] === $currentUserGithubId;
+        $isGithubAppConnected = $authenticatedUser->hasGitHubAppInstalled();
+
         return Inertia::render('Repositories/Show', [
             'repository' => $repository,
-            'issues' => $issues
+            'issues' => $issues,
+            'isRepositoryOwner' => $isRepositoryOwner,
+            'isGithubAppConnected' => $isGithubAppConnected
         ]);
     }
 }

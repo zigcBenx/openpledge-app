@@ -147,6 +147,7 @@ class HandleGithubAppWebhook
         } else {
             Log::warning('User does not have a Stripe account connected', ['user_id' => $dbUser->id]);
             // TODO: Send email to notify the user to connect Stripe account to OpenPledge
+            SendIssueResolverMail::send($dbUser->email, $dbUser->name, $issue->id); // Send emails to all resolvers during beta, regardless of Stripe connection
         }
 
         Log::info('processDonations method completed');
