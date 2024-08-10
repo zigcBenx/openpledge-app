@@ -288,17 +288,16 @@
             };
 
             const generateSearchItemHref = (name, value) => {
-                const appUrl = import.meta.env.VITE_APP_URL;
 
                 if (value.repository_title) {
-                    return `${appUrl}/repositories/${value.repository_title}`;
+                    return route('repositories.show', { githubUser: value.repository_title.split('/')[0], repository: value.repository_title.split('/')[1] })
                 }
 
                 switch (name) {
                     case 'Repositories':
-                        return `${appUrl}/repositories/${value.text}`;
+                        return route('repositories.show', { githubUser: value.text.split('/')[0], repository: value.text.split('/')[1] })
                     case 'Issues':
-                        return `${appUrl}/issues/${value.id}`;
+                        return route('issues.show', {issue: value.id})
                     default:
                         return '#';
                 }
