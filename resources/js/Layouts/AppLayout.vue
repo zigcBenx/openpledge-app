@@ -19,9 +19,10 @@
                                 <NavLink :href="route('discover.issues')" :active="route().current('discover.issues')">
                                     Discover
                                 </NavLink>
-                                <NavLink :href="route('donations.index')" :active="route().current('donations.index')">
+                                <div class="cursor-pointer inline-flex uppercase items-center px-1 pb-2 pt-1 border-b-2 border-transparent text-sm leading-5 text-rich-black dark:text-platinum hover:text-green dark:hover:text-green"
+                                    @click="displayLeaderBoardModal = true">
                                     Leaderboard
-                                </NavLink>
+                                </div>
                             </div>
                         </div>
 
@@ -124,9 +125,9 @@
                         <ResponsiveNavLink :href="route('discover.issues')" :active="route().current('discover.issues')">
                             Discover
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('donations.index')" :active="route().current('donations.index')">
+                        <div @click="displayLeaderBoardModal=true" :active="route().current('donations.index')">
                             Leaderboard
-                        </ResponsiveNavLink>
+                        </div>
                     </div>
 
                     <!-- Responsive Settings Options -->
@@ -151,9 +152,9 @@
                                 Profile
                             </ResponsiveNavLink>
 
-                            <ResponsiveNavLink v-if="$page.props.jetstream.hasApiFeatures" :href="route('api-tokens.index')" :active="route().current('api-tokens.index')">
+                            <!-- <ResponsiveNavLink v-if="$page.props.jetstream.hasApiFeatures" :href="route('api-tokens.index')" :active="route().current('api-tokens.index')">
                                 API Tokens
-                            </ResponsiveNavLink>
+                            </ResponsiveNavLink> -->
 
                             <ResponsiveNavLink @click="toggleDark()" as="button">
                                    <button
@@ -187,6 +188,15 @@
             </main>
         </div>
     </div>
+    <div class="fixed bottom-0 left-0 w-full text-white w-100 bg-openpledge-yellow p-2 text-center">
+        OpenPledge is in <b>BETA</b>. Things might get a little quirky! 🚀 All donations are fictional.
+    </div>
+    <DialogModal :show="displayLeaderBoardModal" @close="displayLeaderBoardModal = false">
+        <template #title>
+            <b>Oops!</b><br> The 'Leaderboard' button is still in the oven, baking to perfection. Stay tuned!" 🍪
+            <br> <b>#BetaVersion</b>
+        </template>
+    </DialogModal>
 </template>
 
 <script>
@@ -203,6 +213,7 @@
     import SearchCard from './Partials/SearchCard.vue';
     import Input from '@/Components/Input.vue';
     import axios from 'axios';
+    import DialogModal from '@/Components/DialogModal.vue';
 
     export default {
         props: {
@@ -219,7 +230,8 @@
             Icon,
             MenuCard,
             SearchCard,
-            Input
+            Input,
+            DialogModal
         },
         setup() {
             const isDark = useDark();
@@ -227,6 +239,7 @@
             const showingNavigationDropdown = ref(false);
             const searchQuery = ref('');
             const debouncedSearchQuery = useDebounce(searchQuery, 300);
+            const displayLeaderBoardModal = ref(false);
             const data = ref({
                 repositories: [],
                 issues: []
@@ -313,7 +326,8 @@
                 filteredData,
                 handleInput,
                 includeGitHubResults,
-                generateSearchItemHref
+                generateSearchItemHref,
+                displayLeaderBoardModal
             };
         }
     };

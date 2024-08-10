@@ -20,7 +20,7 @@
       <DropdownLink class="dark:text-platinum rounded-sm text-rich-black" v-if="$page.props.jetstream.hasApiFeatures" :href="route('api-tokens.index')">
         <Icon name="key" class="dark:stroke-platinum stroke-rich-black"></Icon> <span class="pl-2">API Tokens</span>
       </DropdownLink>
-      <DropdownLink href="#" class="dark:text-platinum rounded-sm text-rich-black" @click="connectStripe">
+      <DropdownLink href="#" class="dark:text-platinum rounded-sm text-rich-black" title="This does not work yet in beta!"> <!--@click="connectStripe"-->
         <Icon name="key" class="dark:stroke-platinum stroke-rich-black"></Icon> <span class="pl-2">Connect Stripe</span>
       </DropdownLink>
     </Col>
