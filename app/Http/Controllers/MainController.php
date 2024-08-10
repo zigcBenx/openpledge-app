@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Actions\Github\GetGithubUser;
 use App\Actions\Issue\GetIssues;
+use App\Models\Donation;
 use App\Models\Issue;
 use GrahamCampbell\GitHub\Facades\GitHub;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class MainController extends Controller
@@ -84,5 +86,15 @@ class MainController extends Controller
         }
 
         return $githubUsers;
+    }
+
+    public function getTopDonors()
+    {
+        return Donation::select('donor_id', DB::raw('SUM(amount) as total_donated'))
+            ->groupBy('donor_id')
+            ->orderByDesc('total_donated')
+            ->with('user')
+            ->take(5)
+            ->get();
     }
 }

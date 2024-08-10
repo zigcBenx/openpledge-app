@@ -5,7 +5,7 @@
         subtitle="A list of top users based on their activity"
     >
         <li v-for="contributor in contributors" :key="contributor.id" class="flex justify-between overflow-hidden py-1.5">
-            <UserListItem :user="contributor" />
+            <UserListItem :userImageUrl="contributor.avatar_url" :userName="contributor.name" />
             <span class="text-purple-heart font-medium text-xs">{{ contributor.issueCount }} issues</span>
         </li>
     </TopList>
