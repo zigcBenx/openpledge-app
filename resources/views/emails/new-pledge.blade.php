@@ -24,6 +24,7 @@
                                                     <p style="margin: 0; margin-bottom: 16px;">Thank you for your pledge on OpenPledge.io. Your support helps maintain and improve the open-source projects that we all use and love.</p>
                                                     <p style="margin: 0; margin-bottom: 16px;">We are committed to bridging the gap between open-source project maintainers and supporters. Your contribution ensures that developers are rewarded for their hard work and dedication.</p>
                                                     <p style="margin: 0;">We appreciate your support and look forward to continuing our journey together. You can view the issue you supported <a href="{{ $issueLink }}">here</a>.</p>
+                                                    <p><b>Note: Since we're still in Beta, all rewards are purely fictional for now—so no actual cash, just a lot of love and appreciation! 😉</b></p>
                                                     <p style="margin: 0; margin-top: 16px;">Sincerely,<br>The OpenPledge.io Team</p>
                                                 </div>
                                             </td>
