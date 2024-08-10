@@ -1,8 +1,8 @@
 <template>
   <div class="flex gap-3.5">
-    <Avatar :url="user.user_avatar" size="lg" />
+    <Avatar :url="user.user_avatar ?? user.avatar_url" size="lg" />
     <div class="flex flex-col">
-      <span class="text-mondo dark:text-seashell mb-1.5 text-sm">{{ user.username }}</span>
+      <span class="text-mondo dark:text-seashell mb-1.5 text-sm">{{ user.username ?? user.name }}</span>
       <div class="flex gap-1 flex-wrap">
         <Pill 
           v-for="lang in languages" 
@@ -25,7 +25,10 @@
       type: Object
     },
     languages: {
-      type: Array
+      type: Array,
+      default: () => {
+        return []
+      }
     }
   })
 </script>
