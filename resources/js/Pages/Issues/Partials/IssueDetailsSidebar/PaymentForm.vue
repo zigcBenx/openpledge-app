@@ -1,5 +1,5 @@
 <template>
-  <div class="dark:bg-charcoal-gray bg-seashell mt-4 rounded-md">
+  <div v-if="!isDisabled" class="dark:bg-charcoal-gray bg-seashell mt-4 rounded-md">
     <FormTypeButtons :type="form.type" @change="updateFormType" />
 
     <span v-if="form.type === 'solve'">
@@ -234,4 +234,6 @@ watch(isDark, (newVal, oldVal) => {
 const updateFormType = (value) => {
   form.type = value;
 }
+
+const isDisabled = computed(() => props.issue.state === 'closed');
 </script>

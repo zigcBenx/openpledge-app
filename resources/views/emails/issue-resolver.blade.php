@@ -24,6 +24,7 @@
                                                     <p style="margin: 0; margin-bottom: 16px;">Congratulations on resolving an issue on OpenPledge.io! Your hard work and dedication have made a significant impact.</p>
                                                     <p style="margin: 0; margin-bottom: 16px;">We are pleased to inform you that your reward will be paid out to you shortly. You can view the resolved issue <a href="{{ $issueLink }}">here</a>.</p>
                                                     <p style="margin: 0;">Thank you for your contribution to the open-source community. We look forward to your continued support and participation.</p>
+                                                    <p><b>Note: Since we're still in Beta, all rewards are purely fictional for now—so no actual cash, just a lot of love and appreciation! 😉</b></p>
                                                     <p style="margin: 0; margin-top: 16px;">Sincerely,<br>The OpenPledge.io Team</p>
                                                 </div>
                                             </td>

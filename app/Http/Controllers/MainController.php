@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Github\GetGithubUser;
 use App\Actions\Issue\GetIssues;
+use App\Models\Donation;
+use App\Models\Issue;
 use GrahamCampbell\GitHub\Facades\GitHub;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class MainController extends Controller
@@ -62,5 +66,35 @@ class MainController extends Controller
         return response()->json([
             'issues' => $paginatedIssues,
         ]);
-    }    
+    }
+
+    public function getTopContributors()
+    {
+        $topResolvers = Issue::where('state', 'closed')
+            ->whereNotNull('resolver_github_id')
+            ->selectRaw('resolver_github_id, COUNT(*) as issue_count')
+            ->groupBy('resolver_github_id')
+            ->orderByDesc('issue_count')
+            ->limit(5)
+            ->get();
+
+        $githubUsers = [];
+        foreach($topResolvers as $resolver) {
+            $githubUser = GetGithubUser::getByGithubId($resolver->resolver_github_id);
+            $githubUser['issueCount'] = $resolver->issue_count;
+            $githubUsers [] = $githubUser;
+        }
+
+        return $githubUsers;
+    }
+
+    public function getTopDonors()
+    {
+        return Donation::select('donor_id', DB::raw('SUM(amount) as total_donated'))
+            ->groupBy('donor_id')
+            ->orderByDesc('total_donated')
+            ->with('user')
+            ->take(5)
+            ->get();
+    }
 }

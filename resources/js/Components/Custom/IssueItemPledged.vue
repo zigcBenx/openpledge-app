@@ -90,15 +90,23 @@
             @click="addFavorites(issue)"
         />
     </td>
+    <DialogModal :show="displayFavoriteModal" @close="closeModal">
+        <template #title>
+            <b>Oops!</b><br> The 'Mark as Favorite' button is still in the oven, baking to perfection. Stay tuned!" 🍪
+            <br> <b>#BetaVersion</b>
+        </template>
+    </DialogModal>
 </template>
 
 <script setup>
     import dayjs from '@/libs/dayjs'
     import { useDark } from '@vueuse/core'
+    import { ref } from 'vue'
     import Icon from '@/Components/Icon.vue'
     import Avatar from '@/Components/Avatar.vue'
     import { Link } from '@inertiajs/vue3'
     import Pill from '@/Components/Form/Pill.vue'
+    import DialogModal from '../DialogModal.vue'
 
     const props = defineProps({
         issue: {
@@ -121,7 +129,12 @@
         return isFavorite ? 'stroke-ocean-green fill-ocean-green' : 'stroke-tundora hover:stroke-ocean-green';
     }
 
+    const displayFavoriteModal = ref(false)
     const addFavorites = (issue) => {
-        issue.favorite = !issue.favorite;
+        issue.favorite = !issue.favorite
+        displayFavoriteModal.value = true
     }
+    const closeModal = () => {
+        displayFavoriteModal.value = false
+    };
 </script>

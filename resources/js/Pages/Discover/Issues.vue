@@ -59,11 +59,7 @@
                 </Page>
                 </div>
                 <div class="w-[27.188rem] hidden xl:block">
-                <Sidebar 
-                    :trendingToday="trendingToday" 
-                    :topContributors="topContributors"
-                    :topDonators="topDonators"
-                />
+                <Sidebar />
             </div>
         </div>
         <Filters 
@@ -81,7 +77,7 @@
 <script setup>
   import { ref, onMounted, watch } from 'vue';
   import { parseQueryFilters, updateQueryFilters, prepareFiltersForQuery } from '../../utils/parseQuery.js';
-  import { languages as languagesList, labels as labelsList, trendingToday, topContributors, topDonators } from '../../assets/mockedData.js';
+  import { languages as languagesList, labels as labelsList } from '../../assets/mockedData.js';
   import { router } from '@inertiajs/vue3'
   import Page from '@/Components/Page.vue';
   import Filters from './Filters.vue';

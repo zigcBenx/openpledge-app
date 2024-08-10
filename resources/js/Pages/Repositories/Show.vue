@@ -79,7 +79,6 @@
                     <div>
                         <div class="w-full flex mt-8 items-center">
                             <p class="w-2/12 text-tundora dark:text-spun-pearl uppercase text-xs">About</p>
-                            <p class="w-10/12 text-oil dark:text-lavender-mist">Some lorem ipsum text for filling up space to fill the description part of repository. Make sure to fix this part.</p>
                         </div>
 
                         <div class="w-full flex mt-8 items-center">
@@ -124,36 +123,23 @@
                 </div>
             </div>
             <div class="flex-grow flex-shrink-0 w-4/12">
-                <GithubIssueConnect />
-                <TopList 
-                    containerClass="mt-6"
-                    title="Trending today" 
-                    subtitle="List of top donated open issues today"
-                >
-                    <li v-for="item in trendingToday" :key="item.id" class="flex justify-between overflow-hidden py-1.5">
-                        <span class="pl-1.5 border-l-2 rounded-sm dark:border-green border-ocean-green text-oil dark:text-lavender-mist text-xs">{{ item.title }}</span>
-                        <span class="text-mondo dark:text-lavender-mist font-medium text-xs">{{ item.repository }}</span>
-                        <span class="text-purple-heart font-medium text-xs">{{ item.donations }}</span>
-                    </li>
-                </TopList>
+                <GithubRepositoryConnect />
+                <TrendingToday />
             </div>
         </div>
     </AppLayout>
 </template>
 
 <script setup>
-import AppLayout from '@/Layouts/AppLayout.vue';
-import Icon from '@/Components/Icon.vue';
-import GithubIssueConnect from '@/Components/Custom/GithubIssueConnect.vue';
-import { ref } from 'vue';
-import Pill from '@/Components/Form/Pill.vue';
-import TopList from '@/Components/Custom/TopList.vue';
-import Button from '@/Components/Button.vue';
-import {
-    trendingToday,
-} from '../../assets/mockedData.js'
+import AppLayout from '@/Layouts/AppLayout.vue'
+import Icon from '@/Components/Icon.vue'
+import GithubRepositoryConnect from '@/Components/Custom/GithubRepositoryConnect.vue'
+import { ref } from 'vue'
+import Pill from '@/Components/Form/Pill.vue'
+import Button from '@/Components/Button.vue'
 import IssuesTable from '@/Components/Custom/IssuesTable.vue'
 import DialogModal from '@/Components/DialogModal.vue'
+import TrendingToday from '@/Components/Custom/TrendingToday.vue'
 
 const props = defineProps
 ({

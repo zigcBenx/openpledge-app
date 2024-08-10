@@ -2,6 +2,7 @@
     import { ref } from 'vue';
     import Pill from '@/Components/Form/Pill.vue';
     import dayjs from '../../../libs/dayjs.js';
+    import { Link } from '@inertiajs/vue3';
 
     defineProps({
         class: {
@@ -40,15 +41,19 @@
       </div>
       <div class="flex mt-8">
           <span class="dark:text-spun-pearl text-tundora text-xs capitalize min-w-[10.75rem]">LAST CHANGES</span> 
-          <span class='dark:text-lavender-mist text-oil text-sm flex gap-1'>{{ dayjs(issue.changed_at).format('MMMM DD YYYY') }}<strong class="font-medium text-mondo dark:text-seashell">userx</strong></span>
+          <span class='dark:text-lavender-mist text-oil text-sm flex gap-1'>{{ dayjs(issue.changed_at).format('MMMM DD YYYY') }}</span>
       </div>
       <div class="flex mt-8">
           <span class="dark:text-spun-pearl text-tundora text-xs capitalize min-w-[10.75rem]">REPOSITORY</span> 
-          <span class='dark:text-seashell text-mondo text-sm font-medium'>{{issue.repository.title}}</span>
+          <span class='dark:text-seashell text-mondo text-sm font-medium'>
+            <Link :href="route('repositories.show',{ githubUser: issue.repository.title.split('/')[0], repository: issue.repository.title.split('/')[1] })">
+                {{ issue.repository.title }}
+            </Link>
+        </span>
       </div>
       <div class="flex mt-8">
           <span class="dark:text-spun-pearl text-tundora text-xs capitalize min-w-[10.75rem]">LANGUAGES</span> 
-          <div class='flex gap-1'>
+          <div class='flex gap-1' title="Beta alert: Not working yet ;)">
               <Pill 
                 color="secondary"
                 size='sm'
