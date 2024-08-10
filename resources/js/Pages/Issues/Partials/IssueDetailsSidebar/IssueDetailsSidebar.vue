@@ -15,6 +15,6 @@
 <template>
   <div class="mb-10">
     <PledgesHistory :issue="issue" />
-    <PaymentForm :issue="issue" :stripePublicKey="stripePublicKey" />
+    <PaymentForm v-if="issue.state !== 'closed'" :issue="issue" :stripePublicKey="stripePublicKey" />
   </div>
 </template>
