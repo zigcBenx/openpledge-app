@@ -44,7 +44,7 @@
                     <div class="mb-5">Pledge Range</div>
                     <RangeSlider
                         @input="handleRangeChange"
-                        :value="filters.find(item => item.key === keys.range)?.value ? Object.entries(filters.find(item => item.key === keys.range).value).map(entry => entry[1]) : [0,1000]"
+                        :value="filters.find(item => item.key === keys.range)?.value ? Object.entries(filters.find(item => item.key === keys.range).value).map(entry => entry[1]) : [0,10000]"
                     />
                 </div>
                 <div>

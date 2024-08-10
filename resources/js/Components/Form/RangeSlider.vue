@@ -5,7 +5,7 @@
       <div class="w-9/12 mx-4">
         <Slider
           v-model="rangeValues"
-          :max="1000"
+          :max="10000"
           :min="0"
         />
       </div>
@@ -19,7 +19,7 @@
   const props = defineProps({
     max: {
       type: Number,
-      default: 1000
+      default: 10000
     },
     min: {
       type: Number,
@@ -27,7 +27,7 @@
     },
     value: {
       type: Array,
-      default: [0,1000]
+      default: [0,10000]
     }
   });
   const rangeValues = ref(props.value);
