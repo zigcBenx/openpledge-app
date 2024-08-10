@@ -45,4 +45,20 @@ class IssueController extends Controller
         $issue = GetIssueById::get($id);
         return $issue->donations;
     }
+
+    public function getTrendingToday()
+    {
+        return Issue::where('state', 'open')
+        ->whereHas('donations', function ($query) {
+            $query->whereDate('created_at', now()->toDateString());
+        })
+        ->with('donations', 'repository:id,title')
+        ->get()
+        ->map(function($issue) {
+            $issue->today_donations_sum = $issue->donations->sum('amount');
+            return $issue;
+        })
+        ->sortByDesc('today_donations_sum')
+        ->take(5);
+    }
 }

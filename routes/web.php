@@ -88,6 +88,11 @@ Route::middleware([
 
     // Search
     Route::get('/search', [SearchController::class, 'getSearchResults'])->name('search');
+
+
+    // top lists endpoints
+    Route::get('/trending-today-issues', [IssueController::class, 'getTrendingToday'])->name('trending-today-issues');
+    Route::get('/top-contributors', [Maincontroller::class, 'getTopContributors'])->name('top-contributors');
 });
 
 Route::get('/auth/github/callback', [GithubController::class, 'callback'])->name('callback');
