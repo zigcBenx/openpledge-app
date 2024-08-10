@@ -17,16 +17,11 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { ref, defineProps } from 'vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
-import DialogModal from '@/Components/DialogModal.vue';
 import IssueTopDetails from './Partials/IssueTopDetails.vue';
 import IssueDetails from './Partials/IssueDetails.vue';
 import Activity from './Partials/Activity/Activity.vue';
 import IssueDetailsSidebar from './Partials/IssueDetailsSidebar/IssueDetailsSidebar.vue';
-import MoneyInput from '@/Components/MoneyInput.vue';
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
-import StripePayment from '@/Components/Custom/StripePayment.vue';
 import { issues } from '../../assets/mockedData.js'
 
 const props = defineProps({
@@ -43,7 +38,7 @@ const props = defineProps({
 const issueState = ref(issues[0]);
 const breadcrumbsData = [{
     title: 'Discover',
-    url: '/issues'
+    url: '/discover/issues'
 }, {
     title: props.issue?.title,
     url: `/issues/${props.issue.id}`
