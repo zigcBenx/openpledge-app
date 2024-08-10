@@ -16,22 +16,22 @@ import { ref } from 'vue';
       <div class="flex flex-col gap-2 p-4">
         <p class="dark:text-tundora text-spun-pearl">1</p>
         <div>
-          <p class="dark:text-lavender-mist text-oil">Step One</p>
-          <p class="dark:text-spun-pearl text-tundora text-xs">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+          <p class="dark:text-lavender-mist text-oil">Fork</p>
+          <p class="dark:text-spun-pearl text-tundora text-xs">Fork the repository to your own GitHub account.</p>
         </div>
       </div>
       <div class="flex flex-col gap-2 p-4">
         <p class="dark:text-tundora text-spun-pearl">2</p>
         <div>
-          <p class="dark:text-lavender-mist text-oil">Step Two</p>
-          <p class="dark:text-spun-pearl text-tundora text-xs">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+          <p class="dark:text-lavender-mist text-oil">Branch</p>
+          <p class="dark:text-spun-pearl text-tundora text-xs">Create a new branch in your forked repository and check it out locally.</p>
         </div>
       </div>
       <div class="flex flex-col gap-2 p-4">
         <p class="dark:text-tundora text-spun-pearl">3</p>
         <div>
-          <p class="dark:text-lavender-mist text-oil">Step Three</p>
-          <p class="dark:text-spun-pearl text-tundora text-xs">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+          <p class="dark:text-lavender-mist text-oil">Code & push</p>
+          <p class="dark:text-spun-pearl text-tundora text-xs">Make your changes or additions to the code, then submit a pull request to the original repository.</p>
         </div>
       </div>
     </div>

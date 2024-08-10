@@ -79,7 +79,6 @@
                     <div>
                         <div class="w-full flex mt-8 items-center">
                             <p class="w-2/12 text-tundora dark:text-spun-pearl uppercase text-xs">About</p>
-                            <p class="w-10/12 text-oil dark:text-lavender-mist">Some lorem ipsum text for filling up space to fill the description part of repository. Make sure to fix this part.</p>
                         </div>
 
                         <div class="w-full flex mt-8 items-center">
