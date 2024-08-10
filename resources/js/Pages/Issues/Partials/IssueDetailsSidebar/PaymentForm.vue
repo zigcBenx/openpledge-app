@@ -9,7 +9,7 @@
     <PledgeMethod :pledgeMethod="form.pledgeMethod" @onChange="handleMethodChange" />
 
     <div>
-      <div class="p-6 flex flex-col gap-6">
+      <div :class="{ 'opacity-60 pointer-events-none': loading }" class="p-6 flex flex-col gap-6">
         <div v-if="form.pledgeMethod === PAYMENT_FORM_METHODS.EXPIRE_DATE" class="flex gap-2">
           <label class="dark:text-lavender-mist text-oil text-sm flex-grow">
             <p class="mb-2.5">Pledge expiration</p>
@@ -70,7 +70,8 @@
             <div id="payment-element">
                 <!-- Stripe will create form elements here -->
             </div>
-            <Button class="mt-8" :plain="true" size="lg" color="primary" @click="handleFormSubmit()">Pledge This Issue</Button>
+            <Button :disabled="loading" class="mt-8" :plain="true" size="lg" color="primary" @click="handleFormSubmit()">Pledge This Issue</Button>
+            <small v-if="loading" class="text-white">Payment is beeing processed...</small>
           </form>
         </div>
 
@@ -190,8 +191,9 @@ const isFormValid = computed(() => {
   return getIsValidInfiniteForm();
 });
 
+const loading = ref(false)
 const handleFormSubmit = async () => {
-
+  loading.value = true
   form.issue_id = props.issue.id;
   form.paymentId = paymentId.value;
 
@@ -220,6 +222,9 @@ const handleFormSubmit = async () => {
           }
         }).catch(error => {
           form.errors = error.response?.data?.errors;
+        })
+        .finally(() => {
+          loading.value = false
         });
       }
   });
