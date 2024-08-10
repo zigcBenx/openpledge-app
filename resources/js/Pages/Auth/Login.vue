@@ -2,14 +2,13 @@
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import AuthenticationCard from '@/Components/AuthenticationCard.vue';
 import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
-import Checkbox from '@/Components/Checkbox.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import Button from '@/Components/Button.vue';
 import ApplicationMark from '@/Components/ApplicationMark.vue';
 import { useDark } from '@vueuse/core';
+import { ref } from 'vue'
 
 const isDark = useDark();
 
@@ -23,6 +22,8 @@ const form = useForm({
   password: '',
   remember: true,
 });
+
+const loading = ref(false)
 
 const submit = () => {
   form.transform(data => ({
@@ -51,9 +52,16 @@ const submit = () => {
     <p class="text-xl mb-6 dark:text-whitish-gray">Log in</p>
     <div class="flex items-center justify-end mt-4">
       <a href="/auth/github"
+         @click="loading = true"
          class="flex items-center justify-center w-full py-5 h-9 rounded-full font-medium text-sm focus:outline-none focus:ring-0 transition duration-150 ease-in-out dark:bg-turquoise bg-dark-green text-white dark:text-black dark:text-dark-black dark:hover:border-green">
         <i class="fa-brands fa-github mr-1 text-lg"></i>
         <p class="mt-1">Login with GitHub</p>
+        <template v-if="loading">
+            <svg class="animate-spin" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle opacity="0.2" cx="12" cy="12" r="6" stroke="#FCFCFD" stroke-width="2"/>
+              <path d="M18 12C18 8.68629 15.3137 6 12 6" stroke="#FCFCFD" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </template>
       </a>
     </div>
 

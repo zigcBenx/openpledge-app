@@ -70,7 +70,7 @@
             <div id="payment-element">
                 <!-- Stripe will create form elements here -->
             </div>
-            <Button :disabled="loading" class="mt-8" :plain="true" size="lg" color="primary" @click="handleFormSubmit()">Pledge This Issue</Button>
+            <Button :loading="loading" class="mt-8" :plain="true" size="lg" color="primary" @click="handleFormSubmit()">Pledge This Issue</Button>
             <small v-if="loading" class="text-white">Payment is beeing processed...</small>
           </form>
         </div>
