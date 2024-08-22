@@ -8,8 +8,8 @@ class GetRepositoryByTitle
 {
     public static function get($title)
     {
-        return Repository::with(['programmingLanguages:id,name','issues' => function ($query) {
-            $query->with('repository.programmingLanguages:id,name')
+        $repository = Repository::with(['programmingLanguages:id,name', 'userFavorite' ,'issues' => function ($query) {
+            $query->with('repository.programmingLanguages:id,name', 'userFavorite')
                 ->withSum('donations', 'amount')
                 ->whereHas('donations', function ($query) {
                     $query->where('amount', '>', 0);
@@ -20,5 +20,15 @@ class GetRepositoryByTitle
             });
         }])
         ->where('title', $title)->first();
+
+        if ($repository) {
+            $repository->issues->each(function ($issue) {
+                $issue->favorite = $issue->userFavorite->isNotEmpty();
+            });
+
+            $repository->favorite = $repository->userFavorite->isNotEmpty();
+        }
+
+        return $repository;
     }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Repository extends Model
 {
@@ -46,5 +47,11 @@ class Repository extends Model
     public function githubInstallation()
     {
         return $this->belongsTo(GitHubInstallation::class, 'github_installation_id', 'installation_id');
+    }
+
+    public function userFavorite()
+    {
+        return $this->morphMany(Favorite::class, 'favorable')
+            ->where('user_id', Auth::id());
     }
 }

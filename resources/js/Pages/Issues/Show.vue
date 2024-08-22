@@ -16,13 +16,13 @@
 
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { ref, defineProps } from 'vue';
+import { defineProps } from 'vue';
 import IssueTopDetails from './Partials/IssueTopDetails.vue';
 import IssueDetails from './Partials/IssueDetails.vue';
 import Activity from './Partials/Activity/Activity.vue';
 import IssueDetailsSidebar from './Partials/IssueDetailsSidebar/IssueDetailsSidebar.vue';
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
-import { issues } from '../../assets/mockedData.js'
+import { useToast } from "vue-toastification";
 
 const props = defineProps({
     issue: {
@@ -35,7 +35,6 @@ const props = defineProps({
     stripePublicKey: String
 })
 
-const issueState = ref(issues[0]);
 const breadcrumbsData = [{
     title: 'Discover',
     url: '/discover/issues'
@@ -45,6 +44,18 @@ const breadcrumbsData = [{
 }];
 
 function handleFavoriteClick() {
-    issueState.value.favorite = !issueState.value.favorite;
+    const toast = useToast()
+    axios.post(route('favorites.store'), {
+        favorable_id: props.issue.id,
+        favorable_type: 'Issue',
+    })
+    .then(response => {
+        toast.success(response.data.message)
+        props.issue.favorite = !props.issue.favorite
+    })
+    .catch(error => {
+        toast.error('Something went wrong!')
+        console.error(error);
+    });
 }
 </script>

@@ -11,6 +11,7 @@ use Laravel\Jetstream\Agent;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use App\Actions\Repository\GetInstalledRepositories;
+use App\Actions\Favorite\GetFavorites;
 
 /**
  * NOTE: Most of this code was copy pasted from vendor\Laravel\Jetstream\Http\Controllers\Inertia\UserProfileController.php
@@ -82,5 +83,10 @@ class ProfileController extends Controller
     public function getInstalledRepositories()
     {
         return GetInstalledRepositories::get();
+    }
+
+    public function getFavorites()
+    {
+        return GetFavorites::get();
     }
 }

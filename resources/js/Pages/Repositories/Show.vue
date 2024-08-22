@@ -27,7 +27,11 @@
                             <Icon 
                                 v-else
                                 name="star" 
-                                class="dark:stroke-mondo dark:fill-mondo"
+                                :class="['stroke-tundora dark:hover:stroke-green', {
+                                'dark:fill-green dark:stroke-green fill-tundora': repository.favorite
+                                }]" 
+                                size="lg"
+                                @click="addFavorites(repository)"
                             />
 
                             <!-- Contact Repository Owner Modal -->
@@ -140,6 +144,7 @@ import Button from '@/Components/Button.vue'
 import IssuesTable from '@/Components/Custom/IssuesTable.vue'
 import DialogModal from '@/Components/DialogModal.vue'
 import TrendingToday from '@/Components/Custom/TrendingToday.vue'
+import { useToast } from "vue-toastification";
 
 const props = defineProps
 ({
@@ -157,4 +162,20 @@ const githubAppInstallationUrl = import.meta.env.VITE_GITHUB_APP_INSTALLATION_UR
 
 const showConnectRepositoryModal = ref(false)
 const showContactOwnerModal = ref(false)
+
+const addFavorites = (repository) => {
+    const toast = useToast()
+    axios.post(route('favorites.store'), {
+        favorable_id: repository.id,
+        favorable_type: 'Repository',
+    })
+    .then(response => {
+        toast.success(response.data.message)
+        repository.favorite = !repository.favorite
+    })
+    .catch(error => {
+        toast.error('Something went wrong!')
+        console.error(error);
+    });
+}
 </script>

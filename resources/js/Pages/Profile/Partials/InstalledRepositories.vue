@@ -17,6 +17,7 @@
                         </li>
                     </ul>
                 </div>
+                <SkeletonLoader v-else-if="isLoading" v-for="n in 5" :key="n" class="w-full h-5 mb-5" />
                 <p v-else class="text-gray-500 text-center">You have no installed repositories</p>
             </div>
         </div>
@@ -27,8 +28,10 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { Link } from '@inertiajs/vue3';
+import SkeletonLoader from '@/Components/SkeletonLoader.vue';
 
 const installedRepositories = ref([]);
+const isLoading = ref(true);
 
 const fetchRepositories = async () => {
     try {
@@ -36,6 +39,8 @@ const fetchRepositories = async () => {
         installedRepositories.value = response.data;
     } catch (error) {
         console.error('Failed to fetch repositories:', error);
+    } finally {
+        isLoading.value = false
     }
 };
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CampaignController;
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\GithubController;
 use App\Http\Controllers\IssueController;
 use App\Http\Controllers\SearchController;
@@ -77,6 +78,12 @@ Route::middleware([
     
     // Get installed repositories from currently authenticated user
     Route::get('/user/repositories', [ProfileController::class, 'getInstalledRepositories'])->name('profile.repositories');
+
+    // Get favorites from currently authenticated user
+    Route::get('/user/favorites', [ProfileController::class, 'getFavorites'])->name('profile.favorites');
+
+    // Store favorites
+    Route::post('/favorites', [FavoriteController::class, 'store'])->name('favorites.store');
 
     Route::post('/subscribe-user', [SubscriberController::class, 'subscribeUser']);
     Route::post('/stripe-connect', [StripeConnectController::class, 'handleStripeConnectCallback'])->name('stripe-connect');

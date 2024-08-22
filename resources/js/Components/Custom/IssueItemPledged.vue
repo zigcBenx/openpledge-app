@@ -107,6 +107,7 @@
     import { Link } from '@inertiajs/vue3'
     import Pill from '@/Components/Form/Pill.vue'
     import DialogModal from '../DialogModal.vue'
+    import { useToast } from "vue-toastification";
 
     const props = defineProps({
         issue: {
@@ -131,8 +132,19 @@
 
     const displayFavoriteModal = ref(false)
     const addFavorites = (issue) => {
-        issue.favorite = !issue.favorite
-        displayFavoriteModal.value = true
+        const toast = useToast()
+        axios.post(route('favorites.store'), {
+            favorable_id: issue.id,
+            favorable_type: 'Issue',
+        })
+        .then(response => {
+            toast.success(response.data.message)
+            issue.favorite = !issue.favorite;
+        })
+        .catch(error => {
+            toast.error('Something went wrong!')
+            console.error(error);
+        });
     }
     const closeModal = () => {
         displayFavoriteModal.value = false

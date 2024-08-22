@@ -5,6 +5,8 @@ import Graphs from './Partials/Graphs.vue';
 import IssueSummary from './Partials/IssueSummary.vue';
 import ProfileCard from './Partials/ProfileCard.vue';
 import InstalledRepositories from './Partials/InstalledRepositories.vue';
+import Favorites from './Partials/Favorites.vue';
+
 defineProps({});
 </script>
 
@@ -33,7 +35,7 @@ defineProps({});
                     <InstalledRepositories />
                 </div>
                 <div class="mt-4">
-                    <IssueSummary />
+                    <Favorites />
                 </div>
                 <div class="mt-4">
                     <IssueSummary />

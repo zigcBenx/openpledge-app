@@ -21,7 +21,7 @@ class GetIssues
         $today = Carbon::now()->toDateString();
 
         $query = Issue::query()
-            ->with('programmingLanguages', 'repository')
+            ->with('programmingLanguages', 'repository', 'userFavorite')
             ->withSum([
                 'donations' => function ($query) use ($today) {
                     $query->where(function ($query) use ($today) {
@@ -60,7 +60,13 @@ class GetIssues
 
         $query = $query->skip($offset)->take($limit);
 
-        return $query->get();
+        $issues = $query->get();
+
+        $issues->each(function ($issue) {
+            $issue->favorite = $issue->userFavorite->isNotEmpty();
+        });
+
+        return $issues;
     }
 
     public static function getRepositoryConnectedIssues($neededIssues, $existingIssues)
