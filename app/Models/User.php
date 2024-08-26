@@ -81,4 +81,9 @@ class User extends Authenticatable
     {
         return $this->githubInstallations()->exists();
     }
+
+    public function active_issues()
+    {
+        return $this->belongsToMany(Issue::class, 'user_solve_issue');
+    }
 }
