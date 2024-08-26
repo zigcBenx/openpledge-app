@@ -67,6 +67,8 @@ Route::middleware([
 
     Route::get('issues/{issue}/donations', [IssueController::class, 'donations'])->name('issues.donations');
 
+    Route::post('issues/solve', [IssueController::class, 'solve'])->name('issues.solve');
+
     Route::get('/github/repositories', [GithubController::class, 'getRepositories'])->name('github-repositories-get');
     Route::get('/github/issues', [GithubController::class, 'getIssues'])->name('github-issues-get');
 

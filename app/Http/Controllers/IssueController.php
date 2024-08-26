@@ -6,6 +6,7 @@ use App\Actions\Github\GetGithubUser;
 use App\Actions\Issue\CreateNewIssue;
 use App\Actions\Issue\GetIssueActivity;
 use App\Actions\Issue\GetIssueById;
+use App\Actions\Issue\SolveIssue;
 use App\Models\Issue;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -44,6 +45,11 @@ class IssueController extends Controller
     {
         $issue = GetIssueById::get($id);
         return $issue->donations;
+    }
+
+    public function solve(Request $request)
+    {
+        return SolveIssue::solve($request->input('issue_id'));
     }
 
     public function getTrendingToday()
