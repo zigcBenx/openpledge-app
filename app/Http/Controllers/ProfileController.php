@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use App\Actions\Repository\GetInstalledRepositories;
 use App\Actions\Favorite\GetFavorites;
+use App\Actions\Issue\GetUsersActiveIssues;
+use App\Actions\Issue\GetUsersFinishedIssues;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * NOTE: Most of this code was copy pasted from vendor\Laravel\Jetstream\Http\Controllers\Inertia\UserProfileController.php
@@ -88,5 +91,18 @@ class ProfileController extends Controller
     public function getFavorites()
     {
         return GetFavorites::get();
+    }
+
+    public function getAuthUsersActiveIssues()
+    {
+        $userId = Auth::id();
+        return GetUsersActiveIssues::get($userId);
+    }
+
+    public function getAuthUsersFinishedIssues()
+    {
+        $user = Auth::user();
+        $githubId = $user->github_id;
+        return GetUsersFinishedIssues::get($githubId);
     }
 }

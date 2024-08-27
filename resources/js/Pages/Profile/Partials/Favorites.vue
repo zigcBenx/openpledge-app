@@ -39,7 +39,7 @@ const fetchFavorites = async () => {
         const response = await axios.get(route('profile.favorites'));
         ({ issues: issues.value, repositories: repositories.value } = response.data);
     } catch (error) {
-        console.error('Failed to fetch repositories:', error);
+        console.error('Failed to fetch favorites:', error);
     } finally {
         isLoading.value = false
     }

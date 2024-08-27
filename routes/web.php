@@ -77,15 +77,18 @@ Route::middleware([
     // override of profile route
     Route::get('/user/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/user/profile/settings', [ProfileController::class, 'settings'])->name('profile.settings');
-    
-    // Get installed repositories from currently authenticated user
-    Route::get('/user/repositories', [ProfileController::class, 'getInstalledRepositories'])->name('profile.repositories');
 
     // Get favorites from currently authenticated user
     Route::get('/user/favorites', [ProfileController::class, 'getFavorites'])->name('profile.favorites');
 
     // Store favorites
     Route::post('/favorites', [FavoriteController::class, 'store'])->name('favorites.store');
+
+    // Get active issues from currently authenticated user
+    Route::get('/user/actives', [ProfileController::class, 'getAuthUsersActiveIssues'])->name('profile.actives');
+
+    // Get finished issues from currently authenticated user
+    Route::get('/user/finished', [ProfileController::class, 'getAuthUsersFinishedIssues'])->name('profile.finished');
 
     Route::post('/subscribe-user', [SubscriberController::class, 'subscribeUser']);
     Route::post('/stripe-connect', [StripeConnectController::class, 'handleStripeConnectCallback'])->name('stripe-connect');

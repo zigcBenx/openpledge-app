@@ -60,4 +60,9 @@ class Issue extends Model
 
         return $user->active_issues()->where('issue_id', $this->id)->exists();
     }
+
+    public function resolvers()
+    {
+        return $this->belongsToMany(User::class, 'user_solve_issue');
+    }
 }
