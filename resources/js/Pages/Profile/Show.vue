@@ -35,7 +35,7 @@ defineProps({});
                         title="Work In Progress"
                         routeName="profile.actives"
                         noIssuesMessage="You have no active issues"
-                        viewAllLink="#"
+                        :viewAllLink="route('profile.actives-show')"
                     />
                 </div>
                 <div class="mt-4">
@@ -46,7 +46,7 @@ defineProps({});
                         title="Finished"
                         routeName="profile.finished"
                         noIssuesMessage="You have no finished issues"
-                        viewAllLink="#"
+                        :viewAllLink="route('profile.finished-show')"
                     />
                 </div>
             </div>

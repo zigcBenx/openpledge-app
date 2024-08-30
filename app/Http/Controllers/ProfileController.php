@@ -93,10 +93,65 @@ class ProfileController extends Controller
         return GetFavorites::get();
     }
 
+    public function showAuthUsersFavorites(Request $request)
+    {
+        $page = $request->input('page', 1);
+        $showIssues = filter_var($request->input('showIssues', true), FILTER_VALIDATE_BOOLEAN);
+
+        $favorites = GetFavorites::getPaginated($page, $showIssues);
+
+        if ($page === 1) {
+            return Inertia::render('Profile/ShowAll', [
+                'issues' => $showIssues ? $favorites->items() : [],
+                'repositories' => !$showIssues ? $favorites->items() : [],
+                'noIssuesMessage' => 'You have no favorites',
+                'title' => 'Favorites',
+                'description' => "Issues and repositories you’ve claimed as your own...",
+                'routeName' => 'profile.favorites-show',
+                'current_page' => $favorites->currentPage(),
+                'isFavoritesPage' => true,
+                'last_page' => $favorites->lastPage(),
+            ]);
+        }
+
+        return response()->json([
+            'issues' => $showIssues ? $favorites->items() : [],
+            'repositories' => !$showIssues ? $favorites->items() : [],
+            'current_page' => $favorites->currentPage(),
+            'last_page' => $favorites->lastPage(),
+        ]);
+    }
+
     public function getAuthUsersActiveIssues()
     {
         $userId = Auth::id();
         return GetUsersActiveIssues::get($userId);
+    }
+
+    public function showAuthUsersActiveIssues(Request $request)
+    {
+        $userId = Auth::id();
+        $page = $request->input('page', 1);
+
+        $issues = GetUsersActiveIssues::getPaginated($userId, $page);
+
+        if ($page === 1) {
+            return Inertia::render('Profile/ShowAll', [
+                'issues' => $issues->items(),
+                'noIssuesMessage' => 'You have no active issues',
+                'title' => 'Work In Progress',
+                'description' => "Issues you're currently wrestling...",
+                'routeName' => 'profile.actives-show',
+                'current_page' => $issues->currentPage(),
+                'last_page' => $issues->lastPage(),
+            ]);
+        }
+
+        return response()->json([
+            'issues' => $issues->items(),
+            'current_page' => $issues->currentPage(),
+            'last_page' => $issues->lastPage(),
+        ]);
     }
 
     public function getAuthUsersFinishedIssues()
@@ -104,5 +159,32 @@ class ProfileController extends Controller
         $user = Auth::user();
         $githubId = $user->github_id;
         return GetUsersFinishedIssues::get($githubId);
+    }
+
+    public function showAuthUsersFinishedIssues(Request $request)
+    {
+        $user = Auth::user();
+        $githubId = $user->github_id;
+        $page = $request->input('page', 1);
+
+        $issues = GetUsersFinishedIssues::getPaginated($githubId, $page);
+
+        if ($page === 1) {
+            return Inertia::render('Profile/ShowAll', [
+                'issues' => $issues->items(),
+                'noIssuesMessage' => 'You have no finished issues',
+                'title' => 'Finished',
+                'description' => "Issues you've tamed and sent to bug heaven...",
+                'routeName' => 'profile.finished-show',
+                'current_page' => $issues->currentPage(),
+                'last_page' => $issues->lastPage(),
+            ]);
+        }
+
+        return response()->json([
+            'issues' => $issues->items(),
+            'current_page' => $issues->currentPage(),
+            'last_page' => $issues->lastPage(),
+        ]);
     }
 }

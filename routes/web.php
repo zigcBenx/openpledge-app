@@ -84,11 +84,20 @@ Route::middleware([
     // Store favorites
     Route::post('/favorites', [FavoriteController::class, 'store'])->name('favorites.store');
 
+    // All favorites page for currently authenticated user
+    Route::get('/user/profile/favorites', [ProfileController::class, 'showAuthUsersFavorites'])->name('profile.favorites-show');
+
     // Get active issues from currently authenticated user
     Route::get('/user/actives', [ProfileController::class, 'getAuthUsersActiveIssues'])->name('profile.actives');
 
+    // All active issues page for currently authenticated user
+    Route::get('/user/profile/actives', [ProfileController::class, 'showAuthUsersActiveIssues'])->name('profile.actives-show');
+
     // Get finished issues from currently authenticated user
     Route::get('/user/finished', [ProfileController::class, 'getAuthUsersFinishedIssues'])->name('profile.finished');
+
+    // All finished issues page for currently authenticated user
+    Route::get('/user/profile/finished', [ProfileController::class, 'showAuthUsersFinishedIssues'])->name('profile.finished-show');
 
     Route::post('/subscribe-user', [SubscriberController::class, 'subscribeUser']);
     Route::post('/stripe-connect', [StripeConnectController::class, 'handleStripeConnectCallback'])->name('stripe-connect');
