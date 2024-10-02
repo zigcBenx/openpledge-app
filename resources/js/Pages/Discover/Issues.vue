@@ -4,7 +4,7 @@
         </template>
         <div class="flex gap-10">
             <div class="flex flex-grow">
-                <Page title="Issues" class="pb-10" description="Search issues you are interested in...">
+                <Page title="Issues" :class="['pb-10', { 'blur-sm': isUserIntentQuizModalVisible }]" description="Search issues you are interested in...">
                     <template #actions>
                         <button @click="displayFilterModal = true" class="justify-center hover:bg-mint-green text-dark-green flex dark:text-green text-dark-green p-1.5 dark:hover:bg-tropical-rain-forest dark:hover:text-green rounded-full py-3 px-3.5">
                             Filters {{ queryFilters.length ? '('+queryFilters.length+')' : '' }}
@@ -72,6 +72,24 @@
             :removedFilters="removedFilters"
             :keys="keys"
         />
+        <Modal :show="isUserIntentQuizModalVisible" :closeable="false">
+            <div class="p-6">
+                <h2 class="text-xl font-bold leading-none text-gray-900 dark:text-white">You are here to:</h2>
+                <div class="mt-4 flex flex-col space-y-2">
+                    <label v-for="userIntentOption in userIntentQuizOptions" :key="userIntentOption.value" class="flex items-center">
+                        <Checkbox 
+                            v-on:change="userIntentQuizSubmission = $event.target.value" 
+                            :checked="userIntentQuizSubmission === userIntentOption.value" 
+                            :value="userIntentOption.value" 
+                        />
+                        <span class="pl-2 leading-none text-gray-900 dark:text-white">{{ userIntentOption.label }}</span>
+                    </label>
+                </div>
+                <Button class="mt-9 px-8 h-11" color="primary" @click="handleUserIntentQuizSubmission" :disabled="!userIntentQuizSubmission">
+                    Submit
+                </Button>
+            </div>
+        </Modal>
     </AppLayout>
 </template>
 <script setup>
@@ -88,13 +106,31 @@
   import Sidebar from './Partials/Sidebar.vue';
   import { useElementSize } from '@vueuse/core';
   import TableRowSkeleton from '@/Components/Custom/TableRowSkeleton.vue';
+  import Checkbox from '@/Components/Checkbox.vue';
+  import Modal from '@/Components/Modal.vue';
+  import Button from '@/Components/Button.vue';
+  import { useToast } from "vue-toastification";
 
   const props = defineProps
     ({
-        issues: Array
+        issues: Array,
+        userIsContributor: Boolean,
+        userIsResolver: Boolean
     });
 
   const keys = { labels: 'labels', languages: 'languages', range: 'range', date: 'date', storageDiscoverKey: 'discover' };
+
+  const UserIntent = Object.freeze({
+    CONTRIBUTOR: 'userIsContributor',
+    PLEDGER: 'userIsPledger',
+    BOTH: 'userIsBoth',
+  });
+
+  const userIntentQuizOptions = [
+    { value: UserIntent.CONTRIBUTOR, label: "Contribute and earn" },
+    { value: UserIntent.PLEDGER, label: "Pledge money to open source" },
+    { value: UserIntent.BOTH, label: "Both" }
+  ];
 
   const labels = ref(labelsList);
   const languages = ref(languagesList);
@@ -106,7 +142,8 @@
   const count = ref(0);
   const loading = ref(false);
   const page = ref(1);
-
+  const isUserIntentQuizModalVisible = ref(!props.userIsContributor && !props.userIsResolver);
+  const userIntentQuizSubmission = ref(null); // Possible values : UserIntent.CONTRIBUTOR, UserIntent.PLEDGER, UserIntent.BOTH
   const el = ref(null)  
   const { width } = useElementSize(el);
   const hiddenFilters = ref(true);
@@ -210,4 +247,22 @@
     }
     return false;
   }
+
+  if (isUserIntentQuizModalVisible.value) {
+    document.body.style.overflow = 'hidden'; // Disable scrolling
+  }
+
+  const handleUserIntentQuizSubmission = () => {
+    const toast = useToast();
+    axios.post(route('user.intent-quiz'), { userIntentQuizSubmission: userIntentQuizSubmission.value })
+    .then(response => {
+        toast.success(response.data.message)
+        isUserIntentQuizModalVisible.value = false;
+        document.body.style.overflow = null; // Restore scrolling
+    })
+    .catch(error => {
+        toast.error('Something went wrong!')
+        console.error(error);
+    });
+  };
 </script>

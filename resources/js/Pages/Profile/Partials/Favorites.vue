@@ -4,7 +4,7 @@
             <div class="w-full p-4 border border-gray-200 rounded-lg shadow sm:p-8 dark:border-gray-700">
                 <div class="flex items-center justify-between mb-8">
                     <h5 class="text-xl leading-none text-gray-900 dark:text-white">Favorites</h5>
-                    <a href="#" class="text-turquoise">View all ></a>
+                    <a :href="route('profile.favorites-show')" class="text-turquoise">View all ></a>
                 </div>
                 <div class="mb-4">
                     <p class="text-lg">Issues</p>
@@ -39,7 +39,7 @@ const fetchFavorites = async () => {
         const response = await axios.get(route('profile.favorites'));
         ({ issues: issues.value, repositories: repositories.value } = response.data);
     } catch (error) {
-        console.error('Failed to fetch repositories:', error);
+        console.error('Failed to fetch favorites:', error);
     } finally {
         isLoading.value = false
     }
