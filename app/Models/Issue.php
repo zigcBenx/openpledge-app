@@ -49,4 +49,20 @@ class Issue extends Model
         return $this->morphMany(Favorite::class, 'favorable')
             ->where('user_id', Auth::id());
     }
+
+    public function isAuthUsersActiveIssue()
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return false;
+        }
+
+        return $user->active_issues()->where('issue_id', $this->id)->exists();
+    }
+
+    public function resolvers()
+    {
+        return $this->belongsToMany(User::class, 'user_solve_issue');
+    }
 }

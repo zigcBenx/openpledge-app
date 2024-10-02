@@ -17,6 +17,7 @@ class GetIssueById
         ])->find($id)->append('donation_sum');
 
         $issue->favorite = $issue->userFavorite->isNotEmpty();
+        $issue->isAuthUsersActiveIssue = $issue->isAuthUsersActiveIssue();
 
         return $issue;
     }

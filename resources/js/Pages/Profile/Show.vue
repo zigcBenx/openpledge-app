@@ -2,10 +2,9 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Earnings from './Partials/Earnings.vue';
 import Graphs from './Partials/Graphs.vue';
-import IssueSummary from './Partials/IssueSummary.vue';
 import ProfileCard from './Partials/ProfileCard.vue';
-import InstalledRepositories from './Partials/InstalledRepositories.vue';
 import Favorites from './Partials/Favorites.vue';
+import IssuesList from './Partials/IssuesList.vue';
 
 defineProps({});
 </script>
@@ -32,13 +31,23 @@ defineProps({});
                     </div>
                 </div>
                 <div class="mt-4">
-                    <InstalledRepositories />
+                    <IssuesList
+                        title="Work In Progress"
+                        routeName="profile.actives"
+                        noIssuesMessage="You have no active issues"
+                        :viewAllLink="route('profile.actives-show')"
+                    />
                 </div>
                 <div class="mt-4">
                     <Favorites />
                 </div>
                 <div class="mt-4">
-                    <IssueSummary />
+                    <IssuesList
+                        title="Finished"
+                        routeName="profile.finished"
+                        noIssuesMessage="You have no finished issues"
+                        :viewAllLink="route('profile.finished-show')"
+                    />
                 </div>
             </div>
         </div>

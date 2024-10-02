@@ -3,7 +3,7 @@
     <FormTypeButtons :type="form.type" @change="updateFormType" />
 
     <span v-if="form.type === 'solve'">
-      <SolveIssue />
+      <SolveIssue :issue="issue" />
     </span>
     <span v-else>
     <PledgeMethod :pledgeMethod="form.pledgeMethod" @onChange="handleMethodChange" />

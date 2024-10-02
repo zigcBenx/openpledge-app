@@ -60,12 +60,13 @@ class PaymentController extends Controller
             $stripe = new StripeClient(config('app.stripe_secret'));
             $paymentDetail = $stripe->paymentIntents->retrieve($request->get('paymentId'));
             $issueId = $request->get('issue_id');
+            $amount = $request->get('amount');
 
             $donation = CreateNewDonation::create(
                 [
                     'donatable_type' => Issue::class,
                     'donatable_id' => $issueId,
-                    'amount' => $request->get('amount'),
+                    'amount' => $amount,
                     'transaction_id' => $paymentDetail->id,
                     'donor_id' => Auth::id(),
                     'expire_date' => $expireDate,
@@ -80,13 +81,12 @@ class PaymentController extends Controller
             $installationId = $issue['repository']['githubInstallation']['installation_id'];
             $token = CommentOnIssue::getInstallationAccessToken($installationId);
 
-            $amount = $request->get('amount');
             $donorEmail = $request->get('email');
             $donorName = Auth::user()->name;
             $comment = CommentOnIssue::constructPledgeComment($amount, $donorName, $issueId);
 
             CommentOnIssue::run($token, $owner, $repo, $issueNumber, $comment);
-            SendNewPledgeMail::send($donorEmail, $donorName, $issueId);
+            SendNewPledgeMail::send($donorEmail, $donorName, $issueId, $amount);
 
             return new JsonResponse(['success' => true]);
         } catch (ApiErrorException $e) {
