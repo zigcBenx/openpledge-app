@@ -12,6 +12,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RepositoryController;
 use App\Http\Controllers\StripeConnectController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -84,11 +85,23 @@ Route::middleware([
     // Store favorites
     Route::post('/favorites', [FavoriteController::class, 'store'])->name('favorites.store');
 
+    // All favorites page for currently authenticated user
+    Route::get('/user/profile/favorites', [ProfileController::class, 'showAuthUsersFavorites'])->name('profile.favorites-show');
+
     // Get active issues from currently authenticated user
     Route::get('/user/actives', [ProfileController::class, 'getAuthUsersActiveIssues'])->name('profile.actives');
 
+    // All active issues page for currently authenticated user
+    Route::get('/user/profile/actives', [ProfileController::class, 'showAuthUsersActiveIssues'])->name('profile.actives-show');
+
     // Get finished issues from currently authenticated user
     Route::get('/user/finished', [ProfileController::class, 'getAuthUsersFinishedIssues'])->name('profile.finished');
+
+    // All finished issues page for currently authenticated user
+    Route::get('/user/profile/finished', [ProfileController::class, 'showAuthUsersFinishedIssues'])->name('profile.finished-show');
+
+    // User quiz submission (we want to know if user signed up to be resolver || pledger || both)
+    Route::post('/user/intent-quiz-submission', [UserController::class, 'handleUserIntentQuiz'])->name('user.intent-quiz');
 
     Route::post('/subscribe-user', [SubscriberController::class, 'subscribeUser']);
     Route::post('/stripe-connect', [StripeConnectController::class, 'handleStripeConnectCallback'])->name('stripe-connect');
