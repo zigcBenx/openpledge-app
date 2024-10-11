@@ -3,7 +3,6 @@
 namespace App\Actions\Issue;
 
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 class GetIssueActivity
 {
@@ -12,7 +11,7 @@ class GetIssueActivity
         $issueDetails = self::parseIssueUrl($issueGithubUrl);
 
         if (!$issueDetails) {
-            Log::warning("Invalid GitHub issue URL provided: {$issueGithubUrl}");
+            logger(`[WARNING] Invalid GitHub issue URL provided: {$issueGithubUrl}`);
             return null;
         }
 
@@ -47,7 +46,7 @@ class GetIssueActivity
 
             return $activities;
         } else {
-            Log::error("Failed to fetch issue activity from GitHub: " . $response->body());
+            logger('[ERROR] Failed to fetch issue activity from GitHub: ' . $response->body());
             return null;
         }
     }

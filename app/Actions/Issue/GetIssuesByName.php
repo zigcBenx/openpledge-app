@@ -6,7 +6,6 @@ use App\Models\Issue;
 use App\Actions\Github\HandleGithubAppCallback;
 use App\Models\GitHubInstallation;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 
 class GetIssuesByName
@@ -72,7 +71,7 @@ class GetIssuesByName
             });
             return $issues;
         } else {
-            Log::error('Failed to fetch GitHub issues', ['response' => $response->body()]);
+            logger('[ERROR] Failed to fetch GitHub issues', ['response' => $response->body()]);
             return [];
         }
     }

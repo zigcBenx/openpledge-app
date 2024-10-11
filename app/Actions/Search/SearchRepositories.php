@@ -5,7 +5,6 @@ namespace App\Actions\Search;
 use App\Models\GitHubInstallation;
 use App\Models\Repository;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 class SearchRepositories
 {
@@ -44,7 +43,7 @@ class SearchRepositories
 
             $githubResults = json_decode($response->getBody()->getContents(), true);
         } catch (\Exception $e) {
-            Log::error('Error fetching GitHub repositories: ' . $e->getMessage());
+            logger('[ERROR] Error fetching GitHub repositories: ' . $e->getMessage());
         }
 
         if (!isset($githubResults['items'])) {

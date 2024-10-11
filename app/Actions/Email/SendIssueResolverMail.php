@@ -7,7 +7,6 @@ use App\Mail\IssueNonResolversMail;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Log;
 
 class SendIssueResolverMail
 {
@@ -27,7 +26,7 @@ class SendIssueResolverMail
                 Mail::to($user->email)->send(new IssueNonResolversMail($user->name, $issueId));
             }
         } catch (Exception $e) {
-            Log::error('Error sending Issue Resolver Mail: ' . $e->getMessage(), [
+            logger('[ERROR] Error sending Issue Resolver Mail: ' . $e->getMessage(), [
                 'resolverMail' => $resolverMail,
                 'resolverName' => $resolverName,
                 'issueId' => $issueId,

@@ -5,7 +5,6 @@ namespace App\Actions\Search;
 use App\Models\GitHubInstallation;
 use App\Models\Issue;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 class SearchIssues
 {
@@ -45,7 +44,7 @@ class SearchIssues
 
             $githubResults = json_decode($response->getBody()->getContents(), true);
         } catch (\Exception $e) {
-            Log::error('Error fetching GitHub issues: ' . $e->getMessage());
+            logger('[ERROR] Error fetching GitHub issues: ' . $e->getMessage());
             return [];
         }
 

@@ -7,7 +7,6 @@ use App\Mail\NewPledgeForResolversMail;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Log;
 
 class SendNewPledgeMail
 {
@@ -27,7 +26,7 @@ class SendNewPledgeMail
                 Mail::to($user->email)->send(new NewPledgeForResolversMail($user->name, $issueId, $amount));
             }
         } catch (Exception $e) {
-            Log::error('Error sending New Pledge Mail: ' . $e->getMessage(), [
+            logger('[ERROR] Error sending New Pledge Mail: ' . $e->getMessage(), [
                 'donorMail' => $donorMail,
                 'donorName' => $donorName,
                 'issueId' => $issueId,

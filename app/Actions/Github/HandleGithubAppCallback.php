@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use App\Models\GitHubInstallation;
 use App\Actions\Repository\CreateNewRepository;
 
@@ -69,12 +68,12 @@ class HandleGithubAppCallback
 
                 return redirect('/user/profile');
             } else {
-                Log::error('Failed to authenticate with GitHub.', ['response' => $response->body()]);
+                logger('[ERROR] Failed to authenticate with GitHub.', ['response' => $response->body()]);
                 return redirect('/error');
             }
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Transaction failed: ' . $e->getMessage());
+            logger('[ERROR] Transaction failed: ' . $e->getMessage());
             return redirect('/error')->with('error', 'An error occurred while processing your request.');
         }
     }
@@ -86,7 +85,7 @@ class HandleGithubAppCallback
         if ($response->successful()) {
             return $response->json();
         } else {
-            Log::error('Failed to fetch GitHub user data', ['response' => $response->body()]);
+            logger('[ERROR] Failed to fetch GitHub user data', ['response' => $response->body()]);
             return null;
         }
     }
@@ -99,7 +98,7 @@ class HandleGithubAppCallback
         if ($response->successful()) {
             return $response->json()['repositories'] ?? [];
         } else {
-            Log::error('Failed to fetch GitHub repositories', ['response' => $response->body()]);
+            logger('[ERROR] Failed to fetch GitHub repositories', ['response' => $response->body()]);
             return [];
         }
     }
