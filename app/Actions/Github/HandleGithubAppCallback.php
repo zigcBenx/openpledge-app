@@ -2,6 +2,7 @@
 
 namespace App\Actions\Github;
 
+use App\Http\Requests\CreateNewRepositoryRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -52,7 +53,7 @@ class HandleGithubAppCallback
                 );
 
                 foreach ($githubRepositoriesData as $repository) {
-                    CreateNewRepository::create([
+                    $validatedRepositoryData = app(CreateNewRepositoryRequest::class)->validate([
                         'title' => $repository['full_name'],
                         'github_url' => $repository['html_url'],
                         'github_id' => $repository['id'],
@@ -60,6 +61,8 @@ class HandleGithubAppCallback
                         'user_id' => $user->id,
                         'github_installation_id' => $installationId
                     ]);
+    
+                    CreateNewRepository::create($validatedRepositoryData);
                 }
 
                 DB::commit();

@@ -8,6 +8,7 @@ use App\Actions\Repository\CreateNewRepository;
 use App\Actions\Repository\GetRepositories;
 use App\Actions\Repository\GetRepositoryByTitle;
 use App\Actions\Issue\GetIssuesByName;
+use App\Http\Requests\CreateNewRepositoryRequest;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -21,9 +22,9 @@ class RepositoryController extends Controller
         return Inertia::render('Repositories/Create');
     }
 
-    public function store(Request $request)
+    public function store(CreateNewRepositoryRequest $request)
     {
-        return CreateNewRepository::create($request->all());
+        return CreateNewRepository::create($request->validated());
     }
 
     public function index()

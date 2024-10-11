@@ -7,15 +7,16 @@ use App\Actions\Issue\CreateNewIssue;
 use App\Actions\Issue\GetIssueActivity;
 use App\Actions\Issue\GetIssueById;
 use App\Actions\Issue\SolveIssue;
+use App\Http\Requests\CreateNewIssueRequest;
 use App\Models\Issue;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class IssueController extends Controller
 {
-    public function store(Request $request)
+    public function store(CreateNewIssueRequest $request)
     {
-        return CreateNewIssue::create($request->all());
+        return CreateNewIssue::create($request->validated());
     }
 
     public function pledgeExternalIssue(Request $request)
@@ -23,7 +24,8 @@ class IssueController extends Controller
         $issue = Issue::where('github_id', $request->input('github_id'))->first();
 
         if (!isset($issue)) {
-            $issue = CreateNewIssue::create($request->all());
+            $validatedIssueData = app(CreateNewIssueRequest::class)->validated();
+            $issue = CreateNewIssue::create($validatedIssueData);
         }
         
         return redirect()->route('issues.show', ['issue' => $issue]);
