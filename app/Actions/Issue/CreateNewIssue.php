@@ -4,7 +4,6 @@ namespace App\Actions\Issue;
 
 use App\Models\Issue;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Validator;
 
 class CreateNewIssue
 {

@@ -106,7 +106,7 @@ Route::middleware([
     Route::post('/subscribe-user', [SubscriberController::class, 'subscribeUser']);
     Route::post('/stripe-connect', [StripeConnectController::class, 'handleStripeConnectCallback'])->name('stripe-connect');
     Route::post('/stripe-redirect', [StripeConnectController::class, 'redirectToStripe'])->name('stripe-redirect');
-    Route::post('/payment-process', [PaymentController::class, 'process'])->name('payment-process');
+    Route::post('/payment-process', [PaymentController::class, 'processPayment'])->name('payment-process');
 
     // GitHub App integration route
     Route::get('/github/installation/callback', [GithubController::class, 'handleGithubAppCallback'])->name('github.installation.callback');
