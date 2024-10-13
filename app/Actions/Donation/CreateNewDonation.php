@@ -3,7 +3,6 @@
 namespace App\Actions\Donation;
 
 use App\Models\Donation;
-use Illuminate\Support\Facades\Validator;
 
 class CreateNewDonation
 {

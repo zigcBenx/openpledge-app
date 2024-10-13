@@ -7,9 +7,10 @@ use Illuminate\Http\JsonResponse;
 use Stripe\StripeClient;
 use Illuminate\Support\Facades\Auth;
 use App\Actions\Issue\GetIssueById;
-use App\Actions\Github\CommentOnIssue;
+use App\Actions\Comment\ConstructComment;
 use App\Actions\Email\SendNewPledgeMail;
 use Stripe\Exception\ApiErrorException;
+use App\Services\Github\GitHubService;
 
 class ProcessPayment
 {
@@ -45,12 +46,11 @@ class ProcessPayment
         $issueNumber = basename(parse_url($issue['github_url'], PHP_URL_PATH));
 
         $installationId = $issue['repository']['githubInstallation']['installation_id'];
-        $token = CommentOnIssue::getInstallationAccessToken($installationId);
 
         $donorName = Auth::user()->name;
-        $comment = CommentOnIssue::constructPledgeComment($amount, $donorName, $issueId);
+        $comment = ConstructComment::constructPledgeComment($amount, $donorName, $issueId);
 
-        CommentOnIssue::run($token, $owner, $repo, $issueNumber, $comment);
+        GithubService::commentOnIssue($installationId, $owner, $repo, $issueNumber, $comment);
         SendNewPledgeMail::send($donorEmail, $donorName, $issueId, $amount);
 
         return new JsonResponse(['success' => true]);

@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Github\GetGithubUser;
+use App\Services\Github\GitHubService;
 use App\Actions\Issue\CreateNewIssue;
-use App\Actions\Issue\GetIssueActivity;
 use App\Actions\Issue\GetIssueById;
 use App\Actions\Issue\SolveIssue;
 use App\Http\Requests\CreateNewIssueRequest;
@@ -34,8 +33,8 @@ class IssueController extends Controller
     public function show($id)
     {
         $issue = GetIssueById::get($id);
-        $issue->issueResolver = GetGithubUser::getByGithubId($issue->resolver_github_id);
-        $issue->issueActivity = GetIssueActivity::get($issue->github_url, $issue->repository->githubInstallation->access_token, $issue->donations);
+        $issue->issueResolver = GithubService::getUserByGithubId($issue->resolver_github_id);
+        $issue->issueActivity = GithubService::getIssueActivityTimeline($issue->github_url, $issue->repository->githubInstallation->access_token, $issue->donations);
 
         return Inertia::render('Issues/Show', [
             'issue' => $issue,

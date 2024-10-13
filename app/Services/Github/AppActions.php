@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Github;
+namespace App\Services\Github;
 
 use App\Http\Requests\CreateNewRepositoryRequest;
 use Illuminate\Http\Request;
@@ -9,10 +9,14 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
 use App\Models\GitHubInstallation;
 use App\Actions\Repository\CreateNewRepository;
+use App\Services\Github\GitHubService;
+use App\Models\Issue;
+use App\Models\User;
+use Carbon\Carbon;
 
-class HandleGithubAppCallback
+class AppActions
 {
-    public static function run(Request $request)
+    public static function handleCallback(Request $request)
     {
         DB::beginTransaction();
 
@@ -39,7 +43,7 @@ class HandleGithubAppCallback
                 $accessToken = $data['access_token'];
 
                 // Fetch repositories for the specific installation
-                $githubRepositoriesData = self::fetchGithubRepositories($accessToken, $installationId);
+                $githubRepositoriesData = GithubService::getRepositoriesByInstallationId($installationId, $accessToken);
 
                 $user = Auth::user();
                 GitHubInstallation::updateOrCreate(
@@ -60,7 +64,7 @@ class HandleGithubAppCallback
                         'user_id' => $user->id,
                         'github_installation_id' => $installationId
                     ]);
-    
+
                     CreateNewRepository::create($validatedRepositoryData);
                 }
 
@@ -78,28 +82,63 @@ class HandleGithubAppCallback
         }
     }
 
-    protected static function fetchGithubUser($accessToken)
+    public static function handleWebhook(Request $request)
     {
-        $response = Http::withToken($accessToken)->get('https://api.github.com/user');
+        $payload = $request->all();
 
-        if ($response->successful()) {
-            return $response->json();
-        } else {
-            logger('[ERROR] Failed to fetch GitHub user data', ['response' => $response->body()]);
-            return null;
+        DB::beginTransaction();
+        try {
+            $action = $payload['action'] ?? null;
+            $pullRequest = $payload['pull_request'] ?? null;
+
+            if ($pullRequest && isset($pullRequest['merged']) && $pullRequest['merged']) {
+                self::handleWebhookPullRequest($pullRequest, $action);
+            } elseif (isset($payload['issue'])) {
+                $issueUrl = $payload['issue']['html_url'];
+                Issue::where('github_url', $issueUrl)->update(['state' => $action === "reopened" ? "open" : $action]);
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            logger('[ERROR] Transaction failed', ['error' => $e->getMessage()]);
+            return response()->json(['status' => 'error', 'message' => 'Transaction failed'], 500);
         }
+        return response()->json(['status' => 'success'], 200);
     }
 
-    public static function fetchGithubRepositories($accessToken, $installationId)
+    private static function handleWebhookPullRequest(array $pullRequest, ?string $action)
     {
-        $response = Http::withToken($accessToken)
-            ->get("https://api.github.com/user/installations/{$installationId}/repositories");
+        $issueHeadData = $pullRequest['head'];
+        $repositoryData = $issueHeadData['repo'];
 
-        if ($response->successful()) {
-            return $response->json()['repositories'] ?? [];
+        $eventsResponse = Http::withToken(AuthActions::getAccessTokenByRepositoryUrl($repositoryData['html_url']))->get($repositoryData['events_url']);
+        $events = $eventsResponse->json();
+
+        $closedIssueUrl = null;
+
+        foreach ($events as $event) {
+            if ($event['type'] === 'IssuesEvent' && $event['payload']['action'] === 'closed') {
+                $closedIssueUrl = $event['payload']['issue']['html_url'];
+                break;
+            }
+        }
+
+        $issue = Issue::where('github_url', $closedIssueUrl)->firstOrFail();
+        $user = $pullRequest['user'];
+
+        $issue->state = $action === "reopened" ? "open" : $action;
+        $issue->resolver_github_id = $user['id'];
+        $issue->resolved_at = Carbon::parse($pullRequest['merged_at']);
+        $issue->save();
+
+        $dbUser = User::where('github_id', $user['id'])->first();
+
+        if ($dbUser) {
+            RewardActions::processDonations($issue, $dbUser);
         } else {
-            logger('[ERROR] Failed to fetch GitHub repositories', ['response' => $response->body()]);
-            return [];
+            logger('[WARNING] No user with the following GitHub id is connected to our app', ['id' => $user['id']]);
+            // TODO: Send email to notify the user to register to OpenPledge & connect with Stripe to claim the reward
         }
     }
 }

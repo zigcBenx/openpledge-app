@@ -3,7 +3,7 @@
 namespace App\Actions\Issue;
 
 use App\Models\Issue;
-use App\Actions\Github\HandleGithubAppCallback;
+use App\Services\Github\GithubService;
 use App\Models\GitHubInstallation;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
@@ -13,24 +13,24 @@ class GetIssuesByName
     public static function get($githubUser, $repositoryName, $repositoryGithubInstallationId)
     {
         $pledgedIssues = Issue::query()
-        ->where('github_url', 'LIKE', "https://github.com/$githubUser/$repositoryName/issues%")
-        ->leftJoin('donations', 'donations.donatable_id', '=', 'issues.id')
-        ->select('issues.*', DB::raw('SUM(donations.amount) as donations_sum_amount'))
-        ->groupBy('issues.id')
-        ->get();
+            ->where('github_url', 'LIKE', "https://github.com/$githubUser/$repositoryName/issues%")
+            ->leftJoin('donations', 'donations.donatable_id', '=', 'issues.id')
+            ->select('issues.*', DB::raw('SUM(donations.amount) as donations_sum_amount'))
+            ->groupBy('issues.id')
+            ->get();
 
-        if(!isset($repositoryGithubInstallationId)) {
+        if (!isset($repositoryGithubInstallationId)) {
             return $pledgedIssues;
-        } 
-        
-        $installation = GitHubInstallation::where('installation_id', $repositoryGithubInstallationId)->first();
-        
-        $installedRepositories = HandleGithubAppCallback::fetchGithubRepositories($installation->access_token, $installation->installation_id);
+        }
 
-        $repositoryData = array_filter($installedRepositories, function($installedRepository) use ($githubUser, $repositoryName) {
+        $installation = GitHubInstallation::where('installation_id', $repositoryGithubInstallationId)->first();
+
+        $installedRepositories = GithubService::getRepositoriesByInstallationId($installation->installation_id, $installation->access_token);
+
+        $repositoryData = array_filter($installedRepositories, function ($installedRepository) use ($githubUser, $repositoryName) {
             return strtolower($installedRepository['full_name']) == strtolower($githubUser . '/' . $repositoryName);
         });
-        
+
         $repositoryData = array_values($repositoryData);
         $repositoryData = !empty($repositoryData) ? $repositoryData[0] : null;
 
@@ -56,7 +56,7 @@ class GetIssuesByName
                 ];
             }
         }
-        
+
         return array_values($mergedIssues);
     }
 

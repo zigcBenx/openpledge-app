@@ -2,10 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Github\GetGithubIssues;
-use App\Actions\Github\GetGithubRepositories;
-use App\Actions\Github\HandleGithubAppCallback;
-use App\Actions\Github\HandleGithubAppWebhook;
+use App\Services\Github\GitHubService;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -49,21 +46,11 @@ class GithubController extends Controller
 
     public function handleGithubAppCallback(Request $request)
     {
-        return HandleGithubAppCallback::run($request);
+        return GithubService::handleGithubAppCallback($request);
     }
 
     public function handleGithubAppWebhook(Request $request)
     {
-        return HandleGithubAppWebhook::run($request);
-    }
-
-    public function getRepositories(Request $request)
-    {
-        return GetGithubRepositories::run($request->get('q'));
-    }
-
-    public function getIssues(Request $request)
-    {
-        return GetGithubIssues::run($request->get('q'));
+        return GithubService::handleGithubAppWebhook($request);
     }
 }

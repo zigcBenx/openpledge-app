@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Github\GetGithubUser;
+use App\Services\Github\GitHubService;
 use App\Actions\Issue\GetIssues;
 use App\Models\Donation;
 use App\Models\Issue;
@@ -53,7 +53,7 @@ class MainController extends Controller
         if (count($pledgedIssues) < $perPage) {
             $neededIssues = $perPage - count($pledgedIssues);
 
-            $externalIssues = GetIssues::getRepositoryConnectedIssues($neededIssues, $existingUrls);
+            $externalIssues = GithubService::getConnectedIssuesInBatch($neededIssues, $existingUrls);
             $combinedIssues = array_merge($pledgedIssues->toArray(), $externalIssues);
         }
 
@@ -86,7 +86,7 @@ class MainController extends Controller
 
         $githubUsers = [];
         foreach ($topResolvers as $resolver) {
-            $githubUser = GetGithubUser::getByGithubId($resolver->resolver_github_id);
+            $githubUser = GithubService::getUserByGithubId($resolver->resolver_github_id);
             $githubUser['issueCount'] = $resolver->issue_count;
             $githubUsers[] = $githubUser;
         }

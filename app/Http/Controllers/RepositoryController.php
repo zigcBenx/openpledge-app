@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Github\GetGithubRepositoryByName;
-use App\Actions\Repository\ConnectRepository;
+use App\Services\Github\GitHubService;
 use App\Actions\Repository\CreateNewRepository;
 use App\Actions\Repository\GetRepositories;
 use App\Actions\Repository\GetRepositoryByTitle;
@@ -35,11 +34,6 @@ class RepositoryController extends Controller
         ]);
     }
 
-    public function connect(Request $request)
-    {
-        return ConnectRepository::connect($request->all());
-    }
-
     /**
      * This function searches database for matching repository,
      * if none is found it tries searching Github database.
@@ -52,7 +46,7 @@ class RepositoryController extends Controller
 
         if (!$repository) {
             try {
-                $githubRepo = GetGithubRepositoryByName::run($githubUser, $repositoryName);
+                $githubRepo = GithubService::getRepositoryByName($githubUser, $repositoryName);
             } catch(Exception $e) {
                 return Redirect::route('error', ['any' => 'error']);
             }

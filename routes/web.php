@@ -52,9 +52,6 @@ Route::middleware([
     // but mybe it would be better when 0 results to request all github repos with certain filters
     // and if found automatically add and show index page...
     Route::get('/repositories/request', [RepositoryController::class, 'getRequestNew'])->name('repositories-request-get');
-
-    Route::post('/repositories/connect', [RepositoryController::class, 'connect'])->name('repositories.connect');
-    
     
     Route::get('/repositories/{githubUser}/{repository}', [RepositoryController::class, 'show'])->name('repositories.show');
 
@@ -69,9 +66,6 @@ Route::middleware([
     Route::get('issues/{issue}/donations', [IssueController::class, 'donations'])->name('issues.donations');
 
     Route::post('issues/solve', [IssueController::class, 'solve'])->name('issues.solve');
-
-    Route::get('/github/repositories', [GithubController::class, 'getRepositories'])->name('github-repositories-get');
-    Route::get('/github/issues', [GithubController::class, 'getIssues'])->name('github-issues-get');
 
     Route::post('/get-payment-intent', [PaymentController::class, 'getPaymentIntent'])->name('get-payment-intent');
 

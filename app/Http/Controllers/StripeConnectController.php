@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Stripe\Exception\OAuth\OAuthErrorException;
 use Stripe\OAuth;
-use Stripe\Stripe;
 use Symfony\Component\HttpFoundation\Response;
 
 class StripeConnectController extends Controller
