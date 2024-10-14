@@ -3,6 +3,7 @@
 namespace App\Actions\Payment;
 use App\Actions\Donation\CreateNewDonation;
 use App\Models\Issue;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Stripe\StripeClient;
 use Illuminate\Support\Facades\Auth;
@@ -50,8 +51,13 @@ class ProcessPayment
         $donorName = Auth::user()->name;
         $comment = ConstructComment::constructPledgeComment($amount, $donorName, $issueId);
 
+        // Query users who have this issue as an active issue (resolvers)
+        $usersWithActiveIssue = User::whereHas('active_issues', function ($query) use ($issueId) {
+            $query->where('issue_id', $issueId);
+        })->get();
+
         GithubService::commentOnIssue($installationId, $owner, $repo, $issueNumber, $comment);
-        SendNewPledgeMail::send($donorEmail, $donorName, $issueId, $amount);
+        SendNewPledgeMail::send($donorEmail, $donorName, $issueId, $amount, $usersWithActiveIssue);
 
         return new JsonResponse(['success' => true]);
     }

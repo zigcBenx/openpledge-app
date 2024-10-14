@@ -18,17 +18,15 @@ class AppActions
 {
     public static function handleCallback(Request $request)
     {
-        DB::beginTransaction();
+        $code = $request->input('code');
+        $installationId = $request->input('installation_id');
+        $setupAction = $request->input('setup_action');
+
+        $clientId = config('services.github.app_client_id');
+        $clientSecret = config('services.github.app_client_secret');
+        $redirectUri = config('services.github.app_callback');
 
         try {
-            $code = $request->input('code');
-            $installationId = $request->input('installation_id');
-            $setupAction = $request->input('setup_action');
-
-            $clientId = config('services.github.app_client_id');
-            $clientSecret = config('services.github.app_client_secret');
-            $redirectUri = config('services.github.app_callback');
-
             $response = Http::asForm()->post('https://github.com/login/oauth/access_token', [
                 'client_id' => $clientId,
                 'client_secret' => $clientSecret,
@@ -36,49 +34,52 @@ class AppActions
                 'redirect_uri' => $redirectUri,
             ]);
 
-            if ($response->successful()) {
-                $data = [];
-                parse_str($response->body(), $data);
-
-                $accessToken = $data['access_token'];
-
-                // Fetch repositories for the specific installation
-                $githubRepositoriesData = GithubService::getRepositoriesByInstallationId($installationId, $accessToken);
-
-                $user = Auth::user();
-                GitHubInstallation::updateOrCreate(
-                    ['user_id' => $user->id],
-                    [
-                        'installation_id' => $installationId,
-                        'setup_action' => $setupAction,
-                        'access_token' => $accessToken,
-                    ]
-                );
-
-                foreach ($githubRepositoriesData as $repository) {
-                    $validatedRepositoryData = app(CreateNewRepositoryRequest::class)->validate([
-                        'title' => $repository['full_name'],
-                        'github_url' => $repository['html_url'],
-                        'github_id' => $repository['id'],
-                        'user_avatar' => $repository['owner']['avatar_url'],
-                        'user_id' => $user->id,
-                        'github_installation_id' => $installationId
-                    ]);
-
-                    CreateNewRepository::create($validatedRepositoryData);
-                }
-
-                DB::commit();
-
-                return redirect('/user/profile');
-            } else {
+            if (!$response->successful()) {
                 logger('[ERROR] Failed to authenticate with GitHub.', ['response' => $response->body()]);
                 return redirect('/error');
             }
+
+            $data = [];
+            parse_str($response->body(), $data);
+            $accessToken = $data['access_token'];
+        } catch (\Exception $e) {
+            logger('[ERROR] Failed to fetch GitHub access token: ' . $e->getMessage());
+            return redirect('/error');
+        }
+
+        DB::beginTransaction();
+        try {
+            $githubRepositoriesData = GithubService::getRepositoriesByInstallationId($installationId, $accessToken);
+            $user = Auth::user();
+
+            GitHubInstallation::updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'installation_id' => $installationId,
+                    'setup_action' => $setupAction,
+                    'access_token' => $accessToken,
+                ]
+            );
+
+            foreach ($githubRepositoriesData as $repository) {
+                $validatedRepositoryData = app(CreateNewRepositoryRequest::class)->validate([
+                    'title' => $repository['full_name'],
+                    'github_url' => $repository['html_url'],
+                    'github_id' => $repository['id'],
+                    'user_avatar' => $repository['owner']['avatar_url'],
+                    'user_id' => $user->id,
+                    'github_installation_id' => $installationId
+                ]);
+
+                CreateNewRepository::create($validatedRepositoryData);
+            }
+
+            DB::commit();
+            return redirect('/user/profile');
         } catch (\Exception $e) {
             DB::rollBack();
             logger('[ERROR] Transaction failed: ' . $e->getMessage());
-            return redirect('/error')->with('error', 'An error occurred while processing your request.');
+            return redirect('/error');
         }
     }
 

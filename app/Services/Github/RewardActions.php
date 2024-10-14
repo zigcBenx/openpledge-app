@@ -32,7 +32,15 @@ class RewardActions
             // TODO: Send email to notify the user to connect Stripe account to OpenPledge
         }
 
-        SendIssueResolverMail::send($dbUser->email, $dbUser->name, $issue->id); // Send emails to all resolvers during beta, regardless of Stripe connection
+        $resolverMail = $dbUser->email;
+        $issueId = $issue->id;
+
+        // Query users who have this issue as an active issue but exclude the current resolver
+        $usersWithActiveIssue = User::whereHas('active_issues', function ($query) use ($issueId) {
+            $query->where('issue_id', $issueId);
+        })->where('email', '!=', $resolverMail)->get();
+
+        SendIssueResolverMail::send($resolverMail, $dbUser->name, $issue->id, $usersWithActiveIssue); // Send emails to all resolvers during beta, regardless of Stripe connection
     }
 
     private static function transferFunds(string $destinationStripeId, $amount, int $issueId)
