@@ -15,14 +15,9 @@ use App\Services\Github\GitHubService;
 
 class ProcessPayment
 {
-    public static function process($pledgeExpirationDate, $pledgeExpirationYear, $paymentId, $issueId, $amount, $donorEmail): JsonResponse
+    public static function process($pledgeExpirationDate, $paymentId, $issueId, $amount, $donorEmail): JsonResponse
     {
-        $expireDate = null;
-        if ($pledgeExpirationDate && $pledgeExpirationYear) {
-            // Extract day and month from 'DD/MM' format & combine with year to form 'Y-m-d' format
-            [$day, $month] = explode('/', $pledgeExpirationDate['value']);
-            $expireDate = date('Y-m-d', strtotime("{$pledgeExpirationYear}-$month-$day"));
-        }
+        $expireDate = date('Y-m-d', strtotime($pledgeExpirationDate));
 
         try {
             $stripe = new StripeClient(config('app.stripe_secret'));

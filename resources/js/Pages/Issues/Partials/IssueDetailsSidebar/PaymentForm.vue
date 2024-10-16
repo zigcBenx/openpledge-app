@@ -197,6 +197,9 @@ const handleFormSubmit = async () => {
   form.issue_id = props.issue.id;
   form.paymentId = paymentId.value;
 
+  form.pledgeExpirationDate = `${form.pledgeExpirationYear}-${form.pledgeExpirationDate.value.split("/")[1]}-${form.pledgeExpirationDate.value.split("/")[0]}`;
+  delete form.pledgeExpirationYear;
+
   await stripe.value.confirmPayment({
       elements: elements.value,
       redirect: "if_required"

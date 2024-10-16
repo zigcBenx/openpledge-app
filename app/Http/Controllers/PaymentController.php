@@ -21,7 +21,6 @@ class PaymentController extends Controller
 
         return ProcessPayment::process(
             $validatedProcessPaymentData['pledgeExpirationDate'],
-            $validatedProcessPaymentData['pledgeExpirationYear'],
             $validatedProcessPaymentData['paymentId'],
             $validatedProcessPaymentData['issue_id'],
             $validatedProcessPaymentData['amount'],
