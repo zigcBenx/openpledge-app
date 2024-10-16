@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\Github\GitHubService;
+use App\Services\GithubService;
 use App\Actions\Issue\GetIssues;
 use App\Models\Donation;
 use App\Models\Issue;

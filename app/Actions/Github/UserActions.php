@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Services\Github;
+namespace App\Actions\Github;
 
+use App\Services\GithubService;
 use Illuminate\Support\Facades\Http;
 
 class UserActions

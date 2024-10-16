@@ -3,7 +3,7 @@
 namespace App\Actions\Search;
 
 use App\Models\Issue;
-use App\Services\Github\GitHubService;
+use App\Services\GithubService;
 
 class SearchIssues
 {

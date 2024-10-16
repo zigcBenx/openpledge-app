@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\Github\GitHubService;
+use App\Services\GithubService;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

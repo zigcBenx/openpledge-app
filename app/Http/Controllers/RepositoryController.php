@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\Github\GitHubService;
+use App\Services\GithubService;
 use App\Actions\Repository\CreateNewRepository;
 use App\Actions\Repository\GetRepositories;
 use App\Actions\Repository\GetRepositoryByTitle;

@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Services\Github;
+namespace App\Actions\Github;
 
 use App\Models\Repository;
+use App\Services\GithubService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use GuzzleHttp\Client;

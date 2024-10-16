@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Services\Github;
+namespace App\Actions\Github;
 
+use App\Services\GithubService;
 use Exception;
 use Github\Exception\ValidationFailedException;
 use Illuminate\Support\Facades\Auth;

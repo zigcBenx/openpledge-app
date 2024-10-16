@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\Github\GitHubService;
+use App\Services\GithubService;
 use App\Actions\Issue\CreateNewIssue;
 use App\Actions\Issue\GetIssueById;
 use App\Actions\Issue\SolveIssue;

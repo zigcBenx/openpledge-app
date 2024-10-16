@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Actions\Payment;
+
 use App\Actions\Donation\CreateNewDonation;
 use App\Models\Issue;
 use App\Models\User;
@@ -11,7 +12,12 @@ use App\Actions\Issue\GetIssueById;
 use App\Actions\Comment\ConstructComment;
 use App\Actions\Email\SendNewPledgeMail;
 use Stripe\Exception\ApiErrorException;
-use App\Services\Github\GitHubService;
+use App\Services\GithubService;
+use App\Actions\Email\SendIssueResolverMail;
+use App\Models\Donation;
+use Carbon\Carbon;
+use Stripe\Stripe;
+use Stripe\Transfer;
 
 class ProcessPayment
 {
@@ -55,5 +61,36 @@ class ProcessPayment
         SendNewPledgeMail::send($donorEmail, $donorName, $issueId, $amount, $usersWithActiveIssue);
 
         return new JsonResponse(['success' => true]);
+    }
+
+    public static function processDonations(Issue $issue, User $dbUser)
+    {
+        $today = Carbon::now()->toDateString();
+        $donationsSumAmount = Donation::where('donatable_id', $issue->id)
+            ->where(function ($query) use ($today) {
+                $query->whereNull('expire_date')
+                    ->orWhere('expire_date', '>', $today);
+            })
+            ->where('paid', false)
+            ->sum('amount');
+
+        $destinationStripeId = $dbUser->stripe_id;
+
+        if (isset($destinationStripeId)) {
+            TransferFunds::transfer($destinationStripeId, $donationsSumAmount, $issue->id);
+        } else {
+            logger('[WARNING] Cannot transfer funds: User does not have a connected Stripe account.', ['user_id' => $dbUser->id]);
+            // TODO: Send email to notify the user to connect Stripe account to OpenPledge
+        }
+
+        $resolverMail = $dbUser->email;
+        $issueId = $issue->id;
+
+        // Query users who have this issue as an active issue but exclude the current resolver
+        $usersWithActiveIssue = User::whereHas('active_issues', function ($query) use ($issueId) {
+            $query->where('issue_id', $issueId);
+        })->where('email', '!=', $resolverMail)->get();
+
+        SendIssueResolverMail::send($resolverMail, $dbUser->name, $issue->id, $usersWithActiveIssue); // Send emails to all resolvers during beta, regardless of Stripe connection
     }
 }

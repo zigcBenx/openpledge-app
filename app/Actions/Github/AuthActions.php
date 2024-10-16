@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Services\Github;
+namespace App\Actions\Github;
 
 use App\Models\GitHubInstallation;
 use App\Models\Repository;
+use App\Services\GithubService;
 use Firebase\JWT\JWT;
 use Illuminate\Support\Facades\Http;
 

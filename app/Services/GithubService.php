@@ -1,6 +1,10 @@
 <?php
 
-namespace App\Services\Github;
+namespace App\Services;
+use App\Actions\Github\AppActions;
+use App\Actions\Github\IssueActions;
+use App\Actions\Github\RepositoryActions;
+use App\Actions\Github\UserActions;
 
 class GithubService
 {

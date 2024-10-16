@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Actions\Payment;
+
 use Illuminate\Http\JsonResponse;
 use Stripe\PaymentIntent;
 use Illuminate\Support\Facades\Auth;

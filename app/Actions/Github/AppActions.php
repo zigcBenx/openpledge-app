@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Services\Github;
+namespace App\Actions\Github;
 
+use App\Actions\Payment\ProcessPayment;
 use App\Http\Requests\CreateNewRepositoryRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -9,7 +10,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
 use App\Models\GitHubInstallation;
 use App\Actions\Repository\CreateNewRepository;
-use App\Services\Github\GitHubService;
+use App\Services\GitHubService;
 use App\Models\Issue;
 use App\Models\User;
 use Carbon\Carbon;
@@ -136,7 +137,7 @@ class AppActions
         $dbUser = User::where('github_id', $user['id'])->first();
 
         if ($dbUser) {
-            RewardActions::processDonations($issue, $dbUser);
+            ProcessPayment::processDonations($issue, $dbUser);
         } else {
             logger('[WARNING] No user with the following GitHub id is connected to our app', ['id' => $user['id']]);
             // TODO: Send email to notify the user to register to OpenPledge & connect with Stripe to claim the reward

@@ -3,7 +3,7 @@
 namespace App\Actions\Issue;
 
 use App\Models\Issue;
-use App\Services\Github\GithubService;
+use App\Services\GithubService;
 use App\Models\GitHubInstallation;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
