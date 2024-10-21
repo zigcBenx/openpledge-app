@@ -59,7 +59,7 @@
             :keys="keys" />
         <Modal :show="isQuizModalVisible" :closeable="false" overflow-visible>
             <div class="p-5 flex flex-col justify-between h-full" style="height: 31dvh;">
-                <ProgressStepper :currentStep="currentQuizStep" />
+                <ProgressStepper :currentStep="currentQuizStep" :totalSteps="3" />
 
                 <div class="mt-6 flex-grow">
                     <div v-if="currentQuizStep === 0">
