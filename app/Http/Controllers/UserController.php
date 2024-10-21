@@ -7,9 +7,9 @@ use App\Actions\User\QuizSubmissions;
 
 class UserController extends Controller
 {
-    public function handleUserIntentQuiz(Request $request)
+    public function handleNewUserQuizSubmission(Request $request)
     {
-        $userIntentQuizSubmission = $request->input('userIntentQuizSubmission');
-        return QuizSubmissions::handleUserIntentQuiz($userIntentQuizSubmission);
+        $newUserQuizSubmission = $request->input('newUserQuizSubmission');
+        return QuizSubmissions::handleNewUserQuizSubmission($newUserQuizSubmission);
     }
 }

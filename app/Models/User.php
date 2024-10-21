@@ -33,7 +33,10 @@ class User extends Authenticatable
         'github_id',
         'profile_photo_path',
         'auth_type',
-        'stripe_id'
+        'stripe_id',
+        'is_pledger',
+        'is_contributor',
+        'job_title'
     ];
 
     /**
