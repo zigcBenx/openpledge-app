@@ -7,7 +7,7 @@
                 <Page title="Issues" :class="['pb-10', { 'blur-sm': isQuizModalVisible }]"
                     description="Search issues you are interested in...">
                     <template #actions>
-                        <button @click="displayFilterModal = true"
+                        <button @click="displayFilterModal = true" id="filter-issues-button"
                             class="justify-center hover:bg-mint-green text-dark-green flex dark:text-green text-dark-green p-1.5 dark:hover:bg-tropical-rain-forest dark:hover:text-green rounded-full py-3 px-3.5">
                             Filters {{ queryFilters.length ? '(' + queryFilters.length + ')' : '' }}
                             <Icon class="pl-1 dark:fill-green fill-dark-green" name="vertical" />
@@ -57,7 +57,8 @@
         <Filters @submit="updateFilterList" @display="handleDisplayModal" :displayFilterModal="displayFilterModal"
             :labels="labels" :languages="languages" :queryFilters="queryFilters" :removedFilters="removedFilters"
             :keys="keys" />
-        <NewUserQuizModal v-model:isQuizModalVisible="isQuizModalVisible" :programmingLanguages="programmingLanguages" />
+        <NewUserQuizModal v-model:isQuizModalVisible="isQuizModalVisible"
+            :programmingLanguages="programmingLanguages" />
     </AppLayout>
 </template>
 <script setup>
@@ -75,6 +76,7 @@ import Sidebar from './Partials/Sidebar.vue';
 import { useElementSize } from '@vueuse/core';
 import TableRowSkeleton from '@/Components/Custom/TableRowSkeleton.vue';
 import NewUserQuizModal from '@/Components/Custom/NewUserQuizModal.vue';
+import { getDiscoverIssuesTour } from '@/utils/onboardingWalkthrough.js';
 
 const props = defineProps
     ({
@@ -199,4 +201,11 @@ const getValue = (value) => {
     }
     return false;
 }
+
+watch(isQuizModalVisible, (newValue, oldValue) => {
+    if (oldValue && !newValue) {
+        const discoverIssuesTour = getDiscoverIssuesTour(issues.value[0]?.repository.title.split('/')[0], issues.value[0]?.repository.title.split('/')[1]);
+        discoverIssuesTour.start();
+    }
+});
 </script>

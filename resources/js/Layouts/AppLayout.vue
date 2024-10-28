@@ -31,6 +31,7 @@
                                 <Dropdown align="right" width="44.375rem">
                                     <template #trigger>
                                         <Input
+                                            id="search-input"
                                             v-model="searchQuery"
                                             inputClass="focus:w-[44.375rem]"
                                             placeholder="Search" 
