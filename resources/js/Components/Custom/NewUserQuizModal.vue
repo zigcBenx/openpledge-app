@@ -5,7 +5,7 @@
             'flex',
             'flex-col',
             'justify-between',
-            currentQuizStep === 0 && newUserQuizSubmission.intent === UserIntent.PLEDGER ? 'h-40dvh' : 'h-31dvh'
+            currentQuizStep === 0 && newUserQuizSubmission.intent && newUserQuizSubmission.intent !== UserIntent.CONTRIBUTOR ? 'h-40dvh' : 'h-31dvh'
         ]">
             <ProgressStepper :currentStep="currentQuizStep" :totalSteps="quizStepsCount" />
 
@@ -24,7 +24,7 @@
                                 </span>
                             </span>
                         </label>
-                        <div class="py-4" v-if="newUserQuizSubmission.intent === UserIntent.PLEDGER">
+                        <div class="py-4" v-if="newUserQuizSubmission.intent && newUserQuizSubmission.intent !== UserIntent.CONTRIBUTOR">
                             <span class="leading-none text-gray-900 dark:text-white">
                                 Company name (if applicable):
                             </span>

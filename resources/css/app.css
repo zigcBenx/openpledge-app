@@ -40,6 +40,9 @@
 
 .shepherd-element .shepherd-footer {
     padding-top: 0.5rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
 }
 
 .shepherd-element .shepherd-footer .shepherd-button {
@@ -58,4 +61,27 @@
 
 .shepherd-element .shepherd-footer .shepherd-button:hover {
     box-shadow: 0 0 0 1px #ffffff !important;
+}
+
+.shepherd-element .shepherd-footer .shepherd-button-primary {
+    margin-bottom: 0.5rem !important;
+}
+
+.shepherd-element .shepherd-footer .shepherd-button-text {
+    background: none !important;
+    border: none !important;
+    color: #9ca3af !important;
+    text-decoration: underline !important;
+    font-size: 0.8rem !important;
+    padding: 0 !important;
+    cursor: pointer !important;
+}
+
+.shepherd-element .shepherd-footer .shepherd-button-text:hover {
+    text-decoration: none !important;
+}
+
+.shepherd-element .shepherd-footer .shepherd-button.shepherd-button-text {
+    border: none !important;
+    box-shadow: none !important;
 }

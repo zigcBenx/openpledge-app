@@ -202,10 +202,18 @@ const getValue = (value) => {
     return false;
 }
 
+const startDiscoverIssuesTour = () => {
+    const discoverIssuesTour = getDiscoverIssuesTour(issues.value[0]?.repository.title.split('/')[0], issues.value[0]?.repository.title.split('/')[1]);
+    discoverIssuesTour.start();
+}
+
 watch(isQuizModalVisible, (newValue, oldValue) => {
     if (oldValue && !newValue) {
-        const discoverIssuesTour = getDiscoverIssuesTour(issues.value[0]?.repository.title.split('/')[0], issues.value[0]?.repository.title.split('/')[1]);
-        discoverIssuesTour.start();
+        startDiscoverIssuesTour();
     }
 });
+
+if (localStorage.getItem('isTutorialInProgress') === 'true') {
+    startDiscoverIssuesTour();
+}
 </script>
