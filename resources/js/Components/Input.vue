@@ -4,7 +4,7 @@
           <Icon :name="icon" :class="iconClass" />
       </div>
       <input 
-        v-model="input"
+        :value="modelValue"
         :type="type" 
         :placeholder="placeholder" 
         :class="[`w-80 pl-3.5 search-cancel:appearance-none search-cancel:w-6 search-cancel:h-6 search-cancel:bg-[url('/images/close.svg')] placeholder-spun-pearl dark:text-lavender-mist h-12 focus:ring-0 dark:bg-oil bg-lavender-mist dark:focus:border-green focus:border-green rounded-md transition-all`, {
@@ -13,8 +13,8 @@
         }, inputClass]"
         :required="required"
         :maxlength="maxlength"
-        @input="emit('onInput', $event)"
-        @blur="emit('onBlur')"
+        @input="$emit('update:modelValue', $event.target.value); $emit('onInput', $event)"
+        @blur="$emit('onBlur')"
       />
       <div v-if="icon && iconPosition === 'right' && type !== 'payment'" class="z-10 absolute inset-y-0 right-3 flex items-center pointer-events-none">
           <Icon :name="icon" :class="iconClass" />
@@ -27,12 +27,12 @@
 </template>
 <script setup>
   import Icon from '@/Components/Icon.vue';
-  import { defineModel } from 'vue';
-  
-  const input = defineModel('input');
-  const emit = defineEmits(['onBlur', 'onInput']);
+  import { defineProps, defineEmits } from 'vue';
+
+  const emit = defineEmits(['update:modelValue', 'onBlur', 'onInput']);
 
   defineProps({
+    modelValue: String,
     inputClass: String,
     iconClass: String,
     placeholder: String,
