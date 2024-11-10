@@ -14,6 +14,7 @@ use App\Services\GitHubService;
 use App\Models\Issue;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Validator;
 
 class AppActions
 {
@@ -63,16 +64,26 @@ class AppActions
             );
 
             foreach ($githubRepositoriesData as $repository) {
-                $validatedRepositoryData = app(CreateNewRepositoryRequest::class)->validate([
-                    'title' => $repository['full_name'],
-                    'github_url' => $repository['html_url'],
-                    'github_id' => $repository['id'],
-                    'user_avatar' => $repository['owner']['avatar_url'],
-                    'user_id' => $user->id,
+                $repositoryData = [
+                    'title'                  => $repository['full_name'],
+                    'github_url'             => $repository['html_url'],
+                    'github_id'              => $repository['id'],
+                    'user_avatar'            => $repository['owner']['avatar_url'],
+                    'user_id'                => $user->id,
                     'github_installation_id' => $installationId
-                ]);
+                ];
+        
+                $validator = Validator::make($repositoryData, (new CreateNewRepositoryRequest)->rules());
+        
+                if ($validator->fails()) {
+                    logger("[ERROR] Validation failed for repository {$repository['full_name']}", [
+                        'errors' => $validator->errors(),
+                        'repository_data' => $repositoryData,
+                    ]);
+                    return redirect('/error');
+                }
 
-                CreateNewRepository::create($validatedRepositoryData);
+                CreateNewRepository::create($repositoryData);
             }
 
             DB::commit();
@@ -97,7 +108,9 @@ class AppActions
                 self::handleWebhookPullRequest($pullRequest, $action);
             } elseif (isset($payload['issue'])) {
                 $issueUrl = $payload['issue']['html_url'];
-                Issue::where('github_url', $issueUrl)->update(['state' => $action === "reopened" ? "open" : $action]);
+                Issue::where('github_url', $issueUrl)->update([
+                    'state' => in_array($action, ["reopened", "unassigned", "assigned"]) ? "open" : $action
+                ]);                
             }
 
             DB::commit();
