@@ -3,6 +3,7 @@
 namespace App\Actions\Payment;
 
 use App\Actions\Donation\CreateNewDonation;
+use App\Actions\Email\SendConnectStripeMail;
 use App\Models\Issue;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -16,14 +17,15 @@ use App\Services\GithubService;
 use App\Actions\Email\SendIssueResolverMail;
 use App\Models\Donation;
 use Carbon\Carbon;
-use Stripe\Stripe;
-use Stripe\Transfer;
 
 class ProcessPayment
 {
     public static function process($pledgeExpirationDate, $paymentId, $issueId, $amount, $donorEmail): JsonResponse
     {
-        $expireDate = date('Y-m-d', strtotime($pledgeExpirationDate));
+        $expireDate = null;
+        if (isset($pledgeExpirationDate)) {
+            $expireDate = date('Y-m-d', strtotime($pledgeExpirationDate));
+        }
 
         try {
             $stripe = new StripeClient(config('app.stripe_secret'));
@@ -74,17 +76,20 @@ class ProcessPayment
             ->where('paid', false)
             ->sum('amount');
 
+        $feePercentage = env('PLATFORM_FEE_PERCENTAGE');
+        $payoutAmount = $donationsSumAmount - $donationsSumAmount * ($feePercentage / 100);
+        $resolverMail = $dbUser->email;
         $destinationStripeId = $dbUser->stripe_id;
+        $issueId = $issue->id;
 
         if (isset($destinationStripeId)) {
-            TransferFunds::transfer($destinationStripeId, $donationsSumAmount, $issue->id);
+            $transferId = TransferFunds::transfer($destinationStripeId, $payoutAmount);
+            Donation::where('donatable_id', $issue->id)->update(['paid' => true, 'payout_transaction_id' => $transferId]);
+            logger('[INFO] Funds transferred', ['issue_id' => $issue->id, 'amount' => $payoutAmount, 'stripe_transfer_id' => $transferId]);
         } else {
+            SendConnectStripeMail::send($resolverMail, $dbUser->name, $payoutAmount, "Payout");
             logger('[WARNING] Cannot transfer funds: User does not have a connected Stripe account.', ['user_id' => $dbUser->id]);
-            // TODO: Send email to notify the user to connect Stripe account to OpenPledge
         }
-
-        $resolverMail = $dbUser->email;
-        $issueId = $issue->id;
 
         // Query users who have this issue as an active issue but exclude the current resolver
         $usersWithActiveIssue = User::whereHas('active_issues', function ($query) use ($issueId) {

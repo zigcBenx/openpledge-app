@@ -2,6 +2,7 @@
 
 namespace App\Actions\User;
 
+use App\Actions\Company\GetOrCreateCompany;
 use App\Models\ProgrammingLanguageable;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,11 @@ class QuizSubmissions
     public static function handleNewUserQuizSubmission($newUserQuizSubmission)
     {
         $user = Auth::user();
+
+        if (!empty($newUserQuizSubmission['companyName'])) {
+            $user->company_id = GetOrCreateCompany::getId($newUserQuizSubmission['companyName']);
+        }
+
         $user->job_title = $newUserQuizSubmission['jobTitle'];
         $user->is_contributor = false;
         $user->is_pledger = false;

@@ -7,7 +7,7 @@
                 <Page title="Issues" :class="['pb-10', { 'blur-sm': isQuizModalVisible }]"
                     description="Search issues you are interested in...">
                     <template #actions>
-                        <button @click="displayFilterModal = true"
+                        <button @click="displayFilterModal = true" id="filter-issues-button"
                             class="justify-center hover:bg-mint-green text-dark-green flex dark:text-green text-dark-green p-1.5 dark:hover:bg-tropical-rain-forest dark:hover:text-green rounded-full py-3 px-3.5">
                             Filters {{ queryFilters.length ? '(' + queryFilters.length + ')' : '' }}
                             <Icon class="pl-1 dark:fill-green fill-dark-green" name="vertical" />
@@ -57,58 +57,8 @@
         <Filters @submit="updateFilterList" @display="handleDisplayModal" :displayFilterModal="displayFilterModal"
             :labels="labels" :languages="languages" :queryFilters="queryFilters" :removedFilters="removedFilters"
             :keys="keys" />
-        <Modal :show="isQuizModalVisible" :closeable="false" overflow-visible>
-            <div class="p-5 flex flex-col justify-between h-full" style="height: 31dvh;">
-                <ProgressStepper :currentStep="currentQuizStep" :totalSteps="3" />
-
-                <div class="mt-6 flex-grow">
-                    <div v-if="currentQuizStep === 0">
-                        <h2 class="text-xl font-bold leading-none text-gray-900 dark:text-white">You are here to:</h2>
-                        <div class="mt-10 flex flex-col space-y-2">
-                            <label v-for="userIntentOption in userIntentQuizOptions" :key="userIntentOption.value"
-                                class="flex items-center">
-                                <Checkbox v-on:change="newUserQuizSubmission.intent = $event.target.value"
-                                    :checked="newUserQuizSubmission.intent === userIntentOption.value"
-                                    :value="userIntentOption.value"
-                                    :disabled="newUserQuizSubmission.intent === userIntentOption.value" />
-                                <span class="pl-2 leading-none text-gray-900 dark:text-white">{{ userIntentOption.label
-                                    }}</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div v-if="currentQuizStep === 1">
-                        <h2 class="text-xl font-bold leading-none text-gray-900 dark:text-white">What tech stacks or
-                            tools do
-                            you love working with? (Pick as many as you like!)</h2>
-                        <MultiSelect class="mt-8" :options="programmingLanguages"
-                            @input="newUserQuizSubmission.programmingLanguages = $event"
-                            :value="newUserQuizSubmission.programmingLanguages" />
-                    </div>
-
-                    <div v-if="currentQuizStep === 2">
-                        <h2 class="text-xl font-bold leading-none text-gray-900 dark:text-white">Which job title
-                            describes your
-                            role best?</h2>
-                        <Select class="mt-8" :data="jobTitleQuizOptions" :default="newUserQuizSubmission.jobTitle"
-                            @input="newUserQuizSubmission.jobTitle = $event" />
-                    </div>
-                </div>
-
-                <div class="flex justify-between space-x-4 mt-auto">
-                    <Button class="px-4 h-11" color="secondary" @click="currentQuizStep > 0 && currentQuizStep--"
-                        :disabled="currentQuizStep === 0">
-                        Back
-                    </Button>
-
-                    <Button class="px-8 h-11" color="primary"
-                        @click="currentQuizStep < quizStepsCount - 1 ? currentQuizStep++ : handleNewUserQuizSubmission()"
-                        :disabled="(currentQuizStep === 0 && !newUserQuizSubmission.intent) || (currentQuizStep === 1 && newUserQuizSubmission.programmingLanguages?.length === 0)">
-                        {{ currentQuizStep === quizStepsCount - 1 ? 'Confirm' : 'Next' }}
-                    </Button>
-                </div>
-            </div>
-        </Modal>
+        <NewUserQuizModal v-model:isQuizModalVisible="isQuizModalVisible"
+            :programmingLanguages="programmingLanguages" />
     </AppLayout>
 </template>
 <script setup>
@@ -125,13 +75,8 @@ import IssuesTable from '@/Components/Custom/IssuesTable.vue';
 import Sidebar from './Partials/Sidebar.vue';
 import { useElementSize } from '@vueuse/core';
 import TableRowSkeleton from '@/Components/Custom/TableRowSkeleton.vue';
-import Checkbox from '@/Components/Checkbox.vue';
-import Modal from '@/Components/Modal.vue';
-import Button from '@/Components/Button.vue';
-import { useToast } from "vue-toastification";
-import ProgressStepper from '@/Components/Form/ProgressStepper.vue';
-import Select from '@/Components/Select.vue';
-import MultiSelect from '@/Components/MultiSelect.vue';
+import NewUserQuizModal from '@/Components/Custom/NewUserQuizModal.vue';
+import { getDiscoverIssuesTour } from '@/utils/onboardingWalkthrough.js';
 
 const props = defineProps
     ({
@@ -143,6 +88,7 @@ const props = defineProps
 
 const keys = { labels: 'labels', languages: 'languages', range: 'range', date: 'date', storageDiscoverKey: 'discover' };
 
+const isQuizModalVisible = ref(!props.userIsContributor && !props.userIsResolver);
 const labels = ref(labelsList);
 const languages = ref(languagesList);
 const issues = ref(props.issues);
@@ -256,76 +202,18 @@ const getValue = (value) => {
     return false;
 }
 
-const UserIntent = Object.freeze({
-    CONTRIBUTOR: 'userIsContributor',
-    PLEDGER: 'userIsPledger',
-    BOTH: 'userIsBoth',
-});
-
-const userIntentQuizOptions = [
-    { value: UserIntent.CONTRIBUTOR, label: "Contribute and earn" },
-    { value: UserIntent.PLEDGER, label: "Pledge money to open source" },
-    { value: UserIntent.BOTH, label: "Both" }
-];
-
-const jobTitleQuizOptions = [
-    "Full Stack Developer",
-    "Frontend Developer",
-    "Backend Developer",
-    "DevOps Engineer",
-    "Data Scientist",
-    "Data Engineer",
-    "Machine Learning Engineer",
-    "Mobile App Developer",
-    "Software Engineer",
-    "Cloud Solutions Architect",
-    "Cybersecurity Analyst",
-    "UI/UX Designer",
-    "Database Administrator",
-    "System Administrator",
-    "Blockchain Developer",
-    "Site Reliability Engineer",
-    "Quality Assurance Engineer",
-    "Artificial Intelligence Engineer",
-    "Embedded Systems Engineer",
-    "Game Developer",
-    "Product Manager",
-    "Network Engineer",
-    "IT Support Specialist",
-    "IT Project Manager",
-    "AR/VR Developer",
-    "DevSecOps Engineer",
-    "Robotics Engineer",
-    "IoT Developer",
-    "Solutions Architect",
-    "Release Manager"
-];
-
-const currentQuizStep = ref(0);
-const quizStepsCount = 3;
-
-const isQuizModalVisible = ref(!props.userIsContributor && !props.userIsResolver);
-const newUserQuizSubmission = ref({
-    intent: undefined,
-    programmingLanguages: [],
-    jobTitle: undefined
-});
-
-if (isQuizModalVisible.value) {
-    document.body.style.overflow = 'hidden'; // Disable scrolling
+const startDiscoverIssuesTour = () => {
+    const discoverIssuesTour = getDiscoverIssuesTour(issues.value[0]?.repository.title.split('/')[0], issues.value[0]?.repository.title.split('/')[1]);
+    discoverIssuesTour.start();
 }
 
-const handleNewUserQuizSubmission = () => {
-    const toast = useToast();
-    axios.post(route('user.new-user-quiz'), { newUserQuizSubmission: newUserQuizSubmission.value })
-        .then(response => {
-            toast.success(response.data.message)
-            isQuizModalVisible.value = false;
-            document.body.style.overflow = null; // Restore scrolling
-        })
-        .catch(error => {
-            toast.error('Something went wrong!')
-            console.error(error);
-        });
-};
+watch(isQuizModalVisible, (newValue, oldValue) => {
+    if (oldValue && !newValue) {
+        startDiscoverIssuesTour();
+    }
+});
+
+if (localStorage.getItem('isTutorialInProgress') === 'true') {
+    startDiscoverIssuesTour();
+}
 </script>

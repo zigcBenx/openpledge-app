@@ -36,7 +36,8 @@ class User extends Authenticatable
         'stripe_id',
         'is_pledger',
         'is_contributor',
-        'job_title'
+        'job_title',
+        'company_id'
     ];
 
     /**
@@ -108,5 +109,10 @@ class User extends Authenticatable
         }
 
         return null;
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
     }
 }
