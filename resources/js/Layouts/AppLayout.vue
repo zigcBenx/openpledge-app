@@ -234,12 +234,15 @@
             </div>
         </template>
         <template #footer>
-            <Button 
-                @click="feedbackModalMessage ? displayFeedbackModal = false : submitFeedback()"
-                :disabled="!feedbackModalMessage && (!feedbackData.email || !feedbackData.content)"
-            >
-                {{ feedbackModalMessage ? 'Close' : 'Help Us Improve' }}
-            </Button>
+            <div class="flex gap-2">
+                <Button 
+                    @click="feedbackModalMessage ? displayFeedbackModal = false : submitFeedback()"
+                    :disabled="!feedbackModalMessage && (!feedbackData.email || !feedbackData.content)"
+                >
+                    {{ feedbackModalMessage ? 'Close' : 'Help Us Improve' }}
+                </Button>
+                <Button v-if="feedbackModalMessage" @click="feedbackModalMessage = ''">Send another feedback</Button>
+            </div>
         </template>
     </DialogModal>
 </template>
