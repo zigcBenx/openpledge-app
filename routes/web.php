@@ -95,6 +95,7 @@ Route::middleware([
     Route::get('/user/profile/finished', [ProfileController::class, 'showAuthUsersFinishedIssues'])->name('profile.finished-show');
 
     Route::post('/user/new-user-quiz-submission', [UserController::class, 'handleNewUserQuizSubmission'])->name('user.new-user-quiz');
+    Route::post('/user/user-feedback-submission', [UserController::class, 'handleUserFeedbackSubmission'])->name('user.feedback');
 
     Route::post('/subscribe-user', [SubscriberController::class, 'subscribeUser']);
     Route::post('/stripe-connect', [StripeConnectController::class, 'handleStripeConnectCallback'])->name('stripe-connect');

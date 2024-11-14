@@ -8,7 +8,7 @@ use Stripe\Transfer;
 
 class TransferFunds
 {
-    public static function transfer(string $destinationStripeId, $amount, int $issueId)
+    public static function transfer(string $destinationStripeId, $amount)
     {
         if ($amount <= 0) {
             return;
@@ -23,11 +23,9 @@ class TransferFunds
                 'destination' => $destinationStripeId
             ]);
 
-            logger('[INFO] Funds transferred', ['issue_id' => $issueId, 'amount' => $amount, 'stripe_transfer_id' => $transfer->id]);
-
-            Donation::where('donatable_id', $issueId)->update(['paid' => true]);
+            return $transfer->id;
         } catch (\Exception $e) {
-            logger('[ERROR] Stripe Transfer failed', ['error' => $e->getMessage(), 'issue_id' => $issueId]);
+            logger('[ERROR] Stripe Transfer failed', ['error' => $e->getMessage()]);
             throw $e;
         }
     }

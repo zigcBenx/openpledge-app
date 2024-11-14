@@ -22,6 +22,14 @@ export const getDiscoverIssuesTour = (githubUser, repository) => {
                 classes: "shepherd-button shepherd-button-primary",
                 action: shepherdTour.next,
             },
+            {
+                text: "I would rather discover on my own",
+                classes: "shepherd-button-text",
+                action: () => {
+                    localStorage.removeItem("isTutorialInProgress");
+                    shepherdTour.complete();
+                },
+            },
         ],
     });
 
@@ -155,7 +163,7 @@ export const getIssueTour = () => {
                 text: "Finish",
                 classes: "shepherd-button shepherd-button-primary",
                 action: () => {
-                    localStorage.removeItem("openPledgeTutorialInProgress");
+                    localStorage.removeItem("isTutorialInProgress");
                     shepherdTour.complete();
                     router.visit(route("discover.issues"));
                 },
