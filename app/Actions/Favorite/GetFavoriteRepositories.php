@@ -4,12 +4,11 @@ namespace App\Actions\Favorite;
 
 use App\Actions\Repository\GetDetailedRepositoryData;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Favorite;
 use App\Models\Repository;
 
 class GetFavoriteRepositories
 {
-    protected static function get()
+    public static function get()
     {
         $userId = Auth::id();
         $favoriteRepositoryIds = GetFavorites::getFavoriteIdsByUserAndType($userId, Repository::class);
@@ -33,7 +32,7 @@ class GetFavoriteRepositories
             });
     }
 
-    protected static function getPaginated($page)
+    public static function getPaginated($page)
     {
         $perPage = 6;
         $columns = ['*'];

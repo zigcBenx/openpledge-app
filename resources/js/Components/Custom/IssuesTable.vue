@@ -6,7 +6,7 @@
     <div class="text-[1.56rem] text-oil dark:text-lavender-mist mt-7 text-center">Oops! No matches found...</div>
     <div class="dark:text-spun-pearl text-tundora text-xs text-center">We couldn’t find any matches for your current filters. Please try changing your search criteria or clear the filters to see more issues.</div>
   </div>
-  <table v-else class="w-full border-separate border-spacing-x-0 border-spacing-y-4">
+  <table v-else class="w-full border-separate border-spacing-x-0 border-spacing-y-4" id="issues-table">
       <thead>
           <tr class="text-tundora dark:text-spun-pearl uppercase text-xs text-left">
               <th class="pb-5 min-w-[5rem] font-normal">State</th>

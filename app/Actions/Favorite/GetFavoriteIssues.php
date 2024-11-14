@@ -7,7 +7,7 @@ use App\Models\Issue;
 
 class GetFavoriteIssues
 {
-    protected static function get()
+    public static function get()
     {
         $userId = Auth::id();
         $favoriteIssueIds = GetFavorites::getFavoriteIdsByUserAndType($userId, Issue::class);
@@ -27,7 +27,7 @@ class GetFavoriteIssues
             });
     }
 
-    protected static function getPaginated($page)
+    public static function getPaginated($page)
     {
         $perPage = 6;
         $columns = ['*'];

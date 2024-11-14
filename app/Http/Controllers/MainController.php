@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ProgrammingLanguage;
 use App\Services\GithubService;
 use App\Actions\Issue\GetIssues;
 use App\Models\Donation;
@@ -35,12 +36,15 @@ class MainController extends Controller
 
         $pledgedIssues = GetIssues::getWithActiveDonations($filters, $offset, $perPage);
 
+        $programmingLanguages = ProgrammingLanguage::select('id', 'name')->get();
+
         // Immediately return if filters are present
         if (!empty($filters)) {
             return Inertia::render('Discover/Issues', [
                 'issues' => $pledgedIssues,
                 'userIsContributor' => $user->isContributor(),
-                'userIsResolver' => $user->isResolver()
+                'userIsResolver' => $user->isResolver(),
+                'programmingLanguages' => $programmingLanguages
             ]);
         }
 
@@ -64,7 +68,8 @@ class MainController extends Controller
             return Inertia::render('Discover/Issues', [
                 'issues' => $paginatedIssues,
                 'userIsContributor' => $user->isContributor(),
-                'userIsResolver' => $user->isResolver()
+                'userIsResolver' => $user->isResolver(),
+                'programmingLanguages' => $programmingLanguages
             ]);
         }
 

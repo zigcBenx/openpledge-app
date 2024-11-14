@@ -22,7 +22,9 @@
               @onInput="form.pledgeExpirationDate.value = formatExpireDate(form.pledgeExpirationDate.value)"
               @onBlur="handlePledgeExpireDateValidation"
             />
-            <small v-if="form.pledgeExpirationDate.error" :class="classes.error">Expire date is invalid.</small>
+            <small v-if="form.pledgeExpirationDate.error" :class="classes.error">
+                Expiration date must be at least 3 weeks from today.
+            </small>
           </label>
 
           <Select 
@@ -70,7 +72,17 @@
             <div id="payment-element">
                 <!-- Stripe will create form elements here -->
             </div>
-            <Button :loading="loading" class="mt-8" :plain="true" size="lg" color="primary" @click="handleFormSubmit()">Pledge This Issue</Button>
+            <Button 
+              :loading="loading" 
+              :disabled="(form.pledgeExpirationDate?.error || false) && form.pledgeMethod === PAYMENT_FORM_METHODS.EXPIRE_DATE" 
+              class="mt-8" 
+              :plain="true" 
+              size="lg" 
+              color="primary" 
+              @click="handleFormSubmit()"
+            >
+              Pledge This Issue
+            </Button>
             <small v-if="loading" class="text-white">Payment is beeing processed...</small>
           </form>
         </div>
@@ -180,7 +192,12 @@ const classes = {
 const yearsData = [...new Array(10)].map((_, index) => 2024 + index);
 
 const handleMethodChange = (value) => form.pledgeMethod = value;
-const handlePledgeExpireDateValidation = () => form.pledgeExpirationDate.error = !dayjs(form.pledgeExpirationDate.value, 'DD/MM', true).isValid();
+const handlePledgeExpireDateValidation = () => {
+  const expirationDate = dayjs(form.pledgeExpirationDate.value, 'DD/MM', true);
+  const minDate = dayjs().add(3, 'weeks');
+
+  form.pledgeExpirationDate.error = !expirationDate.isValid() || expirationDate.isBefore(minDate);
+};
 
 const getIsValidInfiniteForm = () => form.amount && !form.name && !form.cardNumber && !form.expireDate && !form.cvc && !form.email && form.country;
 
@@ -197,7 +214,14 @@ const handleFormSubmit = async () => {
   form.issue_id = props.issue.id;
   form.paymentId = paymentId.value;
 
-  form.pledgeExpirationDate = `${form.pledgeExpirationYear}-${form.pledgeExpirationDate.value.split("/")[1]}-${form.pledgeExpirationDate.value.split("/")[0]}`;
+  console.log(form)
+
+  if (form.pledgeExpirationDate.value.trim() !== '') {
+    form.pledgeExpirationDate = `${form.pledgeExpirationYear}-${form.pledgeExpirationDate.value.split("/")[1]}-${form.pledgeExpirationDate.value.split("/")[0]}`;
+  } else {
+    form.pledgeExpirationDate = null;
+  }
+
   delete form.pledgeExpirationYear;
 
   await stripe.value.confirmPayment({
@@ -207,6 +231,7 @@ const handleFormSubmit = async () => {
       form.paymentId = result.paymentIntent?.id;
       if (result.error) {
           // Handle errors
+          toast.error('Something went wrong!')
       } else {
         axios.post('/payment-process', form).then(response => {
           if(response.data.success) {

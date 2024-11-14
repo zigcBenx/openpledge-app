@@ -1,5 +1,5 @@
 <template>
-  <GithubRepositoryConnect />
+  <GithubRepositoryConnect id="repository-connect-container" />
   <TrendingToday />
   <TopContributors />
   <TopDonors />

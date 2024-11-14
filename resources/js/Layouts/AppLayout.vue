@@ -31,6 +31,7 @@
                                 <Dropdown align="right" width="44.375rem">
                                     <template #trigger>
                                         <Input
+                                            id="search-input"
                                             v-model="searchQuery"
                                             inputClass="focus:w-[44.375rem]"
                                             placeholder="Search" 
@@ -191,10 +192,54 @@
     <div class="fixed bottom-0 left-0 w-full text-white w-100 bg-openpledge-yellow p-2 text-center">
         OpenPledge is in <b>BETA</b>. Things might get a little quirky! 🚀 All donations are fictional.
     </div>
-    <DialogModal :show="displayLeaderBoardModal" @close="displayLeaderBoardModal = false">
+    <Button
+            @click="displayFeedbackModal = true"
+            class="fixed right-0 top-1/2 rounded-none !w-40"
+        >
+            Provide Feedback ✏️
+    </Button>
+    <DialogModal :show="displayFeedbackModal" @close="displayFeedbackModal = false">
         <template #title>
-            <b>Oops!</b><br> The 'Leaderboard' button is still in the oven, baking to perfection. Stay tuned!" 🍪
-            <br> <b>#BetaVersion</b>
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                We Value Your Feedback
+            </h2>
+        </template>
+        <template #content>
+            <div v-if="feedbackModalMessage" class="mb-6">{{ feedbackModalMessage }}</div>
+            <div v-else>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Your Email
+                    </label>
+                    <Input
+                        type="email"
+                        v-model="feedbackData.email"
+                        placeholder="your.email@example.com"
+                        inputClass="w-full"
+                    />
+                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">We'll only use your email to follow up on your feedback.</p>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Your Feedback
+                    </label>
+                    <TextArea
+                        maxlength="500"
+                        v-model="feedbackData.content" 
+                        placeholder="Let us know what you think..."
+                        textAreaClass="w-full h-32" 
+                    />
+                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Your thoughts help us improve!</p>
+                </div>
+            </div>
+        </template>
+        <template #footer>
+            <Button 
+                @click="feedbackModalMessage ? displayFeedbackModal = false : submitFeedback()"
+                :disabled="!feedbackModalMessage && (!feedbackData.email || !feedbackData.content)"
+            >
+                {{ feedbackModalMessage ? 'Close' : 'Help Us Improve' }}
+            </Button>
         </template>
     </DialogModal>
 </template>
@@ -214,6 +259,9 @@
     import Input from '@/Components/Input.vue';
     import axios from 'axios';
     import DialogModal from '@/Components/DialogModal.vue';
+    import Button from '@/Components/Button.vue';
+    import TextArea from '@/Components/TextArea.vue';
+    import { useToast } from "vue-toastification";
 
     export default {
         props: {
@@ -231,7 +279,9 @@
             MenuCard,
             SearchCard,
             Input,
-            DialogModal
+            DialogModal,
+            Button,
+            TextArea
         },
         setup() {
             const isDark = useDark();
@@ -240,6 +290,12 @@
             const searchQuery = ref('');
             const debouncedSearchQuery = useDebounce(searchQuery, 300);
             const displayLeaderBoardModal = ref(false);
+            const displayFeedbackModal = ref(false);
+            const feedbackModalMessage = ref('');
+            const feedbackData = ref({
+                email: '',
+                content: ''
+            });
             const data = ref({
                 repositories: [],
                 issues: []
@@ -316,6 +372,26 @@
                 }
             }
 
+            const submitFeedback = () => {
+                const toast = useToast();
+
+                axios.post(route('user.feedback'), {
+                    email: feedbackData.value.email,
+                    content: feedbackData.value.content
+                })
+                .then(response => {
+                    toast.success(response.data.toastMessage);
+                    displayFeedbackModal.value = true;
+                    feedbackModalMessage.value = response.data.modalMessage;
+                    feedbackData.value.email = '';
+                    feedbackData.value.content = '';
+                })
+                .catch(error => {
+                    toast.error('Something went wrong!')
+                    console.error(error);
+                });
+            };
+
             return {
                 showingNavigationDropdown,
                 logout,
@@ -327,7 +403,11 @@
                 handleInput,
                 includeGitHubResults,
                 generateSearchItemHref,
-                displayLeaderBoardModal
+                displayLeaderBoardModal,
+                displayFeedbackModal,
+                feedbackData,
+                submitFeedback,
+                feedbackModalMessage
             };
         }
     };
