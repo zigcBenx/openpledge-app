@@ -194,7 +194,7 @@
     </div>
     <Button
             @click="displayFeedbackModal = true"
-            class="fixed right-0 top-1/2 rounded-none !w-40"
+            class="fixed right-0 bottom-10 rounded-none !w-40"
         >
             Provide Feedback ✏️
     </Button>
