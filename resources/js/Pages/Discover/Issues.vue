@@ -45,7 +45,7 @@
                     </template>
                     <template v-slot="">
                         <IssuesTable :issues="issues" @onLazyLoading="handleLazyLoadingIssues" :pledged="true"
-                            class="hidden md:table" />
+                            class="table" />
                         <TableRowSkeleton v-if="loading" />
                     </template>
                 </Page>
