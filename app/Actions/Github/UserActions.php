@@ -2,13 +2,14 @@
 
 namespace App\Actions\Github;
 
+use App\Services\GithubService;
 use Illuminate\Support\Facades\Http;
 
-class GetGithubUser
+class UserActions
 {
     public static function getByGithubId($github_id)
     {
-        $url = "https://api.github.com/user/{$github_id}";
+        $url = GithubService::BASE_URL . "/user/{$github_id}";
 
         $response = Http::get($url);
 

@@ -8,11 +8,17 @@ class GetIssueById
 {
     public static function get($id)
     {
-        return Issue::with([
+        $issue = Issue::with([
             'repository' => function ($query) {
                 $query->with('githubInstallation');
             },
-            'donations.user'
+            'donations.user',
+            'userFavorite'
         ])->find($id)->append('donation_sum');
+
+        $issue->favorite = $issue->userFavorite->isNotEmpty();
+        $issue->isAuthUsersActiveIssue = $issue->isAuthUsersActiveIssue();
+
+        return $issue;
     }
 }

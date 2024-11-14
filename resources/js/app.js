@@ -10,6 +10,7 @@ import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
 import "vue-loading-skeleton/dist/style.css";
 import '@vuepic/vue-datepicker/dist/main.css';
+import 'shepherd.js/dist/css/shepherd.css'
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 

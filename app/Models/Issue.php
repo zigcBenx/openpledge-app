@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Issue extends Model
 {
@@ -41,5 +42,27 @@ class Issue extends Model
     public function getDonationSumAttribute()
     {
         return $this->donations()->sum('amount');
+    }
+
+    public function userFavorite()
+    {
+        return $this->morphMany(Favorite::class, 'favorable')
+            ->where('user_id', Auth::id());
+    }
+
+    public function isAuthUsersActiveIssue()
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return false;
+        }
+
+        return $user->active_issues()->where('issue_id', $this->id)->exists();
+    }
+
+    public function resolvers()
+    {
+        return $this->belongsToMany(User::class, 'user_solve_issue');
     }
 }

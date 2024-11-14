@@ -5,10 +5,10 @@
                 <Breadcrumbs :links="breadcrumbsData" wrapperClass="mb-[5.25rem]" />
                 <IssueTopDetails :issue="issue" @onFavoriteClick="handleFavoriteClick" />
                 <IssueDetails :issue="issue" class="mt-[3.375rem]" />
-                <Activity :issue="issue" class="mt-14 pb-10" />
+                <Activity :issue="issue" class="mt-14 pb-10" id="issue-activity-container" />
             </div>
             <div class="pt-[6.43rem]">
-                <IssueDetailsSidebar :issue="issue" :stripePublicKey="stripePublicKey" />
+                <IssueDetailsSidebar :issue="issue" :stripePublicKey="stripePublicKey" id="issue-sidebar-container" />
             </div>
         </div>
     </AppLayout>
@@ -16,13 +16,14 @@
 
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { ref, defineProps } from 'vue';
+import { defineProps, onMounted } from 'vue';
 import IssueTopDetails from './Partials/IssueTopDetails.vue';
 import IssueDetails from './Partials/IssueDetails.vue';
 import Activity from './Partials/Activity/Activity.vue';
 import IssueDetailsSidebar from './Partials/IssueDetailsSidebar/IssueDetailsSidebar.vue';
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
-import { issues } from '../../assets/mockedData.js'
+import { useToast } from "vue-toastification";
+import { getIssueTour } from '@/utils/onboardingWalkthrough.js';
 
 const props = defineProps({
     issue: {
@@ -35,7 +36,6 @@ const props = defineProps({
     stripePublicKey: String
 })
 
-const issueState = ref(issues[0]);
 const breadcrumbsData = [{
     title: 'Discover',
     url: '/discover/issues'
@@ -45,6 +45,25 @@ const breadcrumbsData = [{
 }];
 
 function handleFavoriteClick() {
-    issueState.value.favorite = !issueState.value.favorite;
+    const toast = useToast()
+    axios.post(route('favorites.store'), {
+        favorable_id: props.issue.id,
+        favorable_type: 'Issue',
+    })
+        .then(response => {
+            toast.success(response.data.message)
+            props.issue.favorite = !props.issue.favorite
+        })
+        .catch(error => {
+            toast.error('Something went wrong!')
+            console.error(error);
+        });
 }
+
+onMounted(() => {
+    if (localStorage.getItem('isTutorialInProgress') === 'true') {
+        const issueTour = getIssueTour();
+        issueTour.start();
+    }
+});
 </script>
