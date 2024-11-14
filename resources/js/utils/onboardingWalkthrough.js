@@ -15,7 +15,7 @@ export const getDiscoverIssuesTour = (githubUser, repository) => {
 
     shepherdTour.addStep({
         title: "Welcome to OpenPledge!",
-        text: "Ready to dive into open-source collaboration? Here, you can pledge funds to support open issues and help solvers make a difference. Let’s walk through the main features.",
+        text: "Let’s walk through the main features.",
         buttons: [
             {
                 text: "Lets begin!",
@@ -87,7 +87,8 @@ export const getDiscoverIssuesTour = (githubUser, repository) => {
 
     shepherdTour.addStep({
         title: "Explore the Repository Overview!",
-        text: "Next, we’ll dive into a repository to explore how OpenPledge enables collaborative open-source contributions in greater detail.",
+        // text: "Next, we’ll dive into a repository to explore how OpenPledge enables collaborative open-source contributions in greater detail.",
+        text: "You can visit repository page through search bar or by clicking it's name on issue table. Here is the example of already connected repository.",
         buttons: [
             {
                 text: "Go to Repository",
@@ -157,7 +158,7 @@ export const getIssueTour = () => {
 
     shepherdTour.addStep({
         title: "You’re All Set!",
-        text: `Thank you for exploring OpenPledge! 🎉 We hope this tour helped you get familiar with the platform and discover new ways to support and resolve open-source issues. If you ever need to revisit, we’re just a click away.<br><br>Click "Finish" to return to the main Issues page and start making an impact!`,
+        text: `Thank you for exploring OpenPledge! 🎉 We hope this tour helped you get familiar with the platform and discover new ways to support and resolve open-source issues. If you ever need to revisit the guide, click on profile icon and "Start guided tour" again.<br><br>Click "Finish" to return to the main Issues page and start making an impact!`,
         buttons: [
             {
                 text: "Finish",
@@ -204,7 +205,7 @@ export const getRepositoryTour = (issue) => {
 
     shepherdTour.addStep({
         title: "Filter Issue Types",
-        text: `Easily toggle between <strong>Pledged Issues</strong>—those with active donations—and <strong>Open Issues</strong>—all available issues, whether funded or not. This helps you quickly find the issues that best match your interests or goals.`,
+        text: `Easily toggle between <strong>Pledged Issues</strong> (those with active donations) and <strong>Open Issues</strong> (all available issues, whether funded or not). This helps you quickly find the issues that best match your interests or goals.`,
         attachTo: { element: "#issue-types-container", on: "right" },
         buttons: [
             {
