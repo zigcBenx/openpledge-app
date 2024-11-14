@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Github\GetGithubUser;
+use App\Models\ProgrammingLanguage;
+use App\Services\GithubService;
 use App\Actions\Issue\GetIssues;
 use App\Models\Donation;
 use App\Models\Issue;
@@ -35,12 +36,15 @@ class MainController extends Controller
 
         $pledgedIssues = GetIssues::getWithActiveDonations($filters, $offset, $perPage);
 
+        $programmingLanguages = ProgrammingLanguage::select('id', 'name')->get();
+
         // Immediately return if filters are present
         if (!empty($filters)) {
             return Inertia::render('Discover/Issues', [
                 'issues' => $pledgedIssues,
                 'userIsContributor' => $user->isContributor(),
-                'userIsResolver' => $user->isResolver()
+                'userIsResolver' => $user->isResolver(),
+                'programmingLanguages' => $programmingLanguages
             ]);
         }
 
@@ -53,7 +57,7 @@ class MainController extends Controller
         if (count($pledgedIssues) < $perPage) {
             $neededIssues = $perPage - count($pledgedIssues);
 
-            $externalIssues = GetIssues::getRepositoryConnectedIssues($neededIssues, $existingUrls);
+            $externalIssues = GithubService::getConnectedIssuesInBatch($neededIssues, $existingUrls);
             $combinedIssues = array_merge($pledgedIssues->toArray(), $externalIssues);
         }
 
@@ -64,7 +68,8 @@ class MainController extends Controller
             return Inertia::render('Discover/Issues', [
                 'issues' => $paginatedIssues,
                 'userIsContributor' => $user->isContributor(),
-                'userIsResolver' => $user->isResolver()
+                'userIsResolver' => $user->isResolver(),
+                'programmingLanguages' => $programmingLanguages
             ]);
         }
 
@@ -86,7 +91,7 @@ class MainController extends Controller
 
         $githubUsers = [];
         foreach ($topResolvers as $resolver) {
-            $githubUser = GetGithubUser::getByGithubId($resolver->resolver_github_id);
+            $githubUser = GithubService::getUserByGithubId($resolver->resolver_github_id);
             $githubUser['issueCount'] = $resolver->issue_count;
             $githubUsers[] = $githubUser;
         }

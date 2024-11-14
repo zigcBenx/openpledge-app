@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Github\GetGithubRepositoryByName;
-use App\Actions\Repository\ConnectRepository;
+use App\Services\GithubService;
 use App\Actions\Repository\CreateNewRepository;
 use App\Actions\Repository\GetRepositories;
 use App\Actions\Repository\GetRepositoryByTitle;
 use App\Actions\Issue\GetIssuesByName;
+use App\Http\Requests\CreateNewRepositoryRequest;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -21,9 +21,9 @@ class RepositoryController extends Controller
         return Inertia::render('Repositories/Create');
     }
 
-    public function store(Request $request)
+    public function store(CreateNewRepositoryRequest $request)
     {
-        return CreateNewRepository::create($request->all());
+        return CreateNewRepository::create($request->validated());
     }
 
     public function index()
@@ -32,11 +32,6 @@ class RepositoryController extends Controller
         return Inertia::render('Repositories/Index', [
             'repositories' => $repositories
         ]);
-    }
-
-    public function connect(Request $request)
-    {
-        return ConnectRepository::connect($request->all());
     }
 
     /**
@@ -51,7 +46,7 @@ class RepositoryController extends Controller
 
         if (!$repository) {
             try {
-                $githubRepo = GetGithubRepositoryByName::run($githubUser, $repositoryName);
+                $githubRepo = GithubService::getRepositoryByName($githubUser, $repositoryName);
             } catch(Exception $e) {
                 return Redirect::route('error', ['any' => 'error']);
             }

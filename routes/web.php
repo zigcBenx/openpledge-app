@@ -52,9 +52,6 @@ Route::middleware([
     // but mybe it would be better when 0 results to request all github repos with certain filters
     // and if found automatically add and show index page...
     Route::get('/repositories/request', [RepositoryController::class, 'getRequestNew'])->name('repositories-request-get');
-
-    Route::post('/repositories/connect', [RepositoryController::class, 'connect'])->name('repositories.connect');
-    
     
     Route::get('/repositories/{githubUser}/{repository}', [RepositoryController::class, 'show'])->name('repositories.show');
 
@@ -69,9 +66,6 @@ Route::middleware([
     Route::get('issues/{issue}/donations', [IssueController::class, 'donations'])->name('issues.donations');
 
     Route::post('issues/solve', [IssueController::class, 'solve'])->name('issues.solve');
-
-    Route::get('/github/repositories', [GithubController::class, 'getRepositories'])->name('github-repositories-get');
-    Route::get('/github/issues', [GithubController::class, 'getIssues'])->name('github-issues-get');
 
     Route::post('/get-payment-intent', [PaymentController::class, 'getPaymentIntent'])->name('get-payment-intent');
 
@@ -100,13 +94,13 @@ Route::middleware([
     // All finished issues page for currently authenticated user
     Route::get('/user/profile/finished', [ProfileController::class, 'showAuthUsersFinishedIssues'])->name('profile.finished-show');
 
-    // User quiz submission (we want to know if user signed up to be resolver || pledger || both)
-    Route::post('/user/intent-quiz-submission', [UserController::class, 'handleUserIntentQuiz'])->name('user.intent-quiz');
+    Route::post('/user/new-user-quiz-submission', [UserController::class, 'handleNewUserQuizSubmission'])->name('user.new-user-quiz');
+    Route::post('/user/user-feedback-submission', [UserController::class, 'handleUserFeedbackSubmission'])->name('user.feedback');
 
     Route::post('/subscribe-user', [SubscriberController::class, 'subscribeUser']);
     Route::post('/stripe-connect', [StripeConnectController::class, 'handleStripeConnectCallback'])->name('stripe-connect');
     Route::post('/stripe-redirect', [StripeConnectController::class, 'redirectToStripe'])->name('stripe-redirect');
-    Route::post('/payment-process', [PaymentController::class, 'process'])->name('payment-process');
+    Route::post('/payment-process', [PaymentController::class, 'processPayment'])->name('payment-process');
 
     // GitHub App integration route
     Route::get('/github/installation/callback', [GithubController::class, 'handleGithubAppCallback'])->name('github.installation.callback');

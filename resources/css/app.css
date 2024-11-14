@@ -10,3 +10,78 @@
 [x-cloak] {
     display: none;
 }
+
+.shepherd-element {
+    background-color: #374151 !important;
+    border-radius: 0.375rem !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+    color: #f9fafb !important;
+}
+
+.shepherd-element .shepherd-content {
+    padding: 1rem !important;
+}
+
+.shepherd-element .shepherd-content .shepherd-header {
+    background: none !important;
+}
+
+.shepherd-element .shepherd-content .shepherd-header .shepherd-title {
+    color: #d1d5db !important;
+    font-weight: bold !important;
+    font-size: 1.25rem !important;
+}
+
+.shepherd-element .shepherd-content .shepherd-text {
+    color: #9ca3af !important;
+    font-size: 1rem !important;
+    padding: 0.5rem 1rem 1rem !important;
+}
+
+.shepherd-element .shepherd-footer {
+    padding-top: 0.5rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+}
+
+.shepherd-element .shepherd-footer .shepherd-button {
+    display: inline-block !important;
+    width: 100% !important;
+    height: 2.25rem !important;
+    border-radius: 9999px !important;
+    font-weight: 500 !important;
+    font-size: 0.875rem !important;
+    line-height: 1.25rem !important;
+    color: white !important;
+    background: #37c3a2 !important;
+    transition: background-color 0.15s ease-in-out,
+                box-shadow 0.15s ease-in-out !important;
+}
+
+.shepherd-element .shepherd-footer .shepherd-button:hover {
+    box-shadow: 0 0 0 1px #ffffff !important;
+}
+
+.shepherd-element .shepherd-footer .shepherd-button-primary {
+    margin-bottom: 0.5rem !important;
+}
+
+.shepherd-element .shepherd-footer .shepherd-button-text {
+    background: none !important;
+    border: none !important;
+    color: #9ca3af !important;
+    text-decoration: underline !important;
+    font-size: 0.8rem !important;
+    padding: 0 !important;
+    cursor: pointer !important;
+}
+
+.shepherd-element .shepherd-footer .shepherd-button-text:hover {
+    text-decoration: none !important;
+}
+
+.shepherd-element .shepherd-footer .shepherd-button.shepherd-button-text {
+    border: none !important;
+    box-shadow: none !important;
+}

@@ -34,6 +34,7 @@ import Letter from './../assets/icons/letter.svg';
 import Master from './../assets/icons/master.svg';
 import Visa from './../assets/icons/visa.svg';
 import Info from './../assets/icons/info.svg';
+import Pin from './../assets/icons/pin.svg';
 
 export default {
   props: {
@@ -76,7 +77,8 @@ export default {
     Letter,
     Master,
     Visa,
-    Info
+    Info,
+    Pin
   },
   setup(props) {
     const components = {
@@ -102,6 +104,7 @@ export default {
       master: Master,
       info: Info,
       visa: Visa,
+      pin: Pin,
       'chevron-right': ChevronRight,
       'chevron-down': ChevronDown,
       'open-in-new': OpenInNew,

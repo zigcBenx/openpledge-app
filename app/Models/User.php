@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -34,7 +33,11 @@ class User extends Authenticatable
         'github_id',
         'profile_photo_path',
         'auth_type',
-        'stripe_id'
+        'stripe_id',
+        'is_pledger',
+        'is_contributor',
+        'job_title',
+        'company_id'
     ];
 
     /**
@@ -95,5 +98,21 @@ class User extends Authenticatable
     public function isResolver()
     {
         return (bool) $this->is_pledger;
+    }
+
+    public function getGitHubAccessToken()
+    {
+        $installation = $this->githubInstallations()->first();
+
+        if ($installation && !empty($installation->access_token)) {
+            return $installation->access_token;
+        }
+
+        return null;
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
     }
 }

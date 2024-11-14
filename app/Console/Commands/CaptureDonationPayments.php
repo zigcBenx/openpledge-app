@@ -6,7 +6,6 @@ use App\Models\Donation;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use GuzzleHttp\Client;
-use Illuminate\Support\Facades\Log;
 use Stripe\Exception\ApiErrorException;
 use Stripe\PaymentIntent;
 use Stripe\Stripe;
@@ -79,7 +78,7 @@ class CaptureDonationPayments extends Command
                 }
             }
         } catch(\Exception $e) {
-            Log::alert($e->getMessage());
+            logger('[ERROR] Error handling donation payments: ' . $e->getMessage());
         }
     }
 
@@ -97,7 +96,7 @@ class CaptureDonationPayments extends Command
                 return false;
             }
         } catch (ApiErrorException $e) {
-            Log::alert($e->getMessage());
+            logger('[ERROR] Error capturing donation payments: ' . $e->getMessage());
             return false;
         }
     }
