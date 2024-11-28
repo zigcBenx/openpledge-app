@@ -39,6 +39,7 @@
                                             icon="search"
                                             :closeOnOutside="true"
                                             @onInput="searchQuery = $event.target.value"
+                                            :disabled="!$page.props.auth?.user?.email"
                                         />
                                     </template>
 
@@ -135,15 +136,19 @@
                     <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
                         <div class="flex items-center px-4">
                             <div v-if="$page.props.jetstream.managesProfilePhotos" class="shrink-0 me-3">
-                                <img class="h-10 w-10 rounded-full object-cover" :src="$page.props.auth.user.profile_photo_url" :alt="$page.props.auth.user.name">
+                                <img
+                                    v-if="$page.props.auth?.user?.profile_photo_url"
+                                    class="h-10 w-10 rounded-full object-cover" 
+                                    :src="$page.props.auth?.user?.profile_photo_url"
+                                    :alt="$page.props.auth?.user?.name || 'Guest User'">
                             </div>
 
                             <div>
                                 <div class="font-medium text-base text-gray-800 dark:text-gray-200">
-                                    {{ $page.props.auth.user.name }}
+                                    {{ $page.props.auth?.user?.name || 'Guest Pledger' }}
                                 </div>
                                 <div class="font-medium text-sm text-gray-500">
-                                    {{ $page.props.auth.user.email }}
+                                    {{ $page.props.auth?.user?.email || 'guest@openpledge.io' }}
                                 </div>
                             </div>
                         </div>

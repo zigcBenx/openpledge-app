@@ -29,8 +29,15 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
-    return Redirect::route('login');
+    return Redirect::route('discover.issues');
 });
+
+Route::get('/discover/issues', [MainController::class, 'discoverIssues'])->name('discover.issues');
+
+// top lists endpoints
+Route::get('/trending-today-issues', [IssueController::class, 'getTrendingToday'])->name('trending-today-issues');
+Route::get('/top-contributors', [Maincontroller::class, 'getTopContributors'])->name('top-contributors');
+Route::get('/top-donors', [Maincontroller::class, 'getTopDonors'])->name('top-donors');
 
 Route::middleware([
     'auth:sanctum',
@@ -41,10 +48,6 @@ Route::middleware([
     Route::get('/home', [MainController::class, 'index'])->name('home');
     Route::get('/dashboard', [MainController::class, 'dashboard'])->name('dashboard');
     Route::get('/subscribers', [SubscriberController::class, 'index'])->name('subscribers');
-
-    Route::get('/discover/issues', [MainController::class, 'discoverIssues'])->name('discover.issues');
-
-
 
     // TODO: this route is for displaying request view -> which will be removed
     // since whenever user comes from github repo to openpledge, repos should be automatically created
@@ -107,12 +110,6 @@ Route::middleware([
 
     // Search
     Route::get('/search', [SearchController::class, 'getSearchResults'])->name('search');
-
-
-    // top lists endpoints
-    Route::get('/trending-today-issues', [IssueController::class, 'getTrendingToday'])->name('trending-today-issues');
-    Route::get('/top-contributors', [Maincontroller::class, 'getTopContributors'])->name('top-contributors');
-    Route::get('/top-donors', [Maincontroller::class, 'getTopDonors'])->name('top-donors');
 });
 
 Route::get('/auth/github/callback', [GithubController::class, 'callback'])->name('callback');

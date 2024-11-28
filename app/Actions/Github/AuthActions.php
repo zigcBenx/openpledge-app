@@ -24,16 +24,18 @@ class AuthActions
 
     public static function getAccessTokenByAuthenticatedUser($authenticatedUser)
     {
+        if (!isset($authenticatedUser)) {
+            $randomInstallation = GitHubInstallation::inRandomOrder()->first();
+
+            if ($randomInstallation && !empty($randomInstallation->access_token)) {
+                return $randomInstallation->access_token;
+            }
+        }
+        
         $authenticatedUserToken = $authenticatedUser->getGitHubAccessToken();
 
         if ($authenticatedUserToken) {
             return $authenticatedUserToken;
-        }
-
-        $randomInstallation = GitHubInstallation::inRandomOrder()->first();
-
-        if ($randomInstallation && !empty($randomInstallation->access_token)) {
-            return $randomInstallation->access_token;
         }
 
         return null;

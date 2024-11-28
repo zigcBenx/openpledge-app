@@ -26,7 +26,7 @@
               'dark:bg-rich-black bg-ghost-white': issue.isExternal
             }]"
           >
-              <IssueItemPledged v-if="pledged && !issue.isExternal" :issue="issue"/>
+              <IssueItemPledged v-if="pledged && !issue.isExternal" :issue="issue" :isAuthenticated="isAuthenticated"/>
               <IssueItemExternal v-else :issue="issue" :repository="repository ?? issue.repository"/>
           </tr>
           <tr v-intersection-observer="onIntersectionObserver"></tr>
@@ -60,6 +60,10 @@
           }
         },
         repository: Object,
+        isAuthenticated: {
+            type: Boolean,
+            default: true,
+        },
     })
 
     const emit = defineEmits(['onLazyLoading'])

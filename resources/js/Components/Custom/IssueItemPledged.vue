@@ -85,9 +85,9 @@
         <Icon 
             name="star"
             width="1.375rem"
-            :class="getIconStrokeColor(issue.favorite, issue.state === 'closed')"
-            :disabled="issue.state === 'closed'"
-            @click="addFavorites(issue)"
+            :class="getIconStrokeColor(issue.favorite, !props.isAuthenticated || issue.state === 'closed')"
+            :disabled="!props.isAuthenticated || issue.state === 'closed'"
+            @click="props.isAuthenticated && addFavorites(issue)"
         />
     </td>
     <DialogModal :show="displayFavoriteModal" @close="closeModal">
@@ -113,6 +113,10 @@
         issue: {
             type: Object,
             required: true,
+        },
+        isAuthenticated: {
+            type: Boolean,
+            default: true,
         },
     })
 
