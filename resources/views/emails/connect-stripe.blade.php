@@ -21,7 +21,7 @@
                                     <table class="paragraph_block block-1" width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
                                         <tr>
                                             <td class="pad">
-                                                <div style="color:#000000;direction:ltr;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:16px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:left;mso-line-height-alt:19.2px;">
+                                                <div style="color:#ffffff;direction:ltr;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:16px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:left;mso-line-height-alt:19.2px;">
                                                     <p style="margin: 0; margin-bottom: 16px;">Dear {{ $name }},</p>
                                                     <p style="margin: 0; margin-bottom: 16px;">We’ve processed a {{ strtolower($type) }} of <strong>${{ number_format($amount, 2) }}</strong> for you.</p>
                                                     <p style="margin: 0; margin-bottom: 16px;">

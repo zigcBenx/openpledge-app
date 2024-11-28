@@ -124,17 +124,24 @@ class AppActions
 
     private static function handleWebhookPullRequest(array $pullRequest, ?string $action)
     {
-        $issueHeadData = $pullRequest['head'];
+        $issueHeadData = $pullRequest['base'];
         $repositoryData = $issueHeadData['repo'];
 
-        $eventsResponse = Http::withToken(AuthActions::getAccessTokenByRepositoryUrl($repositoryData['html_url']))->get($repositoryData['events_url']);
-        $events = $eventsResponse->json();
+        $isPullRequestMerged = ($pullRequest['merged'] ?? false) === true;
+
+        if (!$isPullRequestMerged) {
+            return;
+        }
+
+        $issueEventsUrl = str_replace('{/number}', '', $repositoryData['issue_events_url']);
+        $issueEventsResponse = Http::withToken(AuthActions::getAccessTokenByRepositoryUrl($repositoryData['html_url']))->get($issueEventsUrl);
+        $issueEvents = $issueEventsResponse->json();
 
         $closedIssueUrl = null;
 
-        foreach ($events as $event) {
-            if ($event['type'] === 'IssuesEvent' && $event['payload']['action'] === 'closed') {
-                $closedIssueUrl = $event['payload']['issue']['html_url'];
+        foreach ($issueEvents as $issueEvent) {
+            if (isset($issueEvent["event"]) && $issueEvent["event"] === "closed") {
+                $closedIssueUrl = $issueEvent["issue"]["html_url"];
                 break;
             }
         }
