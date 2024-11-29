@@ -6,7 +6,7 @@ class ConstructComment
 {
     public static function constructPledgeComment($amount, $donorName, $issueId)
     {
-        $appUrl = env('APP_URL');
+        $appUrl = config('app.url');
         $issueLink = "{$appUrl}/issues/{$issueId}";
 
         $comment = view('comments.new_pledge', [

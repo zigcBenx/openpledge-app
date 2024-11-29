@@ -87,7 +87,16 @@ class AppActions
             }
 
             DB::commit();
-            return redirect('/user/profile');
+            $firstRepository = $githubRepositoriesData[0];
+            $fullNameParts = explode('/', $firstRepository['full_name']);
+
+            $githubUser = $fullNameParts[0];
+            $repository = $fullNameParts[1];
+
+            return redirect(route('repositories.show', [
+                'githubUser' => $githubUser,
+                'repository' => $repository,
+            ]));
         } catch (\Exception $e) {
             DB::rollBack();
             logger('[ERROR] Transaction failed: ' . $e->getMessage());

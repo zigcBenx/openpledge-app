@@ -27,8 +27,8 @@ class ConnectStripeMail extends Mailable
                 'name' => $this->name,
                 'amount' => $this->amount,
                 'type' => $this->type,
-                'holding_days' => env('PAYMENT_HOLDING_DAYS'),
-                'support_email' => env('FEEDBACK_MAIL')
+                'holding_days' => config('app.payment_holding_days'),
+                'support_email' => config('mail.feedback_mail')
             ])
             ->subject("Action Required: Connect Your Stripe Account to Receive Your $this->type");
     }

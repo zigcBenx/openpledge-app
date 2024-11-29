@@ -76,7 +76,7 @@ class ProcessPayment
             ->where('paid', false)
             ->sum('amount');
 
-        $feePercentage = env('PLATFORM_FEE_PERCENTAGE');
+        $feePercentage = config('app.platform_fee_percentage');
         $payoutAmount = $donationsSumAmount - $donationsSumAmount * ($feePercentage / 100);
         $resolverMail = $dbUser->email;
         $destinationStripeId = $dbUser->stripe_id;

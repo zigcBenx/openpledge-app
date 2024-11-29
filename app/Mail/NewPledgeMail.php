@@ -21,7 +21,7 @@ class NewPledgeMail extends Mailable
 
     public function build()
     {
-        $appUrl = env('APP_URL');
+        $appUrl = config('app.url');
         $issueLink = "{$appUrl}/issues/{$this->issueId}";
         
         return $this->view('emails.new-pledge')
