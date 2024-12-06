@@ -26,6 +26,14 @@
             <span class="dark:text-spun-pearl text-tundora text-xs font-medium">{{ issue.github_username }}</span>
             <span class="dark:text-spun-pearl text-tundora text-xs font-light">{{ dayjs(issue.github_created_at).fromNow() }}</span>
         </div>
+
+        <div class="flex gap-1 mt-3" v-if="issue.resolved_by">
+            <Avatar :url="issue.resolved_by.profile_photo_url" size="sm" />
+            <span class="text-ocean-green dark:text-green text-xs font-medium">{{ issue.resolved_by.name }}</span>
+            <span class="text-ocean-green dark:text-green text-xs font-light">was paid out</span>
+            <span class="text-ocean-green dark:text-green text-xs font-medium">{{ issue.donations_sum_amount ?? 0 }} €</span>
+            <span class="text-ocean-green dark:text-green text-xs font-light">{{ dayjs(issue.resolved_at).fromNow() }}</span>
+        </div>
     </td>
     <td class="py-6 pr-4 align-middle">
         <div class="flex flex-wrap gap-1">

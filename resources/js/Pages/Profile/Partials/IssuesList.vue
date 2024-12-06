@@ -3,7 +3,16 @@
         <div class="w-full p-4 border border-gray-200 rounded-lg shadow sm:p-8 dark:border-gray-700">
             <div class="flex items-center justify-between mb-8">
                 <h5 class="text-xl leading-none text-gray-900 dark:text-white">{{ title }}</h5>
-                <a :href="viewAllLink" class="text-turquoise">View all ></a>
+                <a 
+                    :href="viewAllLink"
+                    @click.prevent="issues.length === 0 ? null : null"
+                    :class="[
+                        'text-turquoise',
+                        { 'cursor-not-allowed opacity-50 pointer-events-none': issues.length === 0 }
+                    ]"
+                >
+                    View all >
+                </a>
             </div>
             <div class="mb-4">
                 <IssuesTable v-if="issues.length > 0" :issues="issues" :pledged="true" class="hidden md:table" />
