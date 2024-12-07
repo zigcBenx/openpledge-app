@@ -8,7 +8,12 @@
                 <Activity :issue="issue" class="mt-14 pb-10" id="issue-activity-container" />
             </div>
             <div class="pt-[6.43rem]">
-                <IssueDetailsSidebar :issue="issue" :stripePublicKey="stripePublicKey" id="issue-sidebar-container" />
+                <IssueDetailsSidebar 
+                    :issue="issue" 
+                    :stripePublicKey="stripePublicKey" 
+                    :isAuthenticated="isAuthenticated" 
+                    id="issue-sidebar-container" 
+                />
             </div>
         </div>
     </AppLayout>
@@ -33,7 +38,8 @@ const props = defineProps({
             return {}
         }
     },
-    stripePublicKey: String
+    stripePublicKey: String,
+    isAuthenticated: Boolean
 })
 
 const breadcrumbsData = [{

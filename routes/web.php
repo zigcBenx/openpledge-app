@@ -33,6 +33,10 @@ Route::get('/', function () {
 });
 
 Route::get('/discover/issues', [MainController::class, 'discoverIssues'])->name('discover.issues');
+Route::get('issues/{issue}', [IssueController::class, 'show'])->name('issues.show');
+
+Route::post('/get-payment-intent', [PaymentController::class, 'getPaymentIntent'])->name('get-payment-intent');
+Route::post('/payment-process', [PaymentController::class, 'processPayment'])->name('payment-process');
 
 // top lists endpoints
 Route::get('/trending-today-issues', [IssueController::class, 'getTrendingToday'])->name('trending-today-issues');
@@ -60,7 +64,7 @@ Route::middleware([
 
 
     Route::resource('repositories', RepositoryController::class)->only('index', 'store');
-    Route::resource('issues', IssueController::class)->only('show', 'store');
+    Route::resource('issues', IssueController::class)->only(['store'])->except(['show']);
     Route::post('issues/pledgeExternalIssue', [IssueController::class, 'pledgeExternalIssue'])->name('issues.pledge-external-issue');
     Route::resource('campaigns', CampaignController::class);
     Route::resource('donations', DonationController::class)->only('index', 'show', 'store');
@@ -69,8 +73,6 @@ Route::middleware([
     Route::get('issues/{issue}/donations', [IssueController::class, 'donations'])->name('issues.donations');
 
     Route::post('issues/solve', [IssueController::class, 'solve'])->name('issues.solve');
-
-    Route::post('/get-payment-intent', [PaymentController::class, 'getPaymentIntent'])->name('get-payment-intent');
 
     // override of profile route
     Route::get('/user/profile', [ProfileController::class, 'show'])->name('profile.show');
@@ -103,7 +105,6 @@ Route::middleware([
     Route::post('/subscribe-user', [SubscriberController::class, 'subscribeUser']);
     Route::post('/stripe-connect', [StripeConnectController::class, 'handleStripeConnectCallback'])->name('stripe-connect');
     Route::post('/stripe-redirect', [StripeConnectController::class, 'redirectToStripe'])->name('stripe-redirect');
-    Route::post('/payment-process', [PaymentController::class, 'processPayment'])->name('payment-process');
 
     // GitHub App integration route
     Route::get('/github/installation/callback', [GithubController::class, 'handleGithubAppCallback'])->name('github.installation.callback');

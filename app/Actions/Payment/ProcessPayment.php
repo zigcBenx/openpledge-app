@@ -20,7 +20,7 @@ use Carbon\Carbon;
 
 class ProcessPayment
 {
-    public static function process($pledgeExpirationDate, $paymentId, $issueId, $amount, $donorEmail): JsonResponse
+    public static function process($pledgeExpirationDate, $paymentId, $issueId, $amount, $donorEmail, $isAuthenticated): JsonResponse
     {
         $expireDate = null;
         if (isset($pledgeExpirationDate)) {
@@ -51,7 +51,7 @@ class ProcessPayment
 
         $installationId = $issue['repository']['githubInstallation']['installation_id'];
 
-        $donorName = Auth::user()->name;
+        $donorName = $isAuthenticated ? Auth::user()->name : "Anonymous Pledger";
         $comment = ConstructComment::constructPledgeComment($amount, $donorName, $issueId);
 
         // Query users who have this issue as an active issue (resolvers)

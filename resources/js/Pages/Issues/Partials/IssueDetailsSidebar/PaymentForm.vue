@@ -50,7 +50,7 @@
           <small v-if="form.errors?.amount" :class="classes.error">{{form.errors?.amount[0]}}</small>
         </label>
 
-        <label class="dark:text-lavender-mist text-oil text-sm">
+        <label class="dark:text-lavender-mist text-oil text-sm" v-if="!isAuthenticated">
           <p class="mb-2.5">Contact details</p>
           <Input 
             v-model:input="form.email"
@@ -110,9 +110,10 @@ import Select from '@/Components/Select.vue';
 import dayjs from '@/libs/dayjs.js'
 import SolveIssue from './SolveIssue.vue';
 import { ref, onMounted } from "vue"
-import { useDark } from '@vueuse/core';
+import { useDark, useDebounce } from '@vueuse/core';
 import { useToast } from 'vue-toastification';
 import { router } from '@inertiajs/vue3'
+import { validateEmail } from '@/utils/validateEmail.js';
 
 const stripe = ref(null);
 const elements = ref(null);
@@ -120,21 +121,50 @@ const paymentId = ref(null);
 const isDark = useDark();
 const toast = useToast()
 
-onMounted(() => {
-  paymentIntent();
+const form = reactive({
+  type: 'pledge',
+  pledgeMethod: PAYMENT_FORM_METHODS.INFINITE,
+  pledgeExpirationDate: {
+    value: '',
+    error: false
+  },
+  pledgeExpirationYear: '',
+  amount: '',
+  cardSave: false,
+  email: '',
+  paymentId: '',
+  errors: {}
 });
 
+onMounted(() => {
+  if (props.isAuthenticated) {
+    paymentIntent();
+  }
+});
+
+const debouncedPaymentIntent = ref(useDebounce(() => {
+  if (form.email && validateEmail(form.email)) {
+    paymentIntent();
+  }
+}, 500));
+
+watch(() => form.email, (newEmail) => {
+  if (!props.isAuthenticated && newEmail) {
+    debouncedPaymentIntent.value;
+  }
+});
 
 const props = defineProps({
   'minAmount': String,
   issue: Object,
-  stripePublicKey: String
+  stripePublicKey: String,
+  isAuthenticated: Boolean
 });
 
 const paymentIntent = () => {
   axios.post('/get-payment-intent', {
     amount: 25,
-    currency: 'USD'
+    email: form.email
   }).then(response => {
     stripe.value = Stripe(props.stripePublicKey);
     const appearance = {
@@ -170,21 +200,6 @@ const paymentIntent = () => {
   });
 };
 
-const form = reactive({
-  type: 'pledge',
-  pledgeMethod: PAYMENT_FORM_METHODS.INFINITE,
-  pledgeExpirationDate: {
-    value: '',
-    error: false
-  },
-  pledgeExpirationYear: '',
-  amount: '',
-  cardSave: false,
-  email: '',
-  paymentId: '',
-  errors: {}
-});
-
 const classes = {
   error: "mt-1.5 text-xs block dark:text-spun-pearl text-tundora"
 }
@@ -213,8 +228,6 @@ const handleFormSubmit = async () => {
   loading.value = true
   form.issue_id = props.issue.id;
   form.paymentId = paymentId.value;
-
-  console.log(form)
 
   if (form.pledgeExpirationDate.value.trim() !== '') {
     form.pledgeExpirationDate = `${form.pledgeExpirationYear}-${form.pledgeExpirationDate.value.split("/")[1]}-${form.pledgeExpirationDate.value.split("/")[0]}`;

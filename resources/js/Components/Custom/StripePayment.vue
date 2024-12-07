@@ -74,7 +74,6 @@ export default {
     }
   },
   async mounted () {
-    console.log(import.meta.env.VITE_STRIPE_KEY)
     this.stripe = await loadStripe(import.meta.env.VITE_STRIPE_KEY)
     this.initialize()
   },
