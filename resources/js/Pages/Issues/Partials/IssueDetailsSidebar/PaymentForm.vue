@@ -10,30 +10,22 @@
 
     <div>
       <div :class="{ 'opacity-60 pointer-events-none': loading }" class="p-6 flex flex-col gap-6">
-        <div v-if="form.pledgeMethod === PAYMENT_FORM_METHODS.EXPIRE_DATE" class="flex gap-2">
-          <label class="dark:text-lavender-mist text-oil text-sm flex-grow">
+        <div v-if="form.pledgeMethod === PAYMENT_FORM_METHODS.EXPIRE_DATE">
+          <label class="dark:text-lavender-mist text-oil text-sm">
             <p class="mb-2.5">Pledge expiration</p>
-            <Input 
-              v-model:input="form.pledgeExpirationDate.value" 
-              inputClass="w-full !bg-transparent" 
-              placeholder="DD/MM"
-              :maxlength="5"
-              :minlength="5"
-              @onInput="form.pledgeExpirationDate.value = formatExpireDate(form.pledgeExpirationDate.value)"
-              @onBlur="handlePledgeExpireDateValidation"
+            <DatePicker
+              v-model="form.pledgeExpirationDate.value"
+              :min-date="minExpiryDate"
+              :is-open="isDatePickerOpen"
+              @update:is-open="isDatePickerOpen = $event"
+              placeholder="Select expiry date"
+              @update:modelValue="handlePledgeExpireDateValidation"
             />
             <small v-if="form.pledgeExpirationDate.error" :class="classes.error">
-                Expiration date must be at least 3 weeks from today.
+              Expiration date must be at least 3 weeks from today.
             </small>
           </label>
-
-          <Select 
-            class="flex-grow !w-[50%] mt-[29px]" 
-            :default="yearsData[0]" 
-            :data="yearsData"
-            @input="form.pledgeExpirationYear = $event"
-          />
-        </div>  
+        </div>
         <label class="dark:text-lavender-mist text-oil text-sm">
           Pledge amount
           <MoneyInput 
@@ -114,6 +106,7 @@ import { useDark, useDebounce } from '@vueuse/core';
 import { useToast } from 'vue-toastification';
 import { router } from '@inertiajs/vue3'
 import { validateEmail } from '@/utils/validateEmail.js';
+import DatePicker from '@/Components/Form/DatePicker.vue';
 
 const stripe = ref(null);
 const elements = ref(null);
@@ -208,10 +201,9 @@ const yearsData = [...new Array(10)].map((_, index) => 2024 + index);
 
 const handleMethodChange = (value) => form.pledgeMethod = value;
 const handlePledgeExpireDateValidation = () => {
-  const expirationDate = dayjs(form.pledgeExpirationDate.value, 'DD/MM', true);
-  const minDate = dayjs().add(3, 'weeks');
-
-  form.pledgeExpirationDate.error = !expirationDate.isValid() || expirationDate.isBefore(minDate);
+  const expirationDate = dayjs(form.pledgeExpirationDate.value);
+  form.pledgeExpirationDate.error = !expirationDate.isValid();
+  isDatePickerOpen.value = false;
 };
 
 const getIsValidInfiniteForm = () => form.amount && !form.name && !form.cardNumber && !form.expireDate && !form.cvc && !form.email && form.country;
@@ -229,8 +221,9 @@ const handleFormSubmit = async () => {
   form.issue_id = props.issue.id;
   form.paymentId = paymentId.value;
 
-  if (form.pledgeExpirationDate.value.trim() !== '') {
-    form.pledgeExpirationDate = `${form.pledgeExpirationYear}-${form.pledgeExpirationDate.value.split("/")[1]}-${form.pledgeExpirationDate.value.split("/")[0]}`;
+  if (form.pledgeExpirationDate.value) {
+    const date = dayjs(form.pledgeExpirationDate.value);
+    form.pledgeExpirationDate = date.format('YYYY-MM-DD');
   } else {
     form.pledgeExpirationDate = null;
   }
@@ -281,5 +274,7 @@ const updateFormType = (value) => {
   form.type = value;
 }
 
-const isDisabled = computed(() => props.issue.state === 'closed');
+const minExpiryDate = dayjs().add(3, 'weeks').toDate();
+
+const isDatePickerOpen = ref(false);
 </script>
