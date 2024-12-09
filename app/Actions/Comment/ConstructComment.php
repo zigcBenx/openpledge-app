@@ -4,7 +4,7 @@ namespace App\Actions\Comment;
 
 class ConstructComment
 {
-    private const SECONDARY_PLEDGE_INTROS = [
+    private const SHORT_PLEDGE_INTROS = [
         "🎯 Another pledge joins the bounty hunt! 🎯",
         "💫 The plot thickens! Another pledge has landed! 💫",
         "🚀 Look who's adding fuel to the rocket! 🚀",
@@ -41,7 +41,7 @@ class ConstructComment
     {
         $appUrl = config('app.url');
         $issueLink = "{$appUrl}/issues/{$issueId}";
-        $intro = self::SECONDARY_PLEDGE_INTROS[array_rand(self::SECONDARY_PLEDGE_INTROS)];
+        $intro = self::SHORT_PLEDGE_INTROS[array_rand(self::SHORT_PLEDGE_INTROS)];
 
         $comment = view('comments.short_pledge', [
             'intro' => $intro,
