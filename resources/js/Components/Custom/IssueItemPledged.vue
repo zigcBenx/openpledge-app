@@ -116,6 +116,7 @@
     import Pill from '@/Components/Form/Pill.vue'
     import DialogModal from '../DialogModal.vue'
     import { useToast } from "vue-toastification";
+    import { router } from '@inertiajs/vue3';
 
     const props = defineProps({
         issue: {
@@ -150,7 +151,10 @@
             favorable_type: 'Issue',
         })
         .then(response => {
-            toast.success(response.data.message)
+            toast.success(response.data.message, {
+                onClick: () => router.visit(route('profile.favorites-show')),
+                toastClassName: 'cursor-pointer hover:opacity-90'
+            });
             issue.favorite = !issue.favorite;
         })
         .catch(error => {

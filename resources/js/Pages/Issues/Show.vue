@@ -29,6 +29,7 @@ import IssueDetailsSidebar from './Partials/IssueDetailsSidebar/IssueDetailsSide
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import { useToast } from "vue-toastification";
 import { getIssueTour } from '@/utils/onboardingWalkthrough.js';
+import { router } from '@inertiajs/vue3';
 
 const props = defineProps({
     issue: {
@@ -57,7 +58,10 @@ function handleFavoriteClick() {
         favorable_type: 'Issue',
     })
         .then(response => {
-            toast.success(response.data.message)
+            toast.success(response.data.message, {
+                onClick: () => router.visit(route('profile.favorites-show')),
+                toastClassName: 'cursor-pointer hover:opacity-90'
+            });
             props.issue.favorite = !props.issue.favorite
         })
         .catch(error => {
