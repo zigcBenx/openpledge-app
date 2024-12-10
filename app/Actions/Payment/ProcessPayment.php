@@ -54,7 +54,7 @@ class ProcessPayment
         $donorName = $isAuthenticated ? Auth::user()->name : "Anonymous Pledger";
         $formattedExpireDate = $expireDate ? Carbon::parse($expireDate)->format('F j, Y') : null;
         $totalBounty = $issue->donations_sum_amount;
-        $existingPledge = $issue->donations_sum_amount > 0;
+        $existingPledge = ($issue->donations_sum_amount - $amount) > 0;
 
         if ($existingPledge) {
             $comment = ConstructComment::constructShortPledgeComment($amount, $donorName, $issueId, $totalBounty, $formattedExpireDate);
