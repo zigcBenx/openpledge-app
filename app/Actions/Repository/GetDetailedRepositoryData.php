@@ -10,7 +10,7 @@ class GetDetailedRepositoryData
     public static function get($repository): void
     {
         [$githubUser, $repositoryName] = explode('/', $repository->title);
-        $issues = GetIssuesByName::get($githubUser, $repositoryName, $repository->github_installation_id);
+        $issues = GetIssuesByName::get($githubUser, $repositoryName, $repository->github_installation_id, 'open');
 
         $repository->favorite = $repository->userFavorite->isNotEmpty();
         $repository->open_issues_count = count($issues);

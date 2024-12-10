@@ -84,8 +84,8 @@
 	</style>
 </head>
 
-<body style="background-color: #2a0f2e; margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
-	<table class="nl-container" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #2a0f2e;">
+<body style="background-color: #ded5e3; margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
+	<table class="nl-container" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #ded5e3;">
 		<tbody>
 			<tr>
 				<td>

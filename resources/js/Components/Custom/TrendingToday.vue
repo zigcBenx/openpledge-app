@@ -34,8 +34,6 @@ const trendingTodayItems = ref([])
 
 async function fetchTrendingIssues() {
     const response = await axios.get(route('trending-today-issues'));
-    trendingTodayItems.value = response.data
-    console.log(trendingTodayItems.value);
-
+    trendingTodayItems.value = response.data;
 }
 </script>
