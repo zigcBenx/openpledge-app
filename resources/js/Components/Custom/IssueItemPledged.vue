@@ -151,10 +151,13 @@
             favorable_type: 'Issue',
         })
         .then(response => {
-            toast.success(response.data.message, {
-                onClick: () => router.visit(route('profile.favorites-show')),
-                toastClassName: 'cursor-pointer hover:opacity-90'
-            });
+            const toastOptions = response.data.message.includes('added') 
+                ? {
+                    onClick: () => router.visit(route('profile.favorites-show')),
+                    toastClassName: 'cursor-pointer hover:opacity-90'
+                } 
+                : {};
+            toast.success(response.data.message, toastOptions);
             issue.favorite = !issue.favorite;
         })
         .catch(error => {

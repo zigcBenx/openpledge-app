@@ -175,10 +175,13 @@ const addFavorites = (repository) => {
         favorable_type: 'Repository',
     })
         .then(response => {
-            toast.success(response.data.message, {
-                onClick: () => router.visit(route('profile.favorites-show')),
-                toastClassName: 'cursor-pointer hover:opacity-90'
-            });
+            const toastOptions = response.data.message.includes('added') 
+                ? {
+                    onClick: () => router.visit(route('profile.favorites-show')),
+                    toastClassName: 'cursor-pointer hover:opacity-90'
+                } 
+                : {};
+            toast.success(response.data.message, toastOptions);
             repository.favorite = !repository.favorite
         })
         .catch(error => {
