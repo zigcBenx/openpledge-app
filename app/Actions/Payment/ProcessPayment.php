@@ -44,7 +44,7 @@ class ProcessPayment
             return new JsonResponse(['success' => false, 'error' => $e->getMessage()]);
         }
 
-        $issue = GetIssueById::get($issueId);
+        $issue = GetIssueById::getWithActiveDonations($issueId);
 
         [$owner, $repo] = explode('/', $issue['repository']['title']);
         $issueNumber = basename(parse_url($issue['github_url'], PHP_URL_PATH));
@@ -52,7 +52,15 @@ class ProcessPayment
         $installationId = $issue['repository']['githubInstallation']['installation_id'];
 
         $donorName = $isAuthenticated ? Auth::user()->name : "Anonymous Pledger";
-        $comment = ConstructComment::constructPledgeComment($amount, $donorName, $issueId);
+        $formattedExpireDate = $expireDate ? Carbon::parse($expireDate)->format('F j, Y') : null;
+        $totalBounty = $issue->donations_sum_amount;
+        $existingPledge = ($issue->donations_sum_amount - $amount) > 0;
+
+        if ($existingPledge) {
+            $comment = ConstructComment::constructShortPledgeComment($amount, $donorName, $issueId, $totalBounty, $formattedExpireDate);
+        } else {
+            $comment = ConstructComment::constructPledgeComment($amount, $donorName, $issueId, $formattedExpireDate);
+        }
 
         // Query users who have this issue as an active issue (resolvers)
         $usersWithActiveIssue = User::whereHas('active_issues', function ($query) use ($issueId) {
