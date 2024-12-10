@@ -45,6 +45,7 @@ import Avatar from '@/Components/Avatar.vue'
 import { Link } from '@inertiajs/vue3'
 import Pill from '@/Components/Form/Pill.vue'
 import { useToast } from "vue-toastification";
+import { router } from '@inertiajs/vue3';
 
 const props = defineProps({
     repository: {
@@ -70,7 +71,13 @@ const addFavorites = (repository) => {
         favorable_type: 'Repository',
     })
         .then(response => {
-            toast.success(response.data.message)
+            const toastOptions = response.data.message.includes('added') 
+                ? {
+                    onClick: () => router.visit(route('profile.favorites-show')),
+                    toastClassName: 'cursor-pointer hover:opacity-90'
+                } 
+                : {};
+            toast.success(response.data.message, toastOptions);
             repository.favorite = !repository.favorite;
         })
         .catch(error => {
