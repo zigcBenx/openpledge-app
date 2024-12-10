@@ -70,7 +70,9 @@ class RepositoryController extends Controller
 
         return Inertia::render('Repositories/Show', [
             'repository' => $repository,
-            'issues' => $issues,
+            'issues' => array_values(collect($issues)->filter(function ($issue) {
+                return $issue instanceof \App\Models\Issue ? $issue->state !== 'closed' : true;
+            })->all()),
             'isRepositoryOwner' => $isRepositoryOwner,
             'isGithubAppConnected' => $isGithubAppConnected
         ]);

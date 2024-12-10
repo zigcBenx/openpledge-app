@@ -4,11 +4,14 @@
     <Link :href="route('profile.show')">
     <div class="items-center flex dark:bg-charcoal-gray bg-seashell p-4 rounded-md">
       <div class="w-[4.25rem]">
-        <img :src="$page.props.auth.user.profile_photo_url" class="rounded-full float-right" />
+        <img 
+         :src="$page.props.auth?.user?.profile_photo_url || 'https://avatars.githubusercontent.com/u/189997707?u=7a98f8258503c5cdb33ebeefc4554ee78b8c0adf&v=4'" 
+         class="rounded-full float-right"
+         :alt="$page.props.auth?.user?.name || 'Anonymous Pledger'" />
       </div>
       <div class="pl-4">
-        <div class="dark:text-lavender-mist text-xl text-oil brake-all">{{ $page.props.auth.user.name }}</div>
-        <div class="text-tundora dark:text-spun-pearl brake-all">{{ $page.props.auth.user.email }}</div>
+        <div class="dark:text-lavender-mist text-xl text-oil brake-all">{{ $page.props.auth?.user?.name || 'Anonymous Pledger' }}</div>
+        <div class="text-tundora dark:text-spun-pearl brake-all">{{ $page.props.auth?.user?.email || 'anonymous@openpledge.io' }}</div>
       </div>
     </div>
     </Link>
@@ -31,9 +34,9 @@
     </DropdownLink>
     </Col>
     <Col>
-    <form method="POST" @submit.prevent="logout">
+    <form method="POST" @submit.prevent="$page.props.auth?.user?.name ? logout() : login()">
       <Button color="secondary" type="submit" class="rounded-md">
-        Sign Out
+        {{ $page.props.auth?.user?.name ? 'Sign Out' : 'Log In' }}
       </Button>
     </form>
     </Col>
@@ -54,6 +57,10 @@ import { Link, router } from '@inertiajs/vue3';
 
 const logout = () => {
   router.post(route('logout'));
+};
+
+const login = () => {
+  router.visit(route('login'));
 };
 
 defineProps({

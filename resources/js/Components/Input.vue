@@ -16,6 +16,7 @@
         :maxlength="maxlength"
         @input="handleInput($event)"
         @blur="$emit('onBlur')"
+        :disabled="disabled"
       />
       <div v-if="icon && iconPosition === 'right' && type !== 'payment'" class="z-10 absolute inset-y-0 right-3 flex items-center pointer-events-none">
           <Icon :name="icon" :class="iconClass" />
@@ -46,6 +47,7 @@
       validator: (value) => ["left", "right"].includes(value),
     },
     type: String,
+    disabled: Boolean
   });
 
   const emit = defineEmits(['update:modelValue', 'update:input', 'onBlur', 'onInput']);

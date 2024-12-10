@@ -42,9 +42,10 @@ class MainController extends Controller
         if (!empty($filters)) {
             return Inertia::render('Discover/Issues', [
                 'issues' => $pledgedIssues,
-                'userIsContributor' => $user->isContributor(),
-                'userIsResolver' => $user->isResolver(),
-                'programmingLanguages' => $programmingLanguages
+                'userIsContributor' => isset($user) ? $user->isContributor() : true,
+                'userIsResolver' => isset($user) ? $user->isResolver() : true,
+                'programmingLanguages' => $programmingLanguages,
+                'isAuthenticated' => isset($user)
             ]);
         }
 
@@ -67,9 +68,10 @@ class MainController extends Controller
         if ($page === 1) {
             return Inertia::render('Discover/Issues', [
                 'issues' => $paginatedIssues,
-                'userIsContributor' => $user->isContributor(),
-                'userIsResolver' => $user->isResolver(),
-                'programmingLanguages' => $programmingLanguages
+                'userIsContributor' => isset($user) ? $user->isContributor() : true,
+                'userIsResolver' => isset($user) ? $user->isResolver() : true,
+                'programmingLanguages' => $programmingLanguages,
+                'isAuthenticated' => isset($user)
             ]);
         }
 

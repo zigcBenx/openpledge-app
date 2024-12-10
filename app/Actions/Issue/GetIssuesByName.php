@@ -10,13 +10,13 @@ use Illuminate\Support\Facades\DB;
 
 class GetIssuesByName
 {
-    public static function get($githubUser, $repositoryName, $repositoryGithubInstallationId)
+    public static function get($githubUser, $repositoryName, $repositoryGithubInstallationId, $state = null)
     {
-        $pledgedIssues = Issue::query()
-            ->where('github_url', 'LIKE', "https://github.com/$githubUser/$repositoryName/issues%")
-            ->leftJoin('donations', 'donations.donatable_id', '=', 'issues.id')
-            ->select('issues.*', DB::raw('SUM(donations.amount) as donations_sum_amount'))
-            ->groupBy('issues.id')
+        $pledgedIssues = Issue::where('github_url', 'LIKE', "https://github.com/$githubUser/$repositoryName/issues%")
+            ->withSum('donations', 'amount')
+            ->when($state, function ($query, $state) {
+                return $query->where('state', $state);
+            })
             ->get();
 
         if (!isset($repositoryGithubInstallationId)) {
