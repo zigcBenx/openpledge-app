@@ -37,6 +37,7 @@ Route::get('issues/{issue}', [IssueController::class, 'show'])->name('issues.sho
 
 Route::post('/get-payment-intent', [PaymentController::class, 'getPaymentIntent'])->name('get-payment-intent');
 Route::post('/payment-process', [PaymentController::class, 'processPayment'])->name('payment-process');
+Route::post('issues/pledgeExternalIssue', [IssueController::class, 'pledgeExternalIssue'])->name('issues.pledge-external-issue');
 Route::post('/user/user-feedback-submission', [UserController::class, 'handleUserFeedbackSubmission'])->name('user.feedback');
 
 // top lists endpoints
@@ -66,7 +67,6 @@ Route::middleware([
 
     Route::resource('repositories', RepositoryController::class)->only('index', 'store');
     Route::resource('issues', IssueController::class)->only(['store'])->except(['show']);
-    Route::post('issues/pledgeExternalIssue', [IssueController::class, 'pledgeExternalIssue'])->name('issues.pledge-external-issue');
     Route::resource('campaigns', CampaignController::class);
     Route::resource('donations', DonationController::class)->only('index', 'show', 'store');
 
