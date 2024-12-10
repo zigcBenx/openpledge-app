@@ -10,10 +10,13 @@ use Illuminate\Support\Facades\DB;
 
 class GetIssuesByName
 {
-    public static function get($githubUser, $repositoryName, $repositoryGithubInstallationId)
+    public static function get($githubUser, $repositoryName, $repositoryGithubInstallationId, $state = null)
     {
         $pledgedIssues = Issue::where('github_url', 'LIKE', "https://github.com/$githubUser/$repositoryName/issues%")
             ->withSum('donations', 'amount')
+            ->when($state, function ($query, $state) {
+                return $query->where('state', $state);
+            })
             ->get();
 
         if (!isset($repositoryGithubInstallationId)) {

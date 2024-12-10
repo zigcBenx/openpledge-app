@@ -27,11 +27,11 @@ const calculateTimeLeft = () => {
   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
   
   if (days > 0) {
-    timeLeft.value = `Expiring in ${days}d ${hours}h`;
+    timeLeft.value = `Expires in ${days}d ${hours}h`;
   } else if (hours > 0) {
-    timeLeft.value = `Expiring in ${hours}h ${minutes}m`;
+    timeLeft.value = `Expires in ${hours}h ${minutes}m`;
   } else if (minutes > 0) {
-    timeLeft.value = `Expiring in ${minutes} minutes`;
+    timeLeft.value = `Expires in ${minutes} minutes`;
   } else {
     timeLeft.value = 'Expired';
   }

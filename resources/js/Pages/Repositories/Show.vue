@@ -149,6 +149,7 @@ import DialogModal from '@/Components/DialogModal.vue'
 import TrendingToday from '@/Components/Custom/TrendingToday.vue'
 import { useToast } from "vue-toastification";
 import { getRepositoryTour } from '@/utils/onboardingWalkthrough.js';
+import { router } from '@inertiajs/vue3';
 
 const props = defineProps
     ({
@@ -174,7 +175,13 @@ const addFavorites = (repository) => {
         favorable_type: 'Repository',
     })
         .then(response => {
-            toast.success(response.data.message)
+            const toastOptions = response.data.message.includes('added') 
+                ? {
+                    onClick: () => router.visit(route('profile.favorites-show')),
+                    toastClassName: 'cursor-pointer hover:opacity-90'
+                } 
+                : {};
+            toast.success(response.data.message, toastOptions);
             repository.favorite = !repository.favorite
         })
         .catch(error => {
