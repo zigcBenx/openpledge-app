@@ -20,7 +20,7 @@ class IssueNonResolversMail extends Mailable
 
     public function build()
     {
-        $appUrl = env('APP_URL');
+        $appUrl = config('app.url');
         $issueLink = "{$appUrl}/issues/{$this->issueId}";
         $discoverLink = "{$appUrl}/discover/issues";
 

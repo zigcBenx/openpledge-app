@@ -44,7 +44,7 @@
                         </div>
                     </template>
                     <template v-slot="">
-                        <IssuesTable :issues="issues" @onLazyLoading="handleLazyLoadingIssues" :pledged="true"
+                        <IssuesTable :issues="issues" @onLazyLoading="handleLazyLoadingIssues" :pledged="true" :isAuthenticated="props.isAuthenticated"
                             class="table" />
                         <TableRowSkeleton v-if="loading" />
                     </template>
@@ -83,7 +83,8 @@ const props = defineProps
         issues: Array,
         userIsContributor: Boolean,
         userIsResolver: Boolean,
-        programmingLanguages: Array
+        programmingLanguages: Array,
+        isAuthenticated: Boolean
     });
 
 const keys = { labels: 'labels', languages: 'languages', range: 'range', date: 'date', storageDiscoverKey: 'discover' };

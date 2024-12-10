@@ -190,5 +190,27 @@ return [
     'stripe_secret' => env('STRIPE_SECRET', ''),
     'stripe_connect_url' => env('STRIPE_CONNECT_URL', ''),
     'stripe_currency' => env('CASHIER_CURRENCY', 'EUR'),
-    'stripe_key' => env('STRIPE_KEY', '')
+    'stripe_key' => env('STRIPE_KEY', ''),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Platform Fee Percentage
+    |--------------------------------------------------------------------------
+    |
+    | This value determines the platform fee percentage.
+    |
+    */
+
+    'platform_fee_percentage' => env('PLATFORM_FEE_PERCENTAGE', 8),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Payment Holding Days
+    |--------------------------------------------------------------------------
+    |
+    | This value determines the number of days the payment is held before being released.
+    |
+    */
+
+    'payment_holding_days' => env('PAYMENT_HOLDING_DAYS', 30),
 ];

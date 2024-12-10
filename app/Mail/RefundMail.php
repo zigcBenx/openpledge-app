@@ -24,7 +24,7 @@ class RefundMail extends Mailable
             ->with([
                 'name' => $this->name,
                 'amount' => $this->amount,
-                'support_email' => env('FEEDBACK_MAIL')
+                'support_email' => config('mail.feedback_mail')
             ])
             ->subject("Your Refund Has Been Issued");
     }

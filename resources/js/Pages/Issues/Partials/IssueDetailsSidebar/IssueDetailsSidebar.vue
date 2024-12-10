@@ -5,7 +5,8 @@
 
   defineProps({
     issue: Object,
-    stripePublicKey: String
+    stripePublicKey: String,
+    isAuthenticated: Boolean
   });
 
   const data = {
@@ -15,6 +16,11 @@
 <template>
   <div class="mb-10">
     <PledgesHistory :issue="issue" />
-    <PaymentForm v-if="issue.state !== 'closed'" :issue="issue" :stripePublicKey="stripePublicKey" />
+    <PaymentForm 
+      v-if="issue.state !== 'closed'" 
+      :issue="issue" 
+      :stripePublicKey="stripePublicKey" 
+      :isAuthenticated="isAuthenticated" 
+    />
   </div>
 </template>

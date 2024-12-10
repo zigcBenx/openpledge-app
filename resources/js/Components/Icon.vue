@@ -35,6 +35,7 @@ import Master from './../assets/icons/master.svg';
 import Visa from './../assets/icons/visa.svg';
 import Info from './../assets/icons/info.svg';
 import Pin from './../assets/icons/pin.svg';
+import Calendar from './../assets/icons/calendar.svg';
 
 export default {
   props: {
@@ -78,7 +79,8 @@ export default {
     Master,
     Visa,
     Info,
-    Pin
+    Pin,
+    Calendar
   },
   setup(props) {
     const components = {
@@ -108,6 +110,7 @@ export default {
       'chevron-right': ChevronRight,
       'chevron-down': ChevronDown,
       'open-in-new': OpenInNew,
+      calendar: Calendar
     };
     const icon = components[props.name];
 

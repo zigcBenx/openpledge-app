@@ -13,6 +13,7 @@ class GetUsersFinishedIssues
             'donations.user',
             'userFavorite',
             'programmingLanguages:id,name',
+            'resolvedBy'
         ])
             ->where('resolver_github_id', $githubId)
             ->withSum('donations', 'amount')
@@ -34,6 +35,7 @@ class GetUsersFinishedIssues
             'donations.user',
             'userFavorite',
             'programmingLanguages:id,name',
+            'resolvedBy'
         ])
             ->where('resolver_github_id', $githubId)
             ->withSum('donations', 'amount');
