@@ -8,18 +8,46 @@ use Illuminate\Support\Facades\Auth;
 
 class GetPaymentIntent
 {
-    public static function get($donationAmount): JsonResponse
+    public static function get($donationAmount, $email): JsonResponse
     {
         $authUser = Auth::user();
 
         try {
-            $customer = \Stripe\Customer::retrieve($authUser->id, []);
+            if ($authUser) {
+                $customer = \Stripe\Customer::retrieve($authUser->id, []);
+            } else {
+                if (!$email) {
+                    throw new \Exception('Email is required for anonymous donations');
+                }
+                
+                try {
+                    $customers = \Stripe\Customer::all([
+                        'email' => $email,
+                        'limit' => 1
+                    ]);
+                    $customer = $customers->data[0] ?? null;
+                } catch (\Exception $e) {
+                    $customer = null;
+                }
+
+                if (!$customer) {
+                    $customer = \Stripe\Customer::create([
+                        "email" => $email,
+                    ]);
+                }
+            }
         } catch (\Exception $e) {
-            $customer = \Stripe\Customer::create([
-                "id" => $authUser->id,
-                "name" => $authUser->name,
-                "email" => $authUser->email,
-            ]);
+            if ($authUser) {
+                $customer = \Stripe\Customer::create([
+                    "id" => $authUser->id,
+                    "name" => $authUser->name,
+                    "email" => $authUser->email,
+                ]);
+            } else {
+                $customer = \Stripe\Customer::create([
+                    "email" => $email,
+                ]);
+            }
         }
 
         $paymentIntent = PaymentIntent::create([

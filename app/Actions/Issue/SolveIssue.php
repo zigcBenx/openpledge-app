@@ -15,11 +15,11 @@ class SolveIssue
         if ($exists) {
             $user->active_issues()->detach($issue_id);
 
-            return response()->json(['message' => "Removed from Active issues"]);
+            return response()->json(['message' => "Issue removed from Active issues."]);
         } else {
             $user->active_issues()->attach($issue_id);
 
-            return response()->json(['message' => "Added to Active issues"]);
+            return response()->json(['message' => "Issue added to Active issues. View all >"]);
         }
     }
 }

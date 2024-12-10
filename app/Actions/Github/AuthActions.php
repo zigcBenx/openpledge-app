@@ -12,11 +12,11 @@ class AuthActions
 {
     private static function generateJwtToken()
     {
-        $privateKey = env('GITHUB_APP_PRIVATE_KEY');
+        $privateKey = config('services.github.app_private_key');
         $payload = [
             'iat' => time(),
             'exp' => time() + 10 * 60, // 10 minutes expiration
-            'iss' => env('GITHUB_APP_CLIENT_ID'),
+            'iss' => config('services.github.app_client_id'),
         ];
 
         return JWT::encode($payload, $privateKey, 'RS256');
@@ -25,20 +25,23 @@ class AuthActions
     public static function getAccessTokenByAuthenticatedUser($authenticatedUser)
     {
         if (!isset($authenticatedUser)) {
-            $randomInstallation = GitHubInstallation::inRandomOrder()->first();
-
-            if ($randomInstallation && !empty($randomInstallation->access_token)) {
-                return $randomInstallation->access_token;
-            }
+            return AuthActions::getRandomInstallationAccessToken();
         }
         
         $authenticatedUserToken = $authenticatedUser->getGitHubAccessToken();
 
         if ($authenticatedUserToken) {
             return $authenticatedUserToken;
-        }
+        } 
+        
+        return AuthActions::getRandomInstallationAccessToken();
+    }
 
-        return null;
+    public static function getRandomInstallationAccessToken()
+    {
+        $randomInstallation = GitHubInstallation::inRandomOrder()->first();
+
+        return $randomInstallation->access_token;
     }
 
     public static function getAccessTokenByRepositoryUrl($repositoryUrl)

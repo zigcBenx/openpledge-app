@@ -65,4 +65,9 @@ class Issue extends Model
     {
         return $this->belongsToMany(User::class, 'user_solve_issue');
     }
+
+    public function resolvedBy()
+    {
+        return $this->belongsTo(User::class, 'resolver_github_id', 'github_id');
+    }
 }

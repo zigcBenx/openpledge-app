@@ -19,7 +19,7 @@ class CheckExpiredDonations extends Command
         logger('[INFO] Task started', [$this->signature]);
         $today = Carbon::today();
 
-        $feePercentage = env('PLATFORM_FEE_PERCENTAGE');
+        $feePercentage = config('app.platform_fee_percentage');
 
         $expiredDonations = Donation::where('expire_date', '<', $today)
             ->where('paid', false)
