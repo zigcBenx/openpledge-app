@@ -42,7 +42,7 @@
         <ul v-if="showHistory" class="flex flex-col gap-3 mt-6">
           <li v-for="donation in issue.donations" :key="donation.id" class="rounded-md border dark:border-stylish-red border-thistle p-4">
             <p class="font-medium dark:text-platinum mb-2">{{ donation.amount }} €</p>
-            <p class="flex text-sm dark:text-lavender-mist mb-1.5">Donated by <span class="font-medium ml-1">{{ donation.user.name }}</span> <span class="ml-auto">on {{ dayjs(donation.created_at).format(DATE_FORMAT) }}</span></p>
+            <p class="flex text-sm dark:text-lavender-mist mb-1.5">Donated by <span class="font-medium ml-1">{{ donation.user?.name || 'Anonymous Pledger' }}</span> <span class="ml-auto">on {{ dayjs(donation.created_at).format(DATE_FORMAT) }}</span></p>
             <p v-if="donation.expire_date" class="flex text-xs font-light dark:text-spun-pearl">Valid until <span class="ml-auto">{{ dayjs(donation.expire_date).format(DATE_FORMAT) }}</span></p>
           </li>
         </ul>
