@@ -8,6 +8,7 @@ use App\Actions\Issue\GetIssueById;
 use App\Actions\Issue\SolveIssue;
 use App\Http\Requests\CreateNewIssueRequest;
 use App\Models\Issue;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -35,10 +36,12 @@ class IssueController extends Controller
         $issue = GetIssueById::get($id);
         $issue->issueResolver = GithubService::getUserByGithubId($issue->resolver_github_id);
         $issue->issueActivity = GithubService::getIssueActivityTimeline($issue->github_url, $issue->repository->githubInstallation->access_token, $issue->donations);
+        $user = Auth::user();
 
         return Inertia::render('Issues/Show', [
             'issue' => $issue,
-            'stripePublicKey' => config('app.stripe_key')
+            'stripePublicKey' => config('app.stripe_key'),
+            'isAuthenticated' => isset($user)
         ]);
     }
 

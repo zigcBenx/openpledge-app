@@ -5,14 +5,13 @@
     <div class="items-center flex dark:bg-charcoal-gray bg-seashell p-4 rounded-md">
       <div class="w-[4.25rem]">
         <img 
-         v-if="$page.props.auth?.user?.profile_photo_url"
-         :src="$page.props.auth?.user?.profile_photo_url" 
+         :src="$page.props.auth?.user?.profile_photo_url || 'https://avatars.githubusercontent.com/u/189997707?u=7a98f8258503c5cdb33ebeefc4554ee78b8c0adf&v=4'" 
          class="rounded-full float-right"
-         :alt="$page.props.auth?.user?.name || 'Guest User'" />
+         :alt="$page.props.auth?.user?.name || 'Anonymous Pledger'" />
       </div>
       <div class="pl-4">
-        <div class="dark:text-lavender-mist text-xl text-oil brake-all">{{ $page.props.auth?.user?.name || 'Guest Pledger' }}</div>
-        <div class="text-tundora dark:text-spun-pearl brake-all">{{ $page.props.auth?.user?.email || 'guest@openpledge.io' }}</div>
+        <div class="dark:text-lavender-mist text-xl text-oil brake-all">{{ $page.props.auth?.user?.name || 'Anonymous Pledger' }}</div>
+        <div class="text-tundora dark:text-spun-pearl brake-all">{{ $page.props.auth?.user?.email || 'anonymous@openpledge.io' }}</div>
       </div>
     </div>
     </Link>

@@ -8,7 +8,12 @@
                 <Activity :issue="issue" class="mt-14 pb-10" id="issue-activity-container" />
             </div>
             <div class="pt-[6.43rem]">
-                <IssueDetailsSidebar :issue="issue" :stripePublicKey="stripePublicKey" id="issue-sidebar-container" />
+                <IssueDetailsSidebar 
+                    :issue="issue" 
+                    :stripePublicKey="stripePublicKey" 
+                    :isAuthenticated="isAuthenticated" 
+                    id="issue-sidebar-container" 
+                />
             </div>
         </div>
     </AppLayout>
@@ -24,6 +29,7 @@ import IssueDetailsSidebar from './Partials/IssueDetailsSidebar/IssueDetailsSide
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import { useToast } from "vue-toastification";
 import { getIssueTour } from '@/utils/onboardingWalkthrough.js';
+import { router } from '@inertiajs/vue3';
 
 const props = defineProps({
     issue: {
@@ -33,7 +39,8 @@ const props = defineProps({
             return {}
         }
     },
-    stripePublicKey: String
+    stripePublicKey: String,
+    isAuthenticated: Boolean
 })
 
 const breadcrumbsData = [{
@@ -51,7 +58,13 @@ function handleFavoriteClick() {
         favorable_type: 'Issue',
     })
         .then(response => {
-            toast.success(response.data.message)
+            const toastOptions = response.data.message.includes('added') 
+                ? {
+                    onClick: () => router.visit(route('profile.favorites-show')),
+                    toastClassName: 'cursor-pointer hover:opacity-90'
+                } 
+                : {};
+            toast.success(response.data.message, toastOptions);
             props.issue.favorite = !props.issue.favorite
         })
         .catch(error => {
