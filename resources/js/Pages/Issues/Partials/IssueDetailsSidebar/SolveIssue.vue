@@ -1,11 +1,12 @@
 <script setup>
   import Button from '@/Components/Button.vue';
   import Icon from '@/Components/Icon.vue';
-  import { ref } from 'vue';
   import { useToast } from "vue-toastification";
+  import { router } from '@inertiajs/vue3';
 
   const props = defineProps({
-    issue: Object
+    issue: Object,
+    isAuthenticated: Boolean
   });
 
   const solveIssue = () => {
@@ -14,7 +15,13 @@
       issue_id: props.issue.id
     })
       .then(response => {
-        toast.success(response.data.message)
+        const toastOptions = response.data.message.includes('added')
+            ? {
+                onClick: () => router.visit(route('profile.actives-show')),
+                toastClassName: 'cursor-pointer hover:opacity-90'
+            } 
+            : {};
+        toast.success(response.data.message, toastOptions);
         props.issue.isAuthUsersActiveIssue = !props.issue.isAuthUsersActiveIssue;
       })
       .catch(error => {
@@ -56,7 +63,7 @@
         </div>
         <p class="dark:text-spun-pearl text-tundora text-xs float-left font-medium leading-5 ml-2">By selecting 'Solve', this issue will be added to your active issues. You will receive notifications regarding activity happening to this issue.</p>
       </div>
-      <Button v-if="!issue.isAuthUsersActiveIssue" size="lg" color="primary" class="dark:text-oil" @click="solveIssue">Solve This Issue</Button>
+      <Button v-if="!issue.isAuthUsersActiveIssue" size="lg" color="primary" class="dark:text-oil" @click="solveIssue" :disabled="!isAuthenticated">Solve This Issue</Button>
       <Button v-else size="lg" color="outline" class="dark:text-platinum" @click="solveIssue">Remove Issue</Button>
     </div>
 </template>

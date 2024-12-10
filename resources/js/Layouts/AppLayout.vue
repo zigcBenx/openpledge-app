@@ -211,7 +211,7 @@
         <template #content>
             <div v-if="feedbackModalMessage" class="mb-6">{{ feedbackModalMessage }}</div>
             <div v-else>
-                <div class="mb-4">
+                <div class="mb-4" v-if="!$page.props.auth?.user">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Your Email
                     </label>
@@ -269,6 +269,7 @@
     import Button from '@/Components/Button.vue';
     import TextArea from '@/Components/TextArea.vue';
     import { useToast } from "vue-toastification";
+    import { validateEmail } from '@/utils/validateEmail';
 
     export default {
         props: {
@@ -300,7 +301,7 @@
             const displayFeedbackModal = ref(false);
             const feedbackModalMessage = ref('');
             const feedbackData = ref({
-                email: '',
+                email: usePage().props.auth.user?.email || '',
                 content: ''
             });
             const data = ref({
@@ -381,6 +382,11 @@
 
             const submitFeedback = () => {
                 const toast = useToast();
+
+                if (!validateEmail(feedbackData.value.email)) {
+                    toast.error('Oops! That email address looks a bit wonky.');
+                    return;
+                }
 
                 axios.post(route('user.feedback'), {
                     email: feedbackData.value.email,

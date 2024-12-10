@@ -5,7 +5,11 @@
         subtitle="List of top donated open issues today"
     >
         <li v-for="item in trendingTodayItems" :key="item.id" class="flex justify-between overflow-hidden py-1.5">
-            <span class="w-6/12 pl-1.5 border-l-2 rounded-sm dark:border-green border-ocean-green text-oil dark:text-lavender-mist text-xs">{{ item.title }}</span>
+            <span class="w-6/12 pl-1.5 border-l-2 rounded-sm dark:border-green border-ocean-green text-oil dark:text-lavender-mist text-xs">
+                <Link :href="route('issues.show', {issue: item.id})">
+                    {{ item.title }}
+                </Link>
+            </span>
             <span class="w-6/12 text-mondo dark:text-lavender-mist font-medium text-xs">
                 <Link :href="route('repositories.show',{ githubUser: item.repository.title.split('/')[0], repository: item.repository.title.split('/')[1] })">
                     {{ item.repository.title }}
@@ -30,7 +34,6 @@ const trendingTodayItems = ref([])
 
 async function fetchTrendingIssues() {
     const response = await axios.get(route('trending-today-issues'));
-    trendingTodayItems.value = response.data
-
+    trendingTodayItems.value = response.data;
 }
 </script>

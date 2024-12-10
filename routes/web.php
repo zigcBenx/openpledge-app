@@ -37,6 +37,7 @@ Route::get('issues/{issue}', [IssueController::class, 'show'])->name('issues.sho
 
 Route::post('/get-payment-intent', [PaymentController::class, 'getPaymentIntent'])->name('get-payment-intent');
 Route::post('/payment-process', [PaymentController::class, 'processPayment'])->name('payment-process');
+Route::post('/user/user-feedback-submission', [UserController::class, 'handleUserFeedbackSubmission'])->name('user.feedback');
 
 // top lists endpoints
 Route::get('/trending-today-issues', [IssueController::class, 'getTrendingToday'])->name('trending-today-issues');
@@ -100,7 +101,6 @@ Route::middleware([
     Route::get('/user/profile/finished', [ProfileController::class, 'showAuthUsersFinishedIssues'])->name('profile.finished-show');
 
     Route::post('/user/new-user-quiz-submission', [UserController::class, 'handleNewUserQuizSubmission'])->name('user.new-user-quiz');
-    Route::post('/user/user-feedback-submission', [UserController::class, 'handleUserFeedbackSubmission'])->name('user.feedback');
 
     Route::post('/subscribe-user', [SubscriberController::class, 'subscribeUser']);
     Route::post('/stripe-connect', [StripeConnectController::class, 'handleStripeConnectCallback'])->name('stripe-connect');
