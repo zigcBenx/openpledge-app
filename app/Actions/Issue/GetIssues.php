@@ -54,7 +54,9 @@ class GetIssues
             }
         }
 
-        $query = $query->skip($offset)->take($limit);
+        $query = $query->orderByDesc('donations_sum_amount')
+            ->skip($offset)
+            ->take($limit);
 
         $issues = $query->get();
 

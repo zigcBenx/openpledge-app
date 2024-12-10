@@ -1,8 +1,8 @@
 <script setup>
   import Button from '@/Components/Button.vue';
   import Icon from '@/Components/Icon.vue';
-  import { ref } from 'vue';
   import { useToast } from "vue-toastification";
+  import { router } from '@inertiajs/vue3';
 
   const props = defineProps({
     issue: Object
@@ -14,7 +14,13 @@
       issue_id: props.issue.id
     })
       .then(response => {
-        toast.success(response.data.message)
+        const toastOptions = response.data.message.includes('added')
+            ? {
+                onClick: () => router.visit(route('profile.actives-show')),
+                toastClassName: 'cursor-pointer hover:opacity-90'
+            } 
+            : {};
+        toast.success(response.data.message, toastOptions);
         props.issue.isAuthUsersActiveIssue = !props.issue.isAuthUsersActiveIssue;
       })
       .catch(error => {
