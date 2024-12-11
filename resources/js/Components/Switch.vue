@@ -10,19 +10,15 @@
     </div>
 </template>
 
-<script>
-import { ref } from 'vue';
+<script setup>
+import { ref, defineProps } from 'vue';
 
-export default {
-    props: {
-        modelValue: {
-            type: Boolean,
-            default: false
-        }
-    },
-    setup() {
-        const uniqueId = ref(`switch-${Math.random().toString(36).slice(2, 11)}`);
-        return { uniqueId };
+defineProps({
+    modelValue: {
+        type: Boolean,
+        default: false
     }
-};
+});
+
+const uniqueId = ref(`switch-${Math.random().toString(36).slice(2, 11)}`);
 </script>
