@@ -19,12 +19,13 @@ class PaymentController extends Controller
     {
         $user = Auth::user();
         $isAuthenticated = isset($user);
-
-        if ($isAuthenticated) {
-            $request->merge(['email' => $user->email]);
-        }
+        $isPledgingAnonymously = (bool) $user->is_pledging_anonymously;
 
         $validatedProcessPaymentData = $request->validated();
+        
+        if ($isAuthenticated) {
+            $validatedProcessPaymentData['email'] = $user->email;
+        }
 
         return ProcessPayment::process(
             $validatedProcessPaymentData['pledgeExpirationDate'],
@@ -32,7 +33,8 @@ class PaymentController extends Controller
             $validatedProcessPaymentData['issue_id'],
             $validatedProcessPaymentData['amount'],
             $validatedProcessPaymentData['email'],
-            $isAuthenticated
+            $isAuthenticated,
+            $isPledgingAnonymously
         );
     }
 }

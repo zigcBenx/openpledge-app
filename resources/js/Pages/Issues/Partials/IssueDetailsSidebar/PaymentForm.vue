@@ -239,7 +239,7 @@ const handleFormSubmit = async () => {
           // Handle errors
           toast.error('Something went wrong!')
       } else {
-        axios.post('/payment-process', form).then(response => {
+        axios.post(route('payment-process'), form).then(response => {
           if(response.data.success) {
             form.amount = '';
             form.cardSave = false;
