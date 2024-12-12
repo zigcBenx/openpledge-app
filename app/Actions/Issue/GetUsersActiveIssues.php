@@ -9,7 +9,7 @@ class GetUsersActiveIssues
     public static function get($userId)
     {
         return Issue::with([
-            'repository.githubInstallation',
+            'repository.programmingLanguages',
             'donations.user',
             'userFavorite',
             'programmingLanguages:id,name',
@@ -33,7 +33,7 @@ class GetUsersActiveIssues
         $pageName = 'page';
 
         $query = Issue::with([
-            'repository.githubInstallation',
+            'repository.programmingLanguages',
             'donations.user',
             'userFavorite',
             'programmingLanguages:id,name',

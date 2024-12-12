@@ -50,7 +50,7 @@ onUnmounted(() => {
 
 <template>
   <div class="flex gap-3 pl-3">
-    <Avatar :url="pledgeActivity.user?.profile_photo_url || 'https://avatars.githubusercontent.com/u/189997707?u=7a98f8258503c5cdb33ebeefc4554ee78b8c0adf&v=4'" />
+    <Avatar :url="pledgeActivity.user?.profile_photo_url || '/images/anonymous_pledger.png'" />
     <div class="pt-1.5">
       <p class="flex gap-1.5 mb-4 text-sm text-tundora dark:text-spun-pearl">
         <span class="font-medium text-mondo dark:text-seashell">{{ pledgeActivity.user?.name || 'Anonymous Pledger'}}</span>

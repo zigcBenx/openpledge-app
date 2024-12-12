@@ -64,7 +64,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { parseQueryFilters, updateQueryFilters, prepareFiltersForQuery } from '../../utils/parseQuery.js';
-import { languages as languagesList, labels as labelsList } from '../../assets/mockedData.js';
+import { labels as labelsList } from '../../assets/mockedData.js';
 import { router } from '@inertiajs/vue3'
 import Page from '@/Components/Page.vue';
 import Filters from './Filters.vue';
@@ -91,7 +91,7 @@ const keys = { labels: 'labels', languages: 'languages', range: 'range', date: '
 
 const isQuizModalVisible = ref(!props.userIsContributor && !props.userIsResolver);
 const labels = ref(labelsList);
-const languages = ref(languagesList);
+const languages = ref(props.programmingLanguages);
 const issues = ref(props.issues);
 const displayFilterModal = ref(false);
 const queryFilters = ref({});
@@ -169,7 +169,9 @@ const handleLazyLoadingIssues = () => {
             existingUrls: existingIssueURLs
         }
     }).then(response => {
-        issues.value = [...issues.value, ...response.data.issues];
+        if(response.data.issues) {
+            issues.value = [...issues.value, ...response.data.issues];
+        }
         loading.value = false;
     }).catch(error => {
         console.error('Failed to load issues:', error);

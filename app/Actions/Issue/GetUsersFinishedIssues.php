@@ -9,7 +9,7 @@ class GetUsersFinishedIssues
     public static function get($githubId)
     {
         return Issue::with([
-            'repository.githubInstallation',
+            'repository.programmingLanguages',
             'donations.user',
             'userFavorite',
             'programmingLanguages:id,name',
@@ -31,7 +31,7 @@ class GetUsersFinishedIssues
         $pageName = 'page';
 
         $query = Issue::with([
-            'repository.githubInstallation',
+            'repository.programmingLanguages',
             'donations.user',
             'userFavorite',
             'programmingLanguages:id,name',
