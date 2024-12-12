@@ -5,7 +5,7 @@
         subtitle="A list of top donors based on their donations"
     >
         <li v-for="donor in donors" :key="donor.user?.id" class="flex justify-between overflow-hidden py-1.5">
-            <UserListItem :userImageUrl="donor.user?.profile_photo_url || 'https://avatars.githubusercontent.com/u/189997707?u=7a98f8258503c5cdb33ebeefc4554ee78b8c0adf&v=4'" :userName="donor.user?.name || 'Anonymous Pledger'" />
+            <UserListItem :userImageUrl="donor.user?.profile_photo_url || '/images/anonymous_pledger.png'" :userName="donor.user?.name || 'Anonymous Pledger'" />
             <span class="text-purple-heart font-medium text-xs">{{ donor.total_donated }} €</span>
         </li>
     </TopList>

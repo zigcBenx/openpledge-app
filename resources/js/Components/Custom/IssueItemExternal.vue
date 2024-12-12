@@ -133,7 +133,8 @@
         user_avatar: issue.user_avatar,
         github_username: props.repository.title.split('/')[0],
         github_created_at: issue.github_created_at,
-        state: issue.state
+        state: issue.state,
+        description: issue.description
       })
     }
 </script>

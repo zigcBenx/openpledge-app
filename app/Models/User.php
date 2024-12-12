@@ -37,7 +37,8 @@ class User extends Authenticatable
         'is_pledger',
         'is_contributor',
         'job_title',
-        'company_id'
+        'company_id',
+        'is_pledging_anonymously'
     ];
 
     /**

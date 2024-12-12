@@ -10,11 +10,9 @@ class GetIssueById
     public static function get($id)
     {
         $issue = Issue::with([
-            'repository' => function ($query) {
-                $query->with('githubInstallation');
-            },
+            'repository.programmingLanguages',
             'donations.user',
-            'userFavorite'
+            'userFavorite',
         ])->find($id)->append('donation_sum');
 
         $issue->favorite = $issue->userFavorite->isNotEmpty();
