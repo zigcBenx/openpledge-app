@@ -20,7 +20,7 @@ use Carbon\Carbon;
 
 class ProcessPayment
 {
-    public static function process($pledgeExpirationDate, $paymentId, $issueId, $amount, $donorEmail, $isAuthenticated): JsonResponse
+    public static function process($pledgeExpirationDate, $paymentId, $issueId, $amount, $donorEmail, $isAuthenticated, $isPledgingAnonymously): JsonResponse
     {
         $expireDate = null;
         if (isset($pledgeExpirationDate)) {
@@ -36,7 +36,7 @@ class ProcessPayment
                     'donatable_id' => $issueId,
                     'amount' => $amount,
                     'transaction_id' => $paymentDetail->id,
-                    'donor_id' => Auth::id(),
+                    'donor_id' => $isPledgingAnonymously ? null : Auth::id(),
                     'expire_date' => $expireDate,
                 ]
             );
@@ -51,7 +51,7 @@ class ProcessPayment
 
         $installationId = $issue['repository']['githubInstallation']['installation_id'];
 
-        $donorName = $isAuthenticated ? Auth::user()->name : "Anonymous Pledger";
+        $donorName = $isAuthenticated || !$isPledgingAnonymously ? Auth::user()->name : "Anonymous Pledger";
         $formattedExpireDate = $expireDate ? Carbon::parse($expireDate)->format('F j, Y') : null;
         $totalBounty = $issue->donations_sum_amount;
         $existingPledge = ($issue->donations_sum_amount - $amount) > 0;

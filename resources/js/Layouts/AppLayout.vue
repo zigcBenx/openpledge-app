@@ -138,7 +138,7 @@
                             <div v-if="$page.props.jetstream.managesProfilePhotos" class="shrink-0 me-3">
                                 <img
                                     class="h-10 w-10 rounded-full object-cover" 
-                                    :src="$page.props.auth?.user?.profile_photo_url || 'https://avatars.githubusercontent.com/u/189997707?u=7a98f8258503c5cdb33ebeefc4554ee78b8c0adf&v=4'"
+                                    :src="$page.props.auth?.user?.profile_photo_url || '/images/anonymous_pledger.png'"
                                     :alt="$page.props.auth?.user?.name || 'Anonymous Pledger'">
                             </div>
 

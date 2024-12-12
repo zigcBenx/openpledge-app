@@ -111,7 +111,8 @@ class IssueActions
                                 'github_username' => $issue['user']['login'],
                                 'github_created_at' => $issue['created_at'],
                                 'isExternal' => true,
-                                'state' => $issue['state']
+                                'state' => $issue['state'],
+                                'description' => $issue['body']
                             ];
                             if (++$totalIssuesCollected >= $neededIssues) {
                                 break 2; // Break out of both loops if needed issues are collected

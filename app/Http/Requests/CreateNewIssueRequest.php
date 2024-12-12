@@ -10,6 +10,7 @@ class CreateNewIssueRequest extends FormRequest
     {
         return [
             'title'              => ['required', 'string', 'max:255'],
+            'description'        => ['nullable', 'string'],
             'github_url'         => ['required', 'string', 'url'],
             'github_id'          => ['required', 'unique:issues,github_id'],
             'repository_id'      => ['required', 'exists:repositories,id'],

@@ -66,7 +66,7 @@
             </div>
             <Button 
               :loading="loading" 
-              :disabled="(form.pledgeExpirationDate?.error || false) && form.pledgeMethod === PAYMENT_FORM_METHODS.EXPIRE_DATE" 
+              :disabled="!form.pledgeExpirationDate?.value && (form.pledgeMethod === PAYMENT_FORM_METHODS.EXPIRE_DATE)" 
               class="mt-8" 
               :plain="true" 
               size="lg" 
@@ -96,9 +96,7 @@ import FormTypeButtons from './FormTypeButtons.vue';
 import Input from '@/Components/Input.vue';
 import MoneyInput from '@/Components/MoneyInput.vue';
 import { preventStringInputWithNumber } from '@/utils/preventStringInputWithNumber.js';
-import { formatExpireDate } from '@/utils/formatExpireDate.js';
 import { PAYMENT_FORM_METHODS } from '@/constants';
-import Select from '@/Components/Select.vue';
 import dayjs from '@/libs/dayjs.js'
 import SolveIssue from './SolveIssue.vue';
 import { ref, onMounted } from "vue"
@@ -107,6 +105,7 @@ import { useToast } from 'vue-toastification';
 import { router } from '@inertiajs/vue3'
 import { validateEmail } from '@/utils/validateEmail.js';
 import DatePicker from '@/Components/Form/DatePicker.vue';
+import confetti from 'canvas-confetti';
 
 const stripe = ref(null);
 const elements = ref(null);
@@ -197,8 +196,6 @@ const classes = {
   error: "mt-1.5 text-xs block dark:text-spun-pearl text-tundora"
 }
 
-const yearsData = [...new Array(10)].map((_, index) => 2024 + index);
-
 const handleMethodChange = (value) => form.pledgeMethod = value;
 const handlePledgeExpireDateValidation = () => {
   const expirationDate = dayjs(form.pledgeExpirationDate.value);
@@ -236,10 +233,10 @@ const handleFormSubmit = async () => {
   }).then(function(result) {
       form.paymentId = result.paymentIntent?.id;
       if (result.error) {
-          // Handle errors
+          console.error(result.error)
           toast.error('Something went wrong!')
       } else {
-        axios.post('/payment-process', form).then(response => {
+        axios.post(route('payment-process'), form).then(response => {
           if(response.data.success) {
             form.amount = '';
             form.cardSave = false;
@@ -247,9 +244,32 @@ const handleFormSubmit = async () => {
             form.paymentId = '';
             form.pledgeExpirationDate = {
               value: '',
-                  error: false
+              error: false
             };
             form.pledgeExpirationYear = '';
+
+            const animationEnd = Date.now() + 4000;
+            
+            const interval = setInterval(function() {
+              const timeLeft = animationEnd - Date.now();
+              
+              if (timeLeft <= 0) {
+                return clearInterval(interval);
+              }
+
+              confetti({
+                particleCount: 200,
+                angle: 90,
+                spread: 180,
+                origin: { x: 0.5, y: 1 },
+                colors: ['#551e5b', '#88f5dc', '#152825'],
+                gravity: 0.5,
+                scalar: 1.4,
+                startVelocity: 80,
+                ticks: 200
+              });
+            }, 150);
+
             paymentIntent();
             toast.success('Pledge submitted! You are awesome!')
             router.reload();

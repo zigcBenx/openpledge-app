@@ -13,7 +13,7 @@ class GetFavoriteIssues
         $favoriteIssueIds = GetFavorites::getFavoriteIdsByUserAndType($userId, Issue::class);
 
         return Issue::with([
-            'repository.githubInstallation',
+            'repository.programmingLanguages',
             'donations.user',
             'userFavorite',
             'programmingLanguages:id,name',
@@ -38,7 +38,7 @@ class GetFavoriteIssues
         $favoriteIssueIds = GetFavorites::getFavoriteIdsByUserAndType($userId, Issue::class);
 
         $query = Issue::with([
-            'repository.githubInstallation',
+            'repository.programmingLanguages',
             'donations.user',
             'userFavorite',
             'programmingLanguages:id,name',

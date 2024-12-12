@@ -21,7 +21,8 @@ class Issue extends Model
         'github_username',
         'github_created_at',
         'resolver_github_id',
-        'resolved_at'
+        'resolved_at',
+        'description'
     ];
 
     public function repository()

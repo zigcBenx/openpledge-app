@@ -4,6 +4,7 @@ namespace App\Actions\Github;
 
 use App\Actions\Payment\ProcessPayment;
 use App\Http\Requests\CreateNewRepositoryRequest;
+use App\Models\ProgrammingLanguage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -83,7 +84,20 @@ class AppActions
                     return redirect('/error');
                 }
 
-                CreateNewRepository::create($repositoryData);
+                $createdRepository = CreateNewRepository::create($repositoryData);
+
+                $programmingLanguages = array_keys(GithubService::getRepositoryProgrammingLanguages($repository, $accessToken));
+
+                $languageIds = [];
+                foreach ($programmingLanguages as $programmingLanguage) {
+                    $language = ProgrammingLanguage::updateOrCreate(
+                        ['name' => $programmingLanguage],
+                        ['name' => $programmingLanguage]
+                    );
+                    $languageIds[] = $language->id;
+                }
+
+                $createdRepository->programmingLanguages()->sync($languageIds);
             }
 
             DB::commit();

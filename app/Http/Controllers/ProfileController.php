@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Profile\UpdateProfile;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Laravel\Jetstream\Jetstream;
@@ -186,5 +187,10 @@ class ProfileController extends Controller
             'current_page' => $issues->currentPage(),
             'last_page' => $issues->lastPage(),
         ]);
+    }
+
+    public function updateAnonymousPledging(Request $request)
+    {
+        return UpdateProfile::toggleAnonymousPledging($request->input('is_pledging_anonymously'));
     }
 }

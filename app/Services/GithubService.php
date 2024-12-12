@@ -35,6 +35,11 @@ class GithubService
         return RepositoryActions::getByInstallationId($installationId, $accessToken);
     }
 
+    public static function getRepositoryProgrammingLanguages($repository, $accessToken)
+    {
+        return RepositoryActions::getProgrammingLanguages($repository, $accessToken);
+    }
+
     public static function getRepositoriesBySearchQuery($searchQuery, $resultsToFetch, $localResults)
     {
         return RepositoryActions::getBySearchQuery($searchQuery, $resultsToFetch, $localResults);

@@ -26,6 +26,16 @@ class RepositoryActions
         }
     }
 
+    public static function getProgrammingLanguages($repository, $accessToken)
+    {
+        $url = GithubService::BASE_URL . "/repos/{$repository['full_name']}/languages";
+
+        $response = Http::withToken($accessToken)
+            ->get($url);
+
+        return $response->json();
+    }
+
     public static function getBySearchQuery($searchQuery, $resultsToFetch, $localResults)
     {
         $accessToken = AuthActions::getAccessTokenByAuthenticatedUser(Auth::user());

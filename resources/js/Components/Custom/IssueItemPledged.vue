@@ -59,7 +59,7 @@
     <td class="py-6 pr-4 align-middle">
         <div class="flex flex-wrap gap-1">
             <Pill 
-                v-if="issue.programming_languages"
+                v-if="issue.programming_languages?.length > 0"
                 v-for="issue_lang in issue.programming_languages" 
                 :key="issue_lang"
                 color="present" 
@@ -69,7 +69,7 @@
                 {{ issue_lang.name }}
             </Pill>
             <Pill 
-                v-else-if="issue.repository"
+                v-else-if="issue.repository?.programming_languages?.length > 0"
                 v-for="lang in issue.repository.programming_languages" 
                 :key="lang"
                 color="present" 
