@@ -24,9 +24,12 @@
       :href="route('api-tokens.index')">
       <Icon name="key" class="dark:stroke-platinum stroke-rich-black"></Icon> <span class="pl-2">API Tokens</span>
     </DropdownLink>
-    <DropdownLink href="#" class="dark:text-platinum rounded-sm text-rich-black"
-      title="This does not work yet in beta!"> <!--@click="connectStripe"-->
-      <Icon name="key" class="dark:stroke-platinum stroke-rich-black"></Icon> <span class="pl-2">Connect Stripe</span>
+    <DropdownLink 
+      class="dark:text-platinum rounded-sm text-rich-black pl-2" 
+      :href="$page.props.auth?.user?.stripe_id ? null : route('stripe.connect')" 
+      @click="openStripeDashboard">
+      <Icon name="dollar" class="dark:stroke-platinum stroke-rich-black"></Icon> 
+      <span class="pl-3">{{ $page.props.auth?.user?.stripe_id ? 'Open Stripe Dashboard' : 'Connect Stripe' }}</span>
     </DropdownLink>
     <DropdownLink class="dark:text-platinum rounded-sm text-rich-black" :href="route('discover.issues')" @click="setTutorialInProgress()">
       <Icon name="pin" class="dark:stroke-platinum stroke-rich-black"></Icon> <span class="pl-2">Start guided
@@ -63,16 +66,17 @@ const login = () => {
   router.visit(route('login'));
 };
 
+const openStripeDashboard = async () => {
+  const response = await axios.get(route('stripe.dashboard.link'));
+  window.open(response.data.url, '_blank');
+};
+
 defineProps({
   isDark: {
     type: Boolean,
     default: false
   }
 });
-
-const connectStripe = () => {
-  router.post('/stripe-redirect');
-}
 
 const setTutorialInProgress = () => {
   localStorage.setItem("isTutorialInProgress", "true");
