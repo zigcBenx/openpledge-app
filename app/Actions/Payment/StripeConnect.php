@@ -17,7 +17,11 @@ class StripeConnect
         Stripe::setApiKey(config('app.stripe_secret'));
 
         $account = Account::create([
-            'type' => 'express'
+            'type' => 'express',
+            'capabilities' => [
+                'transfers' => ['requested' => true],
+                'card_payments' => ['requested' => true],
+            ],
         ]);
 
         $request->session()->put('stripe_id', $account->id);
