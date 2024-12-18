@@ -2,7 +2,10 @@
 import { Link } from '@inertiajs/vue3';
 
 defineProps({
-    href: String,
+    href: {
+        type: String,
+        default: '',
+    },
     as: String,
     contentClasses: {
         type: Array,

@@ -30,7 +30,7 @@ import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import { useToast } from "vue-toastification";
 import { getIssueTour } from '@/utils/onboardingWalkthrough.js';
 import { router } from '@inertiajs/vue3';
-
+import { usePage } from '@inertiajs/vue3';
 const props = defineProps({
     issue: {
         type: Object,
@@ -51,8 +51,17 @@ const breadcrumbsData = [{
     url: `/issues/${props.issue.id}`
 }];
 
+const page = usePage();
+const isAuthenticated = page.props.auth.user !== null;
+
 function handleFavoriteClick() {
     const toast = useToast()
+
+    if (!props.isAuthenticated) {
+        toast.error('Please log in to add this issue to favorites');
+        return;
+    }
+
     axios.post(route('favorites.store'), {
         favorable_id: props.issue.id,
         favorable_type: 'Issue',

@@ -6,7 +6,6 @@ use App\Models\Issue;
 use App\Services\GithubService;
 use App\Models\GitHubInstallation;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\DB;
 
 class GetIssuesByName
 {
@@ -14,6 +13,7 @@ class GetIssuesByName
     {
         $pledgedIssues = Issue::where('github_url', 'LIKE', "https://github.com/$githubUser/$repositoryName/issues%")
             ->withSum('donations', 'amount')
+            ->having('donations_sum_amount', '>', 0)
             ->when($state, function ($query, $state) {
                 return $query->where('state', $state);
             })
@@ -34,30 +34,29 @@ class GetIssuesByName
         $repositoryData = array_values($repositoryData);
         $repositoryData = !empty($repositoryData) ? $repositoryData[0] : null;
 
-        $issues = self::getIssuesFromGitHub($repositoryData["issues_url"]);
+        $githubIssues = self::getIssuesFromGitHub($repositoryData["issues_url"]);
 
-        $mergedIssues = [];
+        $filteredGithubIssues = array_filter($githubIssues, callback: function ($issue) use ($pledgedIssues) {
+            return !in_array((string) $issue['id'], $pledgedIssues->pluck('github_id')->toArray());
+        });
 
-        foreach ($pledgedIssues as $pledgedIssue) {
-            $mergedIssues[$pledgedIssue['github_id']] = $pledgedIssue;
-        }
+        $formattedGithubIssues = [];
 
-        foreach ($issues as $issue) {
-            if (!isset($mergedIssues[$issue['id']])) {
-                $mergedIssues[$issue['id']] = [
-                    'id' => $issue['id'],
-                    'title' => $issue['title'],
-                    'github_url' => $issue['html_url'],
-                    'state' => $issue['state'],
-                    'labels' => $issue['labels'],
-                    'user_avatar' => $issue['user']['avatar_url'],
-                    'github_created_at' => $issue['created_at'],
-                    'isExternal' => true
-                ];
-            }
-        }
+        $formattedGithubIssues = array_map(function ($issue) {
+            return [
+                'id' => $issue['id'],
+                'title' => $issue['title'],
+                'github_url' => $issue['html_url'],
+                'state' => $issue['state'],
+                'labels' => $issue['labels'],
+                'user_avatar' => $issue['user']['avatar_url'],
+                'github_created_at' => $issue['created_at'],
+                'isExternal' => true,
+                'description' => $issue['body']
+            ];
+        }, $filteredGithubIssues);
 
-        return array_values($mergedIssues);
+        return array_values($formattedGithubIssues);
     }
 
     private static function getIssuesFromGitHub($issuesUrl)

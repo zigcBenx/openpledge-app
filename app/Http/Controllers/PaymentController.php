@@ -19,7 +19,7 @@ class PaymentController extends Controller
     {
         $user = Auth::user();
         $isAuthenticated = isset($user);
-        $isPledgingAnonymously = (bool) $user->is_pledging_anonymously;
+        $isPledgingAnonymously = !$isAuthenticated || (bool) $user->is_pledging_anonymously;
 
         $validatedProcessPaymentData = $request->validated();
         
