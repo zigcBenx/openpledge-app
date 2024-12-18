@@ -25,9 +25,9 @@
       <Icon name="key" class="dark:stroke-platinum stroke-rich-black"></Icon> <span class="pl-2">API Tokens</span>
     </DropdownLink>
     <DropdownLink 
-      class="dark:text-platinum rounded-sm text-rich-black pl-2" 
-      :href="$page.props.auth?.user?.stripe_id ? null : route('stripe.connect')" 
-      @click="openStripeDashboard">
+      class="dark:text-platinum rounded-sm text-rich-black pl-2"
+      @click="connectStripe"
+    >
       <Icon name="dollar" class="dark:stroke-platinum stroke-rich-black"></Icon> 
       <span class="pl-3">{{ $page.props.auth?.user?.stripe_id ? 'Open Stripe Dashboard' : 'Connect Stripe' }}</span>
     </DropdownLink>
@@ -66,10 +66,23 @@ const login = () => {
   router.visit(route('login'));
 };
 
-const openStripeDashboard = async () => {
-  const response = await axios.get(route('stripe.dashboard.link'));
-  window.open(response.data.url, '_blank');
-};
+
+const connectStripe = async () => {
+  if (hasUserStripeId) {
+    await redirectToStripeDashboard()
+    return
+  }
+  router.visit(route('stripe.connect'))
+}
+
+const hasUserStripeId = () => {
+  return usePage().props.auth?.user?.stripe_id
+}
+
+const redirectToStripeDashboard = async () => {
+  const response = await axios.get(route('stripe.dashboard.link'))
+  window.open(response.data.url, '_blank')
+}
 
 defineProps({
   isDark: {
