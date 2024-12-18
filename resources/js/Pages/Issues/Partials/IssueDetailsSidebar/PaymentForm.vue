@@ -179,6 +179,9 @@ const paymentIntent = () => {
           boxShadow: 'none',
           border: '1px solid rgb(172 168 179)'
         },
+        '.Input:hover': {
+          border: '1px solid rgb(55 195 162)'
+        },
         '.Input--empty': {
           boxShadow: 'none',
           border: '1px solid rgb(55 195 162)'
@@ -231,10 +234,11 @@ const handleFormSubmit = async () => {
   loading.value = true
   form.issue_id = props.issue.id;
   form.paymentId = paymentId.value;
+  const pledgeExpirationDate = form.pledgeExpirationDate;
 
-  if (form.pledgeExpirationDate.value) {
-    const date = dayjs(form.pledgeExpirationDate.value);
-    form.pledgeExpirationDate = date.format('YYYY-MM-DD');
+  if (pledgeExpirationDate.value) {
+    const expirationDate = dayjs(pledgeExpirationDate.value);
+    form.pledgeExpirationDate = expirationDate.format('YYYY-MM-DD');
   } else {
     form.pledgeExpirationDate = null;
   }
@@ -248,7 +252,9 @@ const handleFormSubmit = async () => {
       form.paymentId = result.paymentIntent?.id;
       if (result.error) {
           console.error(result.error)
-          toast.error('Something went wrong!')
+          toast.error(result.error.message)
+          loading.value = false
+          form.pledgeExpirationDate = pledgeExpirationDate;
       } else {
         axios.post(route('payment-process'), form).then(response => {
           if(response.data.success) {
