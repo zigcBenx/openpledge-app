@@ -56,8 +56,7 @@ import Button from '@/Components/Button.vue';
 import Row from '@/Components/Grid/Row.vue';
 import Col from '@/Components/Grid/Col.vue';
 import Icon from '@/Components/Icon.vue';
-import { Link, router } from '@inertiajs/vue3';
-
+import { Link, router, usePage } from '@inertiajs/vue3';
 const logout = () => {
   router.post(route('logout'));
 };
@@ -66,9 +65,10 @@ const login = () => {
   router.visit(route('login'));
 };
 
+const page = usePage()
 
 const connectStripe = async () => {
-  if (hasUserStripeId) {
+  if (hasUserStripeId()) {
     await redirectToStripeDashboard()
     return
   }
@@ -76,7 +76,7 @@ const connectStripe = async () => {
 }
 
 const hasUserStripeId = () => {
-  return usePage().props.auth?.user?.stripe_id
+  return page.props.auth?.user?.stripe_id
 }
 
 const redirectToStripeDashboard = async () => {
