@@ -155,7 +155,7 @@ const props = defineProps({
 
 const paymentIntent = () => {
   axios.post('/get-payment-intent', {
-    amount: 25,
+    amount: form.amount,
     email: form.email
   }).then(response => {
     stripe.value = Stripe(props.stripePublicKey);
