@@ -104,8 +104,14 @@ Route::middleware([
     Route::post('/user/new-user-quiz-submission', [UserController::class, 'handleNewUserQuizSubmission'])->name('user.new-user-quiz');
 
     Route::post('/subscribe-user', [SubscriberController::class, 'subscribeUser']);
-    Route::post('/stripe-connect', [StripeConnectController::class, 'handleStripeConnectCallback'])->name('stripe-connect');
-    Route::post('/stripe-redirect', [StripeConnectController::class, 'redirectToStripe'])->name('stripe-redirect');
+    
+    // Stripe Connect routes
+    Route::get('/stripe/connect', [StripeConnectController::class, 'stripeConnect'])->name('stripe.connect');
+    Route::get('/stripe/create-account-link', [StripeConnectController::class, 'createAccountLink'])->name('stripe.create.account.link');
+    Route::get('/stripe/onboarding/refresh', [StripeConnectController::class, 'onboardingRefresh'])->name('stripe.onboarding.refresh');
+    Route::get('/stripe/onboarding/return', [StripeConnectController::class, 'onboardingReturn'])->name('stripe.onboarding.return');
+    Route::get('/stripe/verify-installation', [StripeConnectController::class, 'verifyInstallation'])->name('stripe.verify.installation');
+    Route::get('/stripe/dashboard/link', [StripeConnectController::class, 'getDashboardLink'])->name('stripe.dashboard.link');
 
     // GitHub App integration route
     Route::get('/github/installation/callback', [GithubController::class, 'handleGithubAppCallback'])->name('github.installation.callback');
