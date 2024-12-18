@@ -10,10 +10,6 @@ class GetPaymentIntent
 {
     public static function get($donationAmount, $email): JsonResponse
     {
-        if ($donationAmount == 0) {
-            return response()->json(['error' => 'Donation amount cannot be 0.']);
-        }
-
         $authUser = Auth::user();
 
         try {

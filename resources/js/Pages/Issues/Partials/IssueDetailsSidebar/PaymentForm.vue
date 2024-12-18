@@ -99,13 +99,19 @@ import { preventStringInputWithNumber } from '@/utils/preventStringInputWithNumb
 import { PAYMENT_FORM_METHODS } from '@/constants';
 import dayjs from '@/libs/dayjs.js'
 import SolveIssue from './SolveIssue.vue';
-import { ref, onMounted } from "vue"
-import { useDark, useDebounce } from '@vueuse/core';
+import { ref } from "vue"
+import { useDark, useDebounceFn } from '@vueuse/core';
 import { useToast } from 'vue-toastification';
-import { router } from '@inertiajs/vue3'
+import { router, usePage } from '@inertiajs/vue3'
 import { validateEmail } from '@/utils/validateEmail.js';
 import DatePicker from '@/Components/Form/DatePicker.vue';
 import confetti from 'canvas-confetti';
+
+const props = defineProps({
+  'minAmount': String,
+  issue: Object,
+  stripePublicKey: String
+});
 
 const stripe = ref(null);
 const elements = ref(null);
@@ -113,6 +119,8 @@ const paymentId = ref(null);
 const isDark = useDark();
 const toast = useToast();
 const isPledgeAmountValid = ref(false);
+const page = usePage();
+const isAuthenticated = page.props.auth.user !== null;
 
 const form = reactive({
   type: 'pledge',
@@ -129,41 +137,32 @@ const form = reactive({
   errors: {}
 });
 
-onMounted(() => {
-  if (props.isAuthenticated) {
-    paymentIntent();
-  }
-});
+const debouncedPaymentIntent = useDebounceFn(() => {
+  paymentIntent();
+}, 500);
 
-const debouncedPaymentIntent = ref(useDebounce(() => {
-  if (form.email && validateEmail(form.email)) {
-    paymentIntent();
+watch([() => form.amount, () => form.email], ([newAmount, newEmail]) => {
+  if (newAmount && newAmount > 0) {
+    isPledgeAmountValid.value = true;
+  } else {
+    document.getElementById('payment-element').innerHTML = '';
+    isPledgeAmountValid.value = false;
   }
-}, 500));
 
-watch(() => form.email, (newEmail) => {
-  if (!props.isAuthenticated && newEmail) {
-    debouncedPaymentIntent.value;
+  if ((isAuthenticated || (form.email && validateEmail(form.email))) && isPledgeAmountValid.value) {
+    debouncedPaymentIntent();
   }
-});
-
-const props = defineProps({
-  'minAmount': String,
-  issue: Object,
-  stripePublicKey: String,
-  isAuthenticated: Boolean
 });
 
 const paymentIntent = () => {
+  if (!isPledgeAmountValid.value) {
+    return;
+  }
+
   axios.post('/get-payment-intent', {
     amount: form.amount,
     email: form.email
   }).then(response => {
-    if (response.data.error) {
-      toast.error(response.data.error);
-      return;
-    }
-    isPledgeAmountValid.value = true;
     stripe.value = Stripe(props.stripePublicKey);
     const appearance = {
       theme: isDark.value ? 'night' : 'stripe',
@@ -195,6 +194,7 @@ const paymentIntent = () => {
     paymentElement.mount('#payment-element');
   }).catch(error => {
     console.log(error);
+    toast.error(error.response.data.message);
   });
 };
 
