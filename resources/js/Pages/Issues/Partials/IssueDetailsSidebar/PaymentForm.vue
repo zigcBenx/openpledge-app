@@ -149,7 +149,7 @@ watch([() => form.amount, () => form.email], ([newAmount, newEmail]) => {
     isPledgeAmountValid.value = false;
   }
 
-  if ((isAuthenticated || (form.email && validateEmail(form.email))) && isPledgeAmountValid.value) {
+  if ((isAuthenticated || (newEmail && validateEmail(newEmail))) && isPledgeAmountValid.value) {
     debouncedPaymentIntent();
   }
 });
@@ -276,7 +276,6 @@ const handleFormSubmit = async () => {
               });
             }, 150);
 
-            paymentIntent();
             toast.success('Pledge submitted! You are awesome!')
             router.reload();
           }
