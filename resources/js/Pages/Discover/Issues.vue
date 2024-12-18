@@ -44,7 +44,7 @@
                         </div>
                     </template>
                     <template v-slot="">
-                        <IssuesTable :issues="issues" @onLazyLoading="handleLazyLoadingIssues" :pledged="true" :isAuthenticated="props.isAuthenticated"
+                        <IssuesTable :issues="issues" @onLazyLoading="handleLazyLoadingIssues" :pledged="true" :isAuthenticated="isAuthenticated"
                             class="table" />
                         <TableRowSkeleton v-if="loading" />
                     </template>
@@ -77,15 +77,18 @@ import { useElementSize } from '@vueuse/core';
 import TableRowSkeleton from '@/Components/Custom/TableRowSkeleton.vue';
 import NewUserQuizModal from '@/Components/Custom/NewUserQuizModal.vue';
 import { getDiscoverIssuesTour } from '@/utils/onboardingWalkthrough.js';
+import { usePage } from '@inertiajs/vue3';
 
 const props = defineProps
     ({
         issues: Array,
         userIsContributor: Boolean,
         userIsResolver: Boolean,
-        programmingLanguages: Array,
-        isAuthenticated: Boolean
+        programmingLanguages: Array
     });
+
+const inertiaPage = usePage();
+const isAuthenticated = inertiaPage.props.auth.user !== null;
 
 const keys = { labels: 'labels', languages: 'languages', range: 'range', date: 'date', storageDiscoverKey: 'discover' };
 

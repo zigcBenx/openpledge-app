@@ -93,17 +93,11 @@
         <Icon 
             name="star"
             width="1.375rem"
-            :class="getIconStrokeColor(issue.favorite, !props.isAuthenticated || issue.state === 'closed')"
-            :disabled="!props.isAuthenticated || issue.state === 'closed'"
-            @click="props.isAuthenticated && addFavorites(issue)"
+            :class="getIconStrokeColor(issue.favorite, issue.state === 'closed')"
+            :disabled="issue.state === 'closed'"
+            @click="addFavorites(issue)"
         />
     </td>
-    <DialogModal :show="displayFavoriteModal" @close="closeModal">
-        <template #title>
-            <b>Oops!</b><br> The 'Mark as Favorite' button is still in the oven, baking to perfection. Stay tuned!" 🍪
-            <br> <b>#BetaVersion</b>
-        </template>
-    </DialogModal>
 </template>
 
 <script setup>
@@ -114,9 +108,9 @@
     import Avatar from '@/Components/Avatar.vue'
     import { Link } from '@inertiajs/vue3'
     import Pill from '@/Components/Form/Pill.vue'
-    import DialogModal from '../DialogModal.vue'
     import { useToast } from "vue-toastification";
     import { router } from '@inertiajs/vue3';
+    import { usePage } from '@inertiajs/vue3';
 
     const props = defineProps({
         issue: {
@@ -130,7 +124,8 @@
     })
 
     const isDark = useDark()
-
+    const page = usePage()
+    const isAuthenticated = page.props.auth.user !== null
 
     const getIconStrokeColor = (isFavorite, isDisabled) => {
         if (isDark.value) {
@@ -143,9 +138,14 @@
         return isFavorite ? 'stroke-ocean-green fill-ocean-green' : 'stroke-tundora hover:stroke-ocean-green';
     }
 
-    const displayFavoriteModal = ref(false)
     const addFavorites = (issue) => {
         const toast = useToast()
+
+        if (!isAuthenticated) {
+            toast.error('Please log in to add this issue to favorites');
+            return;
+        }
+
         axios.post(route('favorites.store'), {
             favorable_id: issue.id,
             favorable_type: 'Issue',
@@ -165,7 +165,4 @@
             console.error(error);
         });
     }
-    const closeModal = () => {
-        displayFavoriteModal.value = false
-    };
 </script>

@@ -39,8 +39,7 @@ const props = defineProps({
             return {}
         }
     },
-    stripePublicKey: String,
-    isAuthenticated: Boolean
+    stripePublicKey: String
 })
 
 const breadcrumbsData = [{
@@ -57,7 +56,7 @@ const isAuthenticated = page.props.auth.user !== null;
 function handleFavoriteClick() {
     const toast = useToast()
 
-    if (!props.isAuthenticated) {
+    if (!isAuthenticated) {
         toast.error('Please log in to add this issue to favorites');
         return;
     }
