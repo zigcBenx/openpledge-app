@@ -66,7 +66,7 @@
             </div>
             <Button 
               :loading="loading" 
-              :disabled="!form.pledgeExpirationDate?.value && (form.pledgeMethod === PAYMENT_FORM_METHODS.EXPIRE_DATE)" 
+              :disabled="!isPledgeAmountValid || !form.pledgeExpirationDate?.value && (form.pledgeMethod === PAYMENT_FORM_METHODS.EXPIRE_DATE)" 
               class="mt-8" 
               :plain="true" 
               size="lg" 
@@ -111,7 +111,8 @@ const stripe = ref(null);
 const elements = ref(null);
 const paymentId = ref(null);
 const isDark = useDark();
-const toast = useToast()
+const toast = useToast();
+const isPledgeAmountValid = ref(false);
 
 const form = reactive({
   type: 'pledge',
@@ -158,6 +159,11 @@ const paymentIntent = () => {
     amount: form.amount,
     email: form.email
   }).then(response => {
+    if (response.data.error) {
+      toast.error(response.data.error);
+      return;
+    }
+    isPledgeAmountValid.value = true;
     stripe.value = Stripe(props.stripePublicKey);
     const appearance = {
       theme: isDark.value ? 'night' : 'stripe',
