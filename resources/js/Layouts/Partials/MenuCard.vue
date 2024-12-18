@@ -1,6 +1,6 @@
 <template>
   <Row class="dark:bg-rich-black xl:gap-1 bg-seashell p-6 rounded-md">
-    <Col v-if="authenticatedUser()">
+    <Col v-if="isAuthenticated">
       <Col>
         <Link :href="route('profile.show')">
           <div class="items-center flex dark:bg-charcoal-gray bg-seashell p-4 rounded-md">
@@ -47,9 +47,9 @@
       </Col>
     </Col>
     <Col>
-      <form method="POST" @submit.prevent="authenticatedUser() ? logout() : login()">
+      <form method="POST" @submit.prevent="isAuthenticated ? logout() : login()">
         <Button color="secondary" type="submit" class="rounded-md">
-          {{ authenticatedUser() ? 'Sign Out' : 'Log In' }}
+          {{ isAuthenticated ? 'Sign Out' : 'Log In' }}
         </Button>
       </form>
     </Col>
@@ -66,8 +66,14 @@ import Row from '@/Components/Grid/Row.vue';
 import Col from '@/Components/Grid/Col.vue';
 import Icon from '@/Components/Icon.vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
+import { ref } from 'vue';
+
 const logout = () => {
-  router.post(route('logout'));
+  router.post(route('logout'), {}, {
+    onSuccess: () => {
+      isAuthenticated.value = false;
+    }
+  });
 };
 
 const login = () => {
@@ -84,25 +90,20 @@ const connectStripe = async () => {
   router.visit(route('stripe.connect'))
 }
 
+const authenticatedUser = () => {
+  return page.props.auth?.user
+}
+
 const hasUserStripeId = () => {
   return authenticatedUser()?.stripe_id
 }
 
-const authenticatedUser = () => {
-  return page.props.auth?.user
-}
+const isAuthenticated = ref(authenticatedUser() !== null);
 
 const redirectToStripeDashboard = async () => {
   const response = await axios.get(route('stripe.dashboard.link'))
   window.open(response.data.url, '_blank')
 }
-
-defineProps({
-  isDark: {
-    type: Boolean,
-    default: false
-  }
-});
 
 const setTutorialInProgress = () => {
   localStorage.setItem("isTutorialInProgress", "true");
