@@ -14,7 +14,7 @@
         }
     });
 
-    const isDescriptionFullVisible = ref(false);
+    const isDescriptionFullyVisible = ref(false);
 
     marked.setOptions({
         gfm: true,
@@ -33,15 +33,15 @@
           <span class="dark:text-spun-pearl text-tundora text-xs capitalize min-w-[10.75rem]">DESCRIPTION</span> 
           <div v-if="parsedDescription">
               <div :class="['markdown-body dark:text-lavender-mist text-oil text-sm overflow-hidden', {
-                  'max-h-24': !isDescriptionFullVisible
+                  'max-h-24': !isDescriptionFullyVisible
               }]">
                   <div v-html="parsedDescription"></div>
               </div>
               <button 
                 class='font-medium text-mondo dark:text-seashell'
-                @click="isDescriptionFullVisible=!isDescriptionFullVisible"
+                @click="isDescriptionFullyVisible=!isDescriptionFullyVisible"
               >
-                {{ isDescriptionFullVisible ? 'Read less' : 'Read more' }}
+                {{ isDescriptionFullyVisible ? 'Read less' : 'Read more' }}
             </button>
           </div>
       </div>

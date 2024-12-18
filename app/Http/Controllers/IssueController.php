@@ -40,8 +40,7 @@ class IssueController extends Controller
 
         return Inertia::render('Issues/Show', [
             'issue' => $issue,
-            'stripePublicKey' => config('app.stripe_key'),
-            'isAuthenticated' => isset($user)
+            'stripePublicKey' => config('app.stripe_key')
         ]);
     }
 

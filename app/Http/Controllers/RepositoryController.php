@@ -41,7 +41,6 @@ class RepositoryController extends Controller
      */
     public function show($githubUser, $repositoryName)
     {
-        $authenticatedUser = Auth::user();
         $repository = GetRepositoryByTitle::get($githubUser . '/' . $repositoryName);
 
         if (!$repository) {
@@ -64,9 +63,9 @@ class RepositoryController extends Controller
             $issues = GetIssuesByName::get($githubUser, $repositoryName, $repository->github_installation_id);
         }
 
-        $currentUserGithubId = (int) $authenticatedUser->github_id;
-        $isRepositoryOwner = isset($repository['owner_id']) && $repository['owner_id'] === $currentUserGithubId;
-        $isGithubAppConnected = $authenticatedUser->hasGitHubAppInstalled();
+        $authenticatedUser = Auth::user();
+        $isGithubAppConnected = $authenticatedUser?->hasGitHubAppInstalled() ?? false;
+        $isRepositoryOwner = isset($authenticatedUser, $repository['owner_id']) && $repository['owner_id'] === (int) $authenticatedUser->github_id;
 
         return Inertia::render('Repositories/Show', [
             'repository' => $repository,

@@ -150,7 +150,9 @@ import TrendingToday from '@/Components/Custom/TrendingToday.vue'
 import { useToast } from "vue-toastification";
 import { getRepositoryTour } from '@/utils/onboardingWalkthrough.js';
 import { router } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3';
 
+const page = usePage();
 const props = defineProps
     ({
         repository: Object,
@@ -168,8 +170,16 @@ const githubAppInstallationUrl = import.meta.env.VITE_GITHUB_APP_INSTALLATION_UR
 const showConnectRepositoryModal = ref(false)
 const showContactOwnerModal = ref(false)
 
+const isAuthenticated = page.props.auth.user !== null;
+
 const addFavorites = (repository) => {
     const toast = useToast()
+
+    if (!isAuthenticated) {
+        toast.error('Please log in to add this repository to favorites');
+        return;
+    }
+
     axios.post(route('favorites.store'), {
         favorable_id: repository.id,
         favorable_type: 'Repository',

@@ -10,6 +10,10 @@ class GetPaymentIntent
 {
     public static function get($donationAmount, $email): JsonResponse
     {
+        if ($donationAmount == 0) {
+            return response()->json(['error' => 'Donation amount cannot be 0.']);
+        }
+
         $authUser = Auth::user();
 
         try {
@@ -56,9 +60,7 @@ class GetPaymentIntent
             'automatic_payment_methods' => [
                 'enabled' => true,
             ],
-            'customer' => $customer->id,
-            'capture_method' => 'manual',
-            // 'payment_method' => '{{PAYMENT_METHOD_ID}}', // id of selected card
+            'customer' => $customer->id
         ]);
 
         return new JsonResponse(['paymentId' => $paymentIntent->id, 'clientSecret' => $paymentIntent->client_secret]);

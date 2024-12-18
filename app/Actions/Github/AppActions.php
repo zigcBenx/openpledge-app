@@ -132,7 +132,7 @@ class AppActions
             } elseif (isset($payload['issue'])) {
                 $issueUrl = $payload['issue']['html_url'];
                 Issue::where('github_url', $issueUrl)->update([
-                    'state' => in_array($action, ["reopened", "unassigned", "assigned"]) ? "open" : $action
+                    'state' => $action === "closed" ? "closed" : "open"
                 ]);                
             }
 

@@ -44,8 +44,7 @@ class MainController extends Controller
                 'issues' => $pledgedIssues,
                 'userIsContributor' => isset($user) ? $user->isContributor() : true,
                 'userIsResolver' => isset($user) ? $user->isResolver() : true,
-                'programmingLanguages' => $programmingLanguages,
-                'isAuthenticated' => isset($user)
+                'programmingLanguages' => $programmingLanguages
             ]);
         }
 
@@ -70,8 +69,7 @@ class MainController extends Controller
                 'issues' => $paginatedIssues,
                 'userIsContributor' => isset($user) ? $user->isContributor() : true,
                 'userIsResolver' => isset($user) ? $user->isResolver() : true,
-                'programmingLanguages' => $programmingLanguages,
-                'isAuthenticated' => isset($user)
+                'programmingLanguages' => $programmingLanguages
             ]);
         }
 

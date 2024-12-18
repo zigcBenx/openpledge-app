@@ -34,6 +34,7 @@ Route::get('/', function () {
 
 Route::get('/discover/issues', [MainController::class, 'discoverIssues'])->name('discover.issues');
 Route::get('issues/{issue}', [IssueController::class, 'show'])->name('issues.show');
+Route::get('/repositories/{githubUser}/{repository}', [RepositoryController::class, 'show'])->name('repositories.show');
 
 Route::post('/get-payment-intent', [PaymentController::class, 'getPaymentIntent'])->name('get-payment-intent');
 Route::post('/payment-process', [PaymentController::class, 'processPayment'])->name('payment-process');
@@ -61,9 +62,6 @@ Route::middleware([
     // but mybe it would be better when 0 results to request all github repos with certain filters
     // and if found automatically add and show index page...
     Route::get('/repositories/request', [RepositoryController::class, 'getRequestNew'])->name('repositories-request-get');
-    
-    Route::get('/repositories/{githubUser}/{repository}', [RepositoryController::class, 'show'])->name('repositories.show');
-
 
     Route::resource('repositories', RepositoryController::class)->only('index', 'store');
     Route::resource('issues', IssueController::class)->only(['store'])->except(['show']);

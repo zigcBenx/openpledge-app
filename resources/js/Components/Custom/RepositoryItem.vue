@@ -20,10 +20,10 @@
         </div>
     </td>
     <td class="py-6 pr-4 align-middle">
-        <span class="text-base font-medium dark:text-white">{{ repository.open_issues_count ?? 0 }}</span>
+        <span class="text-base font-medium dark:text-white">{{ repository.pledged_issues_count ?? 0 }}</span>
     </td>
     <td class="py-6 pr-4 align-middle">
-        <span class="text-base font-medium dark:text-white">{{ repository.pledged_issues_count ?? 0 }}</span>
+        <span class="text-base font-medium dark:text-white">{{ repository.open_issues_count ?? 0 }}</span>
     </td>
     <td class="py-6 align-middle">
         <span class="text-purple-heart font-medium text-base">

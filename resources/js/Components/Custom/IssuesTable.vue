@@ -40,6 +40,10 @@
     import { vIntersectionObserver } from '@vueuse/components'
     import IssueItemPledged from '@/Components/Custom/IssueItemPledged.vue'
     import IssueItemExternal from '@/Components/Custom/IssueItemExternal.vue'
+    import { usePage } from '@inertiajs/vue3';
+
+    const page = usePage();
+    const isAuthenticated = page.props.auth.user !== null;
 
     defineProps({
         issues: {
@@ -59,11 +63,7 @@
             return false
           }
         },
-        repository: Object,
-        isAuthenticated: {
-            type: Boolean,
-            default: true,
-        },
+        repository: Object
     })
 
     const emit = defineEmits(['onLazyLoading'])
