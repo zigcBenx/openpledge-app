@@ -66,7 +66,7 @@
             </div>
             <Button 
               :loading="loading" 
-              :disabled="!isPledgeAmountValid || !form.pledgeExpirationDate?.value && (form.pledgeMethod === PAYMENT_FORM_METHODS.EXPIRE_DATE)" 
+              :disabled="!isPledgeAmountValid || !isStripePaymentFormValid" 
               class="mt-8" 
               :plain="true" 
               size="lg" 
@@ -121,6 +121,7 @@ const toast = useToast();
 const isPledgeAmountValid = ref(false);
 const page = usePage();
 const isAuthenticated = page.props.auth.user !== null;
+const isStripePaymentFormValid = ref(false);
 
 const form = reactive({
   type: 'pledge',
@@ -180,8 +181,12 @@ const paymentIntent = () => {
         },
         '.Input--empty': {
           boxShadow: 'none',
-          border: '1px solid rgb(172 168 179)'
+          border: '1px solid rgb(55 195 162)'
         },
+        '.Input--invalid': {
+          boxShadow: 'none',
+          border: '1px solid rgb(178 53 212)'
+        }
       }
     };
     const options = {
@@ -192,6 +197,9 @@ const paymentIntent = () => {
     elements.value = stripe.value.elements(options,);
     const paymentElement = elements.value.create('payment');
     paymentElement.mount('#payment-element');
+    paymentElement.on('change', (event) => {
+      isStripePaymentFormValid.value = event.complete;
+    });
   }).catch(error => {
     console.log(error);
     toast.error(error.response.data.message);
