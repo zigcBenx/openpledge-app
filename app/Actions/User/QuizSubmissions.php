@@ -14,7 +14,8 @@ class QuizSubmissions
         $user = Auth::user();
 
         if (!empty($newUserQuizSubmission['companyName'])) {
-            $user->company_id = GetOrCreateCompany::getId($newUserQuizSubmission['companyName']);
+            $company = GetOrCreateCompany::get($newUserQuizSubmission['companyName']);
+            $user->company_id = $company->id;
         }
 
         $user->job_title = $newUserQuizSubmission['jobTitle'];
