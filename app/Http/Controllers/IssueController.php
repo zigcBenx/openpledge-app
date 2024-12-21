@@ -8,6 +8,7 @@ use App\Actions\Issue\GetIssueById;
 use App\Actions\Issue\SolveIssue;
 use App\Http\Requests\CreateNewIssueRequest;
 use App\Models\Issue;
+use App\Models\Label;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -26,6 +27,15 @@ class IssueController extends Controller
         if (!isset($issue)) {
             $validatedIssueData = app(CreateNewIssueRequest::class)->validated();
             $issue = CreateNewIssue::create($validatedIssueData);
+            $labels = $request->input('labels');
+
+            foreach ($labels as $label) {
+                if (in_array(strtolower($label['name']), Label::$allowedLabels)) {
+                    $issue->labels()->create([
+                        'name' => strtolower($label['name'])
+                    ]);
+                }
+            }
         }
         
         return redirect()->route('issues.show', ['issue' => $issue]);

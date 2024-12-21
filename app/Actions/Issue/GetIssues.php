@@ -17,7 +17,7 @@ class GetIssues
         $today = Carbon::now()->toDateString();
 
         $query = Issue::query()
-            ->with('programmingLanguages', 'repository.programmingLanguages', 'userFavorite')
+            ->with('programmingLanguages', 'repository.programmingLanguages', 'userFavorite', 'labels')
             ->withSum([
                 'donations' => function ($query) use ($today) {
                     $query->where(function ($query) use ($today) {
@@ -50,7 +50,9 @@ class GetIssues
 
             if (isset($filters['labels'])) {
                 $labelsArray = explode(',', $filters['labels']);
-                $query->whereIn('labels', $labelsArray);
+                $query->whereHas('labels', function ($query) use ($labelsArray) {
+                    $query->whereIn('name', $labelsArray);
+                });
             }
         }
 

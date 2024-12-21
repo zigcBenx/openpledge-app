@@ -17,7 +17,8 @@ class GetFavoriteIssues
             'donations.user',
             'userFavorite',
             'programmingLanguages:id,name',
-            'resolvedBy'
+            'resolvedBy',
+            'labels'
         ])
             ->withSum('donations', 'amount')
             ->whereIn('id', $favoriteIssueIds)
@@ -42,7 +43,8 @@ class GetFavoriteIssues
             'donations.user',
             'userFavorite',
             'programmingLanguages:id,name',
-            'resolvedBy'
+            'resolvedBy',
+            'labels'
         ])
             ->withSum('donations', 'amount')
             ->whereIn('id', $favoriteIssueIds);

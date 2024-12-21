@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise\Utils as PromiseUtils;
+use App\Models\Label;
 
 class IssueActions
 {
@@ -65,7 +66,7 @@ class IssueActions
 
     public static function getConnectedInBatch($neededIssues, $existingIssues)
     {
-        $connectedRepositories = Repository::inRandomOrder()->get();
+        $connectedRepositories = Repository::inRandomOrder()->with('programmingLanguages')->get();
         $allConnectedIssues = [];
 
         if ($connectedRepositories->isEmpty()) {
@@ -112,7 +113,10 @@ class IssueActions
                                 'github_created_at' => $issue['created_at'],
                                 'isExternal' => true,
                                 'state' => $issue['state'],
-                                'description' => $issue['body']
+                                'description' => $issue['body'],
+                                'labels' => array_values(array_filter($issue['labels'], function ($label) {
+                                    return in_array($label['name'], Label::$allowedLabels);
+                                }))
                             ];
                             if (++$totalIssuesCollected >= $neededIssues) {
                                 break 2; // Break out of both loops if needed issues are collected
