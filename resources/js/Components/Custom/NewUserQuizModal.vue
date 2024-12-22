@@ -100,9 +100,7 @@
                         class="mt-8"
                         :options="programmingLanguages"
                         :value="newUserQuizSubmission.programmingLanguages"
-                        @input="
-                            newUserQuizSubmission.programmingLanguages = $event
-                        "
+                        @input="handleProgrammingLanguagesInput"
                     />
                 </div>
 
@@ -259,6 +257,13 @@ const handleNewUserQuizSubmission = () => {
             toast.error("Something went wrong!");
             console.error(error);
         });
+};
+
+const handleProgrammingLanguagesInput = (e) => {
+    if (e instanceof Event) {
+        return;
+    }
+    newUserQuizSubmission.value.programmingLanguages = e;
 };
 </script>
 

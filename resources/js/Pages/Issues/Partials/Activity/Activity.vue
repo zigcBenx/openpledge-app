@@ -19,7 +19,7 @@ const props = defineProps({
 });
 
 const getActivityComponent = (activity) => {
-  if (activity.event === 'reopened' || activity.event === 'closed') {
+  if (activity.event === 'reopened' || activity.event === 'closed' || activity.event === 'resolved') {
     return { component: IssueActivity, prop: 'issueActivity' };
   } else if (activity.event === 'connected' || activity.event === 'disconnected') {
     return { component: PullRequestActivity, prop: 'pullRequestActivity' };
@@ -46,7 +46,6 @@ const activityCount = computed(() => {
   <div :class="class">
     <p class="mb-10 text-oil dark:text-lavender-mist">Activity ({{ activityCount }})</p>
     <div class="flex flex-col gap-9">
-      <IssueActivity v-if="issue.issueResolver" :issue="issue" />
       <template v-for="activity in issue.issueActivity" :key="activity.id">
         <div v-if="getActivityComponent(activity)">
           <component :is="getActivityComponent(activity).component"

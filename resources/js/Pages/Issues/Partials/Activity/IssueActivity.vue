@@ -8,12 +8,7 @@ const props = defineProps({
         type: Object,
         required: false,
         default: null
-    },
-    issue: {
-        type: Object,
-        required: false,
-        default: null
-    },
+    }
 });
 
 const displayedData = computed(() => {
@@ -23,15 +18,7 @@ const displayedData = computed(() => {
             login: props.issueActivity.actor.login,
             text: props.issueActivity.event,
             date: props.issueActivity.created_at,
-            isResolved: false,
-        };
-    } else if (props.issue) {
-        return {
-            avatarUrl: props.issue.issueResolver.avatar_url,
-            login: props.issue.issueResolver.login,
-            text: 'resolved',
-            date: props.issue.resolved_at,
-            isResolved: true,
+            isResolved: props.issueActivity.event === 'resolved',
         };
     }
     return null;

@@ -10,7 +10,6 @@ use App\Actions\Issue\GetIssuesByName;
 use App\Http\Requests\CreateNewRepositoryRequest;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
@@ -47,7 +46,12 @@ class RepositoryController extends Controller
             try {
                 $githubRepo = GithubService::getRepositoryByName($githubUser, $repositoryName);
             } catch(Exception $e) {
-                return Redirect::route('error', ['any' => 'error']);
+                return Inertia::render('Error', [
+                    'message' => 'Repository access failed. It might be private. Connect with our GitHub app for seamless access to your repositories.',
+                    'subMessage' => view('instructions.connect_repository_instructions')->render(),
+                    'redirectUrl' => config('services.github.app_installation_url'),
+                    'redirectButtonText' => 'Connect'
+                ]);
             }
             $repository = [
                 'title'              => $githubRepo['full_name'],
