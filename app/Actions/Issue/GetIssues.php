@@ -31,13 +31,13 @@ class GetIssues
 
         if ($filters) {
             if (isset($filters['range'])) {
-                list($minRange, $maxRange) = explode('-', $filters['range']);
+                [$minRange, $maxRange] = explode('-', $filters['range']);
                 $query->having('donations_sum_amount', '>=', (int) $minRange)
                     ->having('donations_sum_amount', '<=', (int) $maxRange);
             }
 
             if (isset($filters['date'])) {
-                list($month, $year) = explode('-', $filters['date']);
+                [$month, $year] = explode('-', $filters['date']);
                 $query->whereMonth('created_at', $month)->whereYear('created_at', $year);
             }
 

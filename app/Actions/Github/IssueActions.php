@@ -31,7 +31,7 @@ class IssueActions
         }
     }
 
-    public static function getActivityTimeline($issueGithubUrl, $githubAccessToken, $donations)
+    public static function getActivityTimeline($issueGithubUrl, $githubAccessToken, $donations, $resolver, $resolvedAt)
     {
         if (!preg_match('/^https:\/\/github\.com\/([\w\-]+)\/([\w\-]+)\/issues\/(\d+)$/', $issueGithubUrl, $matches)) {
             logger("[WARNING] Invalid GitHub issue URL provided: {$issueGithubUrl}");
@@ -50,6 +50,17 @@ class IssueActions
 
             if (isset($donations)) {
                 $activities = array_merge($activities, $donations->toArray());
+            }
+
+            if (isset($resolver) && isset($resolvedAt)) {
+                $activities = array_merge($activities, [[
+                    'actor' => [
+                        'avatar_url' => $resolver['avatar_url'],
+                        'login' => $resolver['login'],
+                    ],
+                    'event' => 'resolved',
+                    'created_at' => $resolvedAt,
+                ]]);
             }
 
             // Get the latest activities first

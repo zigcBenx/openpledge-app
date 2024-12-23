@@ -1,11 +1,11 @@
 <template>
   <div class="bg-periwinkle dark:bg-valhalla p-6 rounded-md">
     <h2 class="text-gunmetal dark:text-lavender-mist text-xl mb-4">Connect your GitHub repository to OpenPledge</h2>
-    <p class="text-tundora dark:text-spun-pearl text-xs mb-6">Add a repository from GitHub by pasting the link to that repository.</p>
+    <p class="text-tundora dark:text-spun-pearl text-xs mb-6">Add a repository from GitHub by pasting the link to that repository and pressing enter.</p>
     <Input 
       v-model:input="repositoryLink"
       inputClass="!w-full !bg-transparent border-spun-pearl placeholder-tundora focus:border-tundora dark:border-mondo dark:placeholder-spun-pearl" 
-      placeholder="Paste URL" 
+      placeholder="https://github.com/laravel/laravel" 
       icon="open-in-new" 
       iconPosition="right"
       @keydown.enter="openRepository"

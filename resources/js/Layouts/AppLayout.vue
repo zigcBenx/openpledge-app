@@ -39,7 +39,7 @@
                                             icon="search"
                                             :closeOnOutside="true"
                                             @onInput="searchQuery = $event.target.value"
-                                            :disabled="!$page.props.auth?.user?.email"
+                                            @click="!user && login()"
                                         />
                                     </template>
 
@@ -315,6 +315,10 @@
                 router.post(route('logout'));
             };
 
+            const login = () => {
+                router.visit(route('login'));
+            };
+
             const fetchSearchResults = async (query, includeGitHub) => {
                 try {
                     const response = await axios.get(route('search'), {
@@ -408,6 +412,7 @@
             return {
                 showingNavigationDropdown,
                 logout,
+                login,
                 user,
                 toggleDark,
                 isDark,

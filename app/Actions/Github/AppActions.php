@@ -67,11 +67,18 @@ class AppActions
             );
 
             foreach ($githubRepositoriesData as $repository) {
+                $userAvatar = $repository['owner']['avatar_url'];
+
+                if (strlen($userAvatar) > 255) {
+                    [$owner, $repositoryTitle] = explode('/', $repository['full_name']);
+                    $userAvatar = "https://ui-avatars.com/api/?name=$repositoryTitle&color=7F9CF5&background=EBF4FF";
+                }
+
                 $repositoryData = [
                     'title' => $repository['full_name'],
                     'github_url' => $repository['html_url'],
                     'github_id' => $repository['id'],
-                    'user_avatar' => $repository['owner']['avatar_url'],
+                    'user_avatar' => $userAvatar,
                     'user_id' => $user->id,
                     'github_installation_id' => $installationId
                 ];
