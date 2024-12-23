@@ -45,6 +45,7 @@ Route::post('/user/user-feedback-submission', [UserController::class, 'handleUse
 Route::get('/trending-today-issues', [IssueController::class, 'getTrendingToday'])->name('trending-today-issues');
 Route::get('/top-contributors', [Maincontroller::class, 'getTopContributors'])->name('top-contributors');
 Route::get('/top-donors', [Maincontroller::class, 'getTopDonors'])->name('top-donors');
+Route::get('/anonymous-donations', [Maincontroller::class, 'getAnonymousDonations'])->name('anonymous-donations');
 
 Route::middleware([
     'auth:sanctum',

@@ -39,13 +39,13 @@
         <div class="flex flex-wrap gap-1">
             <Pill
                 v-if="issue.labels && issue.labels.length > 0"
-                v-for="label in issue.labels.split(',')"
-                :key="label"
+                v-for="label in issue.labels"
+                :key="label.id"
                 color="present"
                 size="sm"
                 :disabled="issue.state === 'closed'"
             >
-            {{ label }}
+                {{ label.name.charAt(0).toUpperCase() + label.name.slice(1) }}
             </Pill>
         </div>
     </td>

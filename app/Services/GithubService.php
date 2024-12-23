@@ -35,9 +35,9 @@ class GithubService
         return RepositoryActions::getByInstallationId($installationId, $accessToken);
     }
 
-    public static function getRepositoryProgrammingLanguages($repository, $accessToken)
+    public static function getRepositoryProgrammingLanguages($repositoryTitle, $accessToken)
     {
-        return RepositoryActions::getProgrammingLanguages($repository, $accessToken);
+        return RepositoryActions::getProgrammingLanguages($repositoryTitle, $accessToken);
     }
 
     public static function getRepositoriesBySearchQuery($searchQuery, $resultsToFetch, $localResults)
@@ -50,9 +50,9 @@ class GithubService
         return IssueActions::comment($installationId, $owner, $repo, $issueNumber, $comment);
     }
 
-    public static function getIssueActivityTimeline($issueGithubUrl, $githubAccessToken, $donations)
+    public static function getIssueActivityTimeline($issueGithubUrl, $githubAccessToken, $donations, $resolver, $resolvedAt)
     {
-        return IssueActions::getActivityTimeline($issueGithubUrl, $githubAccessToken, $donations);
+        return IssueActions::getActivityTimeline($issueGithubUrl, $githubAccessToken, $donations, $resolver, $resolvedAt);
     }
 
     public static function getConnectedIssuesInBatch($neededIssues, $existingIssues)

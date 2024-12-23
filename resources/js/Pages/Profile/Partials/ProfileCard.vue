@@ -7,10 +7,10 @@ import { useToast } from 'vue-toastification';
 import { Link, usePage } from '@inertiajs/vue3';
 
 const page = usePage()
-const isAnonymously = ref(Boolean(page.props.auth.user.is_pledging_anonymously))
+const isPledgingAnonymously = ref(Boolean(page.props.auth.user.is_pledging_anonymously))
 const toast = useToast()
 
-watch(isAnonymously, async (newValue) => {
+watch(isPledgingAnonymously, async (newValue) => {
   try {
     axios.post(route('profile.settings.anonymous-pledging'), {
         is_pledging_anonymously: newValue
@@ -61,7 +61,7 @@ watch(isAnonymously, async (newValue) => {
     </div>
     <div class="w-full flex mt-8 justify-between items-center">
       <p class="text-white">Pledge Anonymously</p>
-      <Switch v-model="isAnonymously" />
+      <Switch v-model="isPledgingAnonymously" />
     </div>
   </div>
 </template>

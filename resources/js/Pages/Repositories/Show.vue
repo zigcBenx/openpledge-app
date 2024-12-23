@@ -91,40 +91,56 @@
                             </DialogModal>
                         </div>
                     </div>
-                    <div>
-                        <div class="w-full flex mt-8 items-center">
-                            <p class="w-2/12 text-tundora dark:text-spun-pearl uppercase text-xs">About</p>
+                    <div v-if="repository.direct_from_github">
+                        <p class="text-gunmetal dark:text-lavender-mist text-lg text-center px-28 mt-24">
+                            Connect this repository to OpenPledge to make its issues visible on our platform. Once connected, issues can be pledged for support and solved by contributors, helping you drive meaningful progress.
+                        </p>
+                        <div class="flex justify-between mt-24">
+                            <p class="text-2xl dark:text-lavender-mist text-oil">Issues</p>
+                            <div class="flex gap-2" id="issue-types-container">
+                                <Pill color="secondary">Open ?</Pill>
+                            </div>
                         </div>
+                        <div v-for="n in 3" :key="n">
+                            <TableRowSkeleton class="mt-2" />
+                        </div>
+                    </div>
+                    <div v-else>
+                        <div>
+                            <div class="w-full flex mt-8 items-center">
+                                <p class="w-2/12 text-tundora dark:text-spun-pearl uppercase text-xs">About</p>
+                            </div>
 
-                        <div class="w-full flex mt-8 items-center">
-                            <p class="w-2/12 text-tundora dark:text-spun-pearl uppercase text-xs">Languages</p>
-                            <div class="w-10/12">
-                                <div class="flex gap-2 text-oil dark:text-lavender-mist">
-                                    <Pill v-for="language in repository.programming_languages" :key="language.id"
-                                        color="present" :contentClasses="['px-2']">
-                                        {{ language.name }}
-                                    </Pill>
+                            <div class="w-full flex mt-8 items-center">
+                                <p class="w-2/12 text-tundora dark:text-spun-pearl uppercase text-xs">Languages</p>
+                                <div class="w-10/12">
+                                    <div class="flex gap-2 text-oil dark:text-lavender-mist">
+                                        <Pill v-for="language in repository.programming_languages" :key="language.id"
+                                            color="present" :contentClasses="['px-2']">
+                                            {{ language.name }}
+                                        </Pill>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="mt-28">
-                        <div class="flex justify-between">
-                            <p class="text-2xl dark:text-lavender-mist text-oil">Issues</p>
-                            <div class="flex gap-2" id="issue-types-container">
-                                <Pill :color="selectedPledgedIssues ? 'secondary' : 'primary'"
-                                    @click="selectedPledgedIssues = true">
-                                    Pledged {{ repository.issues_count }}
-                                </Pill>
-                                <Pill :color="selectedPledgedIssues ? 'primary' : 'secondary'"
-                                    @click="selectedPledgedIssues = false">
-                                    Open {{ listOfIssues.length }}
-                                </Pill>
+                        <div class="mt-28">
+                            <div class="flex justify-between">
+                                <p class="text-2xl dark:text-lavender-mist text-oil">Issues</p>
+                                <div class="flex gap-2" id="issue-types-container">
+                                    <Pill :color="selectedPledgedIssues ? 'secondary' : 'primary'"
+                                        @click="selectedPledgedIssues = true">
+                                        Pledged {{ repository.issues_count }}
+                                    </Pill>
+                                    <Pill :color="selectedPledgedIssues ? 'primary' : 'secondary'"
+                                        @click="selectedPledgedIssues = false">
+                                        Open {{ listOfIssues.length }}
+                                    </Pill>
+                                </div>
                             </div>
-                        </div>
-                        <div>
-                            <IssuesTable v-if="selectedPledgedIssues" :issues="repository.issues" :pledged="true" />
-                            <IssuesTable v-else :issues="listOfIssues" :repository="repository" />
+                            <div>
+                                <IssuesTable v-if="selectedPledgedIssues" :issues="repository.issues" :pledged="true" />
+                                <IssuesTable v-else :issues="listOfIssues" :repository="repository" />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -151,6 +167,7 @@ import { useToast } from "vue-toastification";
 import { getRepositoryTour } from '@/utils/onboardingWalkthrough.js';
 import { router } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
+import TableRowSkeleton from '@/Components/Custom/TableRowSkeleton.vue';
 
 const page = usePage();
 const props = defineProps

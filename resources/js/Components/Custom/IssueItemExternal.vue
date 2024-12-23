@@ -26,13 +26,13 @@
       <div class="flex flex-wrap gap-1">
           <Pill
               v-if="issue.labels && issue.labels.length > 0"
-              v-for="label in issue.labels.split(',')"
+              v-for="label in issue.labels"
               :key="label"
               color="present"
               size="sm"
               disabled
           >
-          {{ label }}
+          {{ label.name.charAt(0).toUpperCase() + label.name.slice(1) }}
           </Pill>
       </div>
   </td>
@@ -131,10 +131,11 @@
         github_id: issue.github_id ?? issue.id,
         repository_id: props.repository.id,
         user_avatar: issue.user_avatar,
-        github_username: props.repository.title.split('/')[0],
+        github_username: issue.github_username,
         github_created_at: issue.github_created_at,
         state: issue.state,
-        description: issue.description
+        description: issue.description,
+        labels: issue.labels
       })
     }
 </script>

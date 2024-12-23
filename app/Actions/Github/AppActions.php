@@ -5,6 +5,8 @@ namespace App\Actions\Github;
 use App\Actions\Payment\ProcessPayment;
 use App\Http\Requests\CreateNewRepositoryRequest;
 use App\Models\ProgrammingLanguage;
+use App\Models\Repository;
+use App\Models\Label;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -65,17 +67,24 @@ class AppActions
             );
 
             foreach ($githubRepositoriesData as $repository) {
+                $userAvatar = $repository['owner']['avatar_url'];
+
+                if (strlen($userAvatar) > 255) {
+                    [$owner, $repositoryTitle] = explode('/', $repository['full_name']);
+                    $userAvatar = "https://ui-avatars.com/api/?name=$repositoryTitle&color=7F9CF5&background=EBF4FF";
+                }
+
                 $repositoryData = [
-                    'title'                  => $repository['full_name'],
-                    'github_url'             => $repository['html_url'],
-                    'github_id'              => $repository['id'],
-                    'user_avatar'            => $repository['owner']['avatar_url'],
-                    'user_id'                => $user->id,
+                    'title' => $repository['full_name'],
+                    'github_url' => $repository['html_url'],
+                    'github_id' => $repository['id'],
+                    'user_avatar' => $userAvatar,
+                    'user_id' => $user->id,
                     'github_installation_id' => $installationId
                 ];
-        
+
                 $validator = Validator::make($repositoryData, (new CreateNewRepositoryRequest)->rules());
-        
+
                 if ($validator->fails()) {
                     logger("[ERROR] Validation failed for repository {$repository['full_name']}", [
                         'errors' => $validator->errors(),
@@ -86,7 +95,7 @@ class AppActions
 
                 $createdRepository = CreateNewRepository::create($repositoryData);
 
-                $programmingLanguages = array_keys(GithubService::getRepositoryProgrammingLanguages($repository, $accessToken));
+                $programmingLanguages = array_keys(GithubService::getRepositoryProgrammingLanguages($repository['full_name'], $accessToken));
 
                 $languageIds = [];
                 foreach ($programmingLanguages as $programmingLanguage) {
@@ -130,10 +139,9 @@ class AppActions
             if ($pullRequest && isset($pullRequest['merged']) && $pullRequest['merged']) {
                 self::handleWebhookPullRequest($pullRequest, $action);
             } elseif (isset($payload['issue'])) {
-                $issueUrl = $payload['issue']['html_url'];
-                Issue::where('github_url', $issueUrl)->update([
-                    'state' => $action === "closed" ? "closed" : "open"
-                ]);                
+                self::handleWebhookIssue($payload, $action);
+            } elseif (isset($payload['repository'])) {
+                self::handleWebhookRepository($payload);
             }
 
             DB::commit();
@@ -185,5 +193,62 @@ class AppActions
             logger('[WARNING] No user with the following GitHub id is connected to our app', ['id' => $user['id']]);
             // TODO: Send email to notify the user to register to OpenPledge & connect with Stripe to claim the reward
         }
+    }
+
+    private static function handleWebhookRepository($payload)
+    {
+        $repositoryId = $payload['repository']['id'];
+        $repository = Repository::where('github_id', $repositoryId)->firstOrFail();
+
+        $repositoryIssues = Issue::where('repository_id', $repository->id)->get();
+        foreach ($repositoryIssues as $issue) {
+            $issueGithubUrl = $issue->github_url;
+            $issueGithubUrl = str_replace($repository->title, $payload['repository']['full_name'], $issueGithubUrl);
+            $issue->github_url = $issueGithubUrl;
+            $issue->save();
+        }
+
+        $repository->title = $payload['repository']['full_name'];
+        $repository->github_url = $payload['repository']['html_url'];
+
+        $githubInstallation = $repository->githubInstallation;
+
+        $programmingLanguages = array_keys(GithubService::getRepositoryProgrammingLanguages($repository->title, $githubInstallation->access_token));
+
+        $languageIds = [];
+        foreach ($programmingLanguages as $programmingLanguage) {
+            $language = ProgrammingLanguage::updateOrCreate(
+                ['name' => $programmingLanguage],
+                ['name' => $programmingLanguage]
+            );
+            $languageIds[] = $language->id;
+        }
+
+        $repository->programmingLanguages()->delete();
+        $repository->programmingLanguages()->sync($languageIds);
+        $repository->save();
+    }
+
+    private static function handleWebhookIssue($payload, $action)
+    {
+        $issueGithubId = $payload['issue']['id'];
+        $issue = Issue::where('github_id', $issueGithubId)->firstOrFail();
+        $issue->state = $action === "closed" ? "closed" : "open";
+        $issue->title = $payload['issue']['title'];
+        $issue->description = $payload['issue']['body'];
+        $issue->labels()->delete();
+
+        $allowedLabels = Label::$allowedLabels;
+        $labels = $payload['issue']['labels'];
+
+        foreach ($labels as $label) {
+            if (in_array(strtolower($label['name']), $allowedLabels)) {
+                $issue->labels()->create([
+                    'name' => strtolower($label['name'])
+                ]);
+            }
+        }
+
+        $issue->save();
     }
 }

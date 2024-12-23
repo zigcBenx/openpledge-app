@@ -1,5 +1,5 @@
 <template>
-    <div class="custom-select" :tabindex="0" @blur="dropdownOpen = false" ref="dropdownContainer">
+    <div class="custom-select" :tabindex="0" ref="dropdownContainer">
         <div class="selected" :class="{ open: dropdownOpen }" @click="toggleDropdown">
             <template v-if="selectedOptions.length === 0">
                 Select at least one
