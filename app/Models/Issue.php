@@ -40,6 +40,11 @@ class Issue extends Model
         return $this->morphToMany(ProgrammingLanguage::class, 'programming_languageable');
     }
 
+    public function labels()
+    {
+        return $this->hasMany(Label::class);
+    }
+
     public function getDonationSumAttribute()
     {
         return $this->donations()->sum('amount');

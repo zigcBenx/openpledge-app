@@ -38,7 +38,8 @@ return [
         'app_client_id' => env('GITHUB_APP_CLIENT_ID'),
         'app_client_secret' => env('GITHUB_APP_CLIENT_SECRET'),
         'app_callback' => env('GITHUB_APP_CALLBACK_URL'),
-        'app_private_key' => env('GITHUB_APP_PRIVATE_KEY')
+        'app_private_key' => env('GITHUB_APP_PRIVATE_KEY'),
+        'app_installation_url' => env('VITE_GITHUB_APP_INSTALLATION_URL')
     ],
 
 ];

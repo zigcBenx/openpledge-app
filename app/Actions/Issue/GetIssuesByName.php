@@ -6,6 +6,7 @@ use App\Models\Issue;
 use App\Services\GithubService;
 use App\Models\GitHubInstallation;
 use Illuminate\Support\Facades\Http;
+use App\Models\Label;
 
 class GetIssuesByName
 {
@@ -40,15 +41,15 @@ class GetIssuesByName
             return !in_array((string) $issue['id'], $pledgedIssues->pluck('github_id')->toArray());
         });
 
-        $formattedGithubIssues = [];
-
         $formattedGithubIssues = array_map(function ($issue) {
             return [
                 'id' => $issue['id'],
                 'title' => $issue['title'],
                 'github_url' => $issue['html_url'],
                 'state' => $issue['state'],
-                'labels' => $issue['labels'],
+                'labels' => array_values(array_filter($issue['labels'], function ($label) {
+                    return in_array($label['name'], Label::$allowedLabels);
+                })),
                 'user_avatar' => $issue['user']['avatar_url'],
                 'github_created_at' => $issue['created_at'],
                 'isExternal' => true,

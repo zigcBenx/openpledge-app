@@ -26,14 +26,19 @@ class RepositoryActions
         }
     }
 
-    public static function getProgrammingLanguages($repository, $accessToken)
+    public static function getProgrammingLanguages($repositoryTitle, $accessToken)
     {
-        $url = GithubService::BASE_URL . "/repos/{$repository['full_name']}/languages";
+        $url = GithubService::BASE_URL . "/repos/{$repositoryTitle}/languages";
 
         $response = Http::withToken($accessToken)
             ->get($url);
 
-        return $response->json();
+        if ($response->successful()) {
+            return $response->json() ?? [];
+        } else {
+            logger('[ERROR] Failed to fetch GitHub programming languages', ['response' => $response->body(), 'repositoryTitle' => $repositoryTitle]);
+            return [];
+        }
     }
 
     public static function getBySearchQuery($searchQuery, $resultsToFetch, $localResults)

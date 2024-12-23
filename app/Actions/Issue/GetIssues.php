@@ -17,7 +17,7 @@ class GetIssues
         $today = Carbon::now()->toDateString();
 
         $query = Issue::query()
-            ->with('programmingLanguages', 'repository.programmingLanguages', 'userFavorite')
+            ->with('programmingLanguages', 'repository.programmingLanguages', 'userFavorite', 'labels')
             ->withSum([
                 'donations' => function ($query) use ($today) {
                     $query->where(function ($query) use ($today) {
@@ -31,13 +31,13 @@ class GetIssues
 
         if ($filters) {
             if (isset($filters['range'])) {
-                list($minRange, $maxRange) = explode('-', $filters['range']);
+                [$minRange, $maxRange] = explode('-', $filters['range']);
                 $query->having('donations_sum_amount', '>=', (int) $minRange)
                     ->having('donations_sum_amount', '<=', (int) $maxRange);
             }
 
             if (isset($filters['date'])) {
-                list($month, $year) = explode('-', $filters['date']);
+                [$month, $year] = explode('-', $filters['date']);
                 $query->whereMonth('created_at', $month)->whereYear('created_at', $year);
             }
 
@@ -50,7 +50,9 @@ class GetIssues
 
             if (isset($filters['labels'])) {
                 $labelsArray = explode(',', $filters['labels']);
-                $query->whereIn('labels', $labelsArray);
+                $query->whereHas('labels', function ($query) use ($labelsArray) {
+                    $query->whereIn('name', $labelsArray);
+                });
             }
         }
 

@@ -8,7 +8,6 @@ use App\Actions\User\Contributors;
 use App\Models\ProgrammingLanguage;
 use App\Services\GithubService;
 use App\Actions\Issue\GetIssues;
-use App\Models\Donation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Inertia\Inertia;

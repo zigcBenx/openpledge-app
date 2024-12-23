@@ -13,6 +13,7 @@ class GetUsersActiveIssues
             'donations.user',
             'userFavorite',
             'programmingLanguages:id,name',
+            'labels'
         ])
             ->whereHas('resolvers', function ($query) use ($userId) {
                 $query->where('user_id', $userId);
@@ -37,6 +38,7 @@ class GetUsersActiveIssues
             'donations.user',
             'userFavorite',
             'programmingLanguages:id,name',
+            'labels'
         ])
             ->whereHas('resolvers', function ($query) use ($userId) {
                 $query->where('user_id', $userId);
