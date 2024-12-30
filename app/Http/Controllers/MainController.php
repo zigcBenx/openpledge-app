@@ -71,7 +71,7 @@ class MainController extends Controller
             $combinedIssues = array_merge($pledgedIssues->toArray(), $externalIssues);
         }
 
-        $paginatedIssues = array_slice($combinedIssues, 0, $paginationParams['perPage']);
+        $paginatedIssues = array_slice($combinedIssues ?? $pledgedIssues->toArray(), 0, $paginationParams['perPage']);
 
         // For the first page, use Inertia to render the page
         if ($paginationParams['page'] === 1) {
