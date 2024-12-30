@@ -99,8 +99,14 @@
                                 <Pill color="secondary">Open ?</Pill>
                             </div>
                         </div>
-                        <div v-for="n in 3" :key="n">
-                            <TableRowSkeleton class="mt-2" />
+                        <div class="mt-4 p-8 rounded-md border-2 border-dashed border-gray-300 dark:border-gray-600">
+                            <div class="text-center">
+                                <Icon name="key" class="stroke-tundora mx-auto mb-2" size="lg" />
+                                <p class="text-gray-500 dark:text-gray-400 mb-2">Repository Not Connected</p>
+                                <p class="text-sm text-gray-400 dark:text-gray-500">
+                                    Connect this repository to view and interact with its issues
+                                </p>
+                            </div>
                         </div>
                     </div>
                     <div v-else>
@@ -165,7 +171,6 @@ import { useToast } from "vue-toastification";
 import { getRepositoryTour } from '@/utils/onboardingWalkthrough.js';
 import { router } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
-import TableRowSkeleton from '@/Components/Custom/TableRowSkeleton.vue';
 
 const toast = useToast()
 const page = usePage();
