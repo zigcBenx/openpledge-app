@@ -46,11 +46,14 @@ class RepositoryController extends Controller
             try {
                 $githubRepo = GithubService::getRepositoryByName($githubUser, $repositoryName);
             } catch(Exception $e) {
+                $isAuthenticated = Auth::check();
                 return Inertia::render('Error', [
                     'message' => 'Repository access failed. It might be private. Connect with our GitHub app for seamless access to your repositories.',
                     'subMessage' => view('instructions.connect_repository_instructions')->render(),
-                    'redirectUrl' => config('services.github.app_installation_url'),
-                    'redirectButtonText' => 'Connect'
+                    'redirectUrl' => $isAuthenticated ? config('services.github.app_installation_url') : route('login'),
+                    'redirectButtonText' => 'Connect',
+                    'actionUrl' => $isAuthenticated ? route('github.save-redirect-path') : null,
+                    'actionData' => $isAuthenticated ? ['redirect_path' => "/repositories/{$githubUser}/{$repositoryName}"] : null
                 ]);
             }
             $repository = [
