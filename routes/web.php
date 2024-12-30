@@ -114,6 +114,7 @@ Route::middleware([
 
     // GitHub App integration route
     Route::get('/github/installation/callback', [GithubController::class, 'handleGithubAppCallback'])->name('github.installation.callback');
+    Route::post('github/save-redirect-path', [GithubController::class, 'saveRedirectPath'])->name('github.save-redirect-path');
 
     // Search
     Route::get('/search', [SearchController::class, 'getSearchResults'])->name('search');

@@ -53,4 +53,9 @@ class GithubController extends Controller
     {
         return GithubService::handleGithubAppWebhook($request);
     }
+
+    public function saveRedirectPath(Request $request)
+    {
+        return GithubService::saveRedirectPath($request);
+    }
 }

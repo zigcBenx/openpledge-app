@@ -82,11 +82,9 @@
                                 </template>
 
                                 <template #footer>
-                                    <a :href="githubAppInstallationUrl">
-                                        <Button class="mt-9 px-8 h-11" color="primary">
-                                            Connect
-                                        </Button>
-                                    </a>
+                                    <Button @click="savePathAndRedirect" class="mt-9 px-8 h-11" color="primary">
+                                        Connect
+                                    </Button>
                                 </template>
                             </DialogModal>
                         </div>
@@ -169,6 +167,7 @@ import { router } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
 import TableRowSkeleton from '@/Components/Custom/TableRowSkeleton.vue';
 
+const toast = useToast()
 const page = usePage();
 const props = defineProps
     ({
@@ -190,8 +189,6 @@ const showContactOwnerModal = ref(false)
 const isAuthenticated = page.props.auth.user !== null;
 
 const addFavorites = (repository) => {
-    const toast = useToast()
-
     if (!isAuthenticated) {
         toast.error('Please log in to add this repository to favorites');
         return;
@@ -215,6 +212,18 @@ const addFavorites = (repository) => {
             toast.error('Something went wrong!')
             console.error(error);
         });
+}
+
+const savePathAndRedirect = async () => {
+    try {
+        await axios.post(route('github.save-redirect-path'), {
+            redirect_path: window.location.pathname
+        });
+        window.location.href = githubAppInstallationUrl
+    } catch (error) {
+        toast.error('Something went wrong!')
+        console.error(error);
+    }
 }
 
 onMounted(() => {

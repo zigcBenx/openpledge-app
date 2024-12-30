@@ -110,16 +110,24 @@ class AppActions
             }
 
             DB::commit();
-            $firstRepository = $githubRepositoriesData[0];
-            $fullNameParts = explode('/', $firstRepository['full_name']);
 
-            $githubUser = $fullNameParts[0];
-            $repository = $fullNameParts[1];
+            $redirectPath = session('github_redirect_path');
 
-            return redirect(route('repositories.show', [
-                'githubUser' => $githubUser,
-                'repository' => $repository,
-            ]));
+            if ($redirectPath) {
+                session()->forget('github_redirect_path');
+
+                $fullNameParts = explode('/', $redirectPath);
+
+                $githubUser = $fullNameParts[2];
+                $repository = $fullNameParts[3];
+    
+                return redirect(route('repositories.show', [
+                    'githubUser' => $githubUser,
+                    'repository' => $repository,
+                ]));
+            }
+
+            return redirect(route('discover.issues'));
         } catch (\Exception $e) {
             DB::rollBack();
             logger('[ERROR] Transaction failed: ' . $e->getMessage());
@@ -251,5 +259,11 @@ class AppActions
         }
 
         $issue->save();
+    }
+
+    public static function saveRedirectPath($request)
+    {
+        $redirectPath = $request->input('redirect_path');
+        session(['github_redirect_path' => $redirectPath]);
     }
 }
