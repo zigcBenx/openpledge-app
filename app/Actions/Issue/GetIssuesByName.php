@@ -53,7 +53,8 @@ class GetIssuesByName
                 'user_avatar' => $issue['user']['avatar_url'],
                 'github_created_at' => $issue['created_at'],
                 'isExternal' => true,
-                'description' => $issue['body']
+                'description' => $issue['body'],
+                'github_username' => $issue['user']['login']
             ];
         }, $filteredGithubIssues);
 
