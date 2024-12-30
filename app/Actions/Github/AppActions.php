@@ -182,7 +182,8 @@ class AppActions
 
         $issue->state = $action === "reopened" ? "open" : $action;
         $issue->resolver_github_id = $user['id'];
-        $issue->resolved_at = Carbon::parse($pullRequest['merged_at']);
+        $issue->resolved_at = Carbon::parse($pullRequest['merged_at'])
+            ->setTimezone(config('app.timezone'));
         $issue->save();
 
         $dbUser = User::where('github_id', $user['id'])->first();
