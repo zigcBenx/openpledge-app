@@ -53,6 +53,13 @@
         </Button>
       </form>
     </Col>
+    <Col v-if="!isAuthenticated">
+      <form method="POST" @submit.prevent="register()">
+        <Button color="secondary" type="submit" class="rounded-md bg-transparent dark:bg-transparent">
+          Sign Up
+        </Button>
+      </form>
+    </Col>
     <Col class="dark:text-seashell text-sm py-2 flex justify-between">
       <span>Terms & Conditions</span>
       <span>Privacy Policy</span>
@@ -78,6 +85,10 @@ const logout = () => {
 
 const login = () => {
   router.visit(route('login'));
+};
+
+const register = () => {
+  router.visit(route('register'));
 };
 
 const page = usePage()
