@@ -47,6 +47,9 @@ Route::get('/top-contributors', [Maincontroller::class, 'getTopContributors'])->
 Route::get('/top-donors', [Maincontroller::class, 'getTopDonors'])->name('top-donors');
 Route::get('/anonymous-donations', [Maincontroller::class, 'getAnonymousDonations'])->name('anonymous-donations');
 
+// Internal and external Issue and Repository search
+Route::get('/search', [SearchController::class, 'getSearchResults'])->name('search');
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -115,9 +118,6 @@ Route::middleware([
     // GitHub App integration route
     Route::get('/github/installation/callback', [GithubController::class, 'handleGithubAppCallback'])->name('github.installation.callback');
     Route::post('github/save-redirect-path', [GithubController::class, 'saveRedirectPath'])->name('github.save-redirect-path');
-
-    // Search
-    Route::get('/search', [SearchController::class, 'getSearchResults'])->name('search');
 });
 
 Route::get('/auth/github/callback', [GithubController::class, 'callback'])->name('callback');

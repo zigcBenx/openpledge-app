@@ -21,7 +21,7 @@
                                 </NavLink>
                                 <div class="cursor-pointer inline-flex uppercase items-center px-1 pb-2 pt-1 border-b-2 border-transparent text-sm leading-5 text-rich-black dark:text-platinum hover:text-green dark:hover:text-green"
                                     @click="displayLeaderBoardModal = true">
-                                    Leaderboard
+                                    Leaderboard {{ isAuthenticated }}
                                 </div>
                             </div>
                         </div>
@@ -39,7 +39,6 @@
                                             icon="search"
                                             :closeOnOutside="true"
                                             @onInput="searchQuery = $event.target.value"
-                                            @click="!user && login()"
                                         />
                                     </template>
 
@@ -49,8 +48,10 @@
                                             class="w-[44.375rem]" 
                                             :data="filteredData" 
                                             checkboxLabel="Show GitHub results"
+                                            :isCheckboxDisabled="!isAuthenticated"
                                             :getSearchItemHref="generateSearchItemHref"
                                             @checkbox-toggled="includeGitHubResults = $event"
+                                            :tooltipText="!isAuthenticated ? 'Log In to show GitHub results' : ''"
                                         />
                                     </template>
                                 </Dropdown>                                
@@ -309,7 +310,10 @@
                 issues: []
             });
             const includeGitHubResults = ref(false);
-            const user = usePage().props.auth.user;
+            const user = computed(() => usePage().props.auth.user);
+            const isAuthenticated = computed(() => {
+                return user.value !== null;
+            });
 
             const logout = () => {
                 router.post(route('logout'));
@@ -425,7 +429,8 @@
                 displayFeedbackModal,
                 feedbackData,
                 submitFeedback,
-                feedbackModalMessage
+                feedbackModalMessage,
+                isAuthenticated
             };
         }
     };
