@@ -13,10 +13,10 @@
             <!-- Tooltip -->
             <div v-if="isCheckboxDisabled && tooltipText.length > 0" 
                  class="invisible group-hover:visible absolute -top-12 left-1/2 transform -translate-x-1/2 px-3 py-2 
-                        bg-gunmetal dark:bg-rich-black text-white text-sm rounded-md shadow-lg ring-2 ring-green
+                        bg-seashell dark:bg-rich-black text-sm rounded-md shadow-lg ring-2 ring-green
                         before:content-[''] before:absolute before:top-full before:left-1/2 before:-translate-x-1/2 
-                        before:border-8 before:border-transparent before:border-t-gunmetal dark:before:border-t-rich-black
-                        whitespace-nowrap z-10">
+                        before:border-8 before:border-transparent before:border-t-seashell dark:before:border-t-rich-black
+                        whitespace-nowrap z-10 dark:text-seashell">
                 {{ tooltipText }}
             </div>
         </Col>
