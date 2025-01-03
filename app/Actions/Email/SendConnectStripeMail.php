@@ -22,6 +22,7 @@ class SendConnectStripeMail
                 'name' => $name,
                 'amount' => $amount,
                 'type' => $type,
+                'stack_trace' => $e->getTraceAsString()
             ]);
         }
     }

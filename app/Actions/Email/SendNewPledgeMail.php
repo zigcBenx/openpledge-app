@@ -24,6 +24,7 @@ class SendNewPledgeMail
                 'donorMail' => $donorMail,
                 'donorName' => $donorName,
                 'issueId' => $issueId,
+                'stack_trace' => $e->getTraceAsString()
             ]);
         }
     }

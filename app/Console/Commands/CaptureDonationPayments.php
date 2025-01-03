@@ -78,7 +78,9 @@ class CaptureDonationPayments extends Command
                 }
             }
         } catch(\Exception $e) {
-            logger('[ERROR] Error handling donation payments: ' . $e->getMessage());
+            logger('[ERROR] Error handling donation payments: ' . $e->getMessage(), [
+                'stack_trace' => $e->getTraceAsString()
+            ]);
         }
     }
 
@@ -96,7 +98,9 @@ class CaptureDonationPayments extends Command
                 return false;
             }
         } catch (ApiErrorException $e) {
-            logger('[ERROR] Error capturing donation payments: ' . $e->getMessage());
+            logger('[ERROR] Error capturing donation payments: ' . $e->getMessage(), [
+                'stack_trace' => $e->getTraceAsString()
+            ]);
             return false;
         }
     }

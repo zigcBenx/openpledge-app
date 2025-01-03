@@ -165,7 +165,9 @@ class IssueActions
 
             $githubResults = json_decode($response->getBody()->getContents(), true);
         } catch (\Exception $e) {
-            logger('[ERROR] Error fetching GitHub issues: ' . $e->getMessage());
+            logger('[ERROR] Error fetching GitHub issues: ' . $e->getMessage(), [
+                'stack_trace' => $e->getTraceAsString()
+            ]);
             return [];
         }
 

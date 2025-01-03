@@ -48,7 +48,9 @@ class AppActions
             parse_str($response->body(), $data);
             $accessToken = $data['access_token'];
         } catch (\Exception $e) {
-            logger('[ERROR] Failed to fetch GitHub access token: ' . $e->getMessage());
+            logger('[ERROR] Failed to fetch GitHub access token: ' . $e->getMessage(), [
+                'stack_trace' => $e->getTraceAsString()
+            ]);
             return redirect('/error');
         }
 
@@ -130,7 +132,9 @@ class AppActions
             return redirect(route('discover.issues'));
         } catch (\Exception $e) {
             DB::rollBack();
-            logger('[ERROR] Transaction failed: ' . $e->getMessage());
+            logger('[ERROR] Transaction failed: ' . $e->getMessage(), [
+                'stack_trace' => $e->getTraceAsString()
+            ]);
             return redirect('/error');
         }
     }
@@ -155,7 +159,10 @@ class AppActions
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
-            logger('[ERROR] Transaction failed', ['error' => $e->getMessage()]);
+            logger('[ERROR] Transaction failed', [
+                'error' => $e->getMessage(),
+                'stack_trace' => $e->getTraceAsString()
+            ]);
             return response()->json(['status' => 'error', 'message' => 'Transaction failed'], 500);
         }
         return response()->json(['status' => 'success'], 200);
@@ -176,16 +183,20 @@ class AppActions
         $issueEventsResponse = Http::withToken(AuthActions::getAccessTokenByRepositoryUrl($repositoryData['html_url']))->get($issueEventsUrl);
         $issueEvents = $issueEventsResponse->json();
 
-        $closedIssueUrl = null;
+        $closedIssueGithubId = null;
 
         foreach ($issueEvents as $issueEvent) {
             if (isset($issueEvent["event"]) && $issueEvent["event"] === "closed") {
-                $closedIssueUrl = $issueEvent["issue"]["html_url"];
+                $closedIssueGithubId = $issueEvent["issue"]["id"];
                 break;
             }
         }
 
-        $issue = Issue::where('github_url', $closedIssueUrl)->firstOrFail();
+        $issue = Issue::where('github_id', $closedIssueGithubId)->first();
+        if (!$issue) {
+            return;
+        }
+
         $user = $pullRequest['user'];
 
         $issue->state = $action === "reopened" ? "open" : $action;
@@ -233,7 +244,6 @@ class AppActions
             $languageIds[] = $language->id;
         }
 
-        $repository->programmingLanguages()->delete();
         $repository->programmingLanguages()->sync($languageIds);
         $repository->save();
     }
@@ -241,7 +251,10 @@ class AppActions
     private static function handleWebhookIssue($payload, $action)
     {
         $issueGithubId = $payload['issue']['id'];
-        $issue = Issue::where('github_id', $issueGithubId)->firstOrFail();
+        $issue = Issue::where('github_id', $issueGithubId)->first();
+        if (!$issue) {
+            return;
+        }
         $issue->state = $action === "closed" ? "closed" : "open";
         $issue->title = $payload['issue']['title'];
         $issue->description = $payload['issue']['body'];

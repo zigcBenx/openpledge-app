@@ -15,7 +15,8 @@ class SendFeedbackMail
         } catch (Exception $e) {
             logger('[ERROR] Error sending Feedback Mail: ' . $e->getMessage(), [
                 'email' => $email,
-                'content' => $content
+                'content' => $content,
+                'stack_trace' => $e->getTraceAsString()
             ]);
         }
     }

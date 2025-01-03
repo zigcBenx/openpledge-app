@@ -55,7 +55,9 @@ class RepositoryActions
 
             $githubResults = json_decode($response->getBody()->getContents(), true);
         } catch (Exception $e) {
-            logger('[ERROR] Error fetching GitHub repositories: ' . $e->getMessage());
+            logger('[ERROR] Error fetching GitHub repositories: ' . $e->getMessage(), [
+                'stack_trace' => $e->getTraceAsString()
+            ]);
         }
 
         if (!isset($githubResults['items'])) {

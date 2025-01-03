@@ -18,14 +18,17 @@ class TransferFunds
 
         try {
             $transfer = Transfer::create([
-                'amount' => $amount * 100, // Multiplied by 100 because Stripe expects the amount in cents
+                'amount' => (int)($amount * 100), // Multiplied by 100 because Stripe expects the amount in cents
                 'currency' => 'eur',
                 'destination' => $destinationStripeId
             ]);
 
             return $transfer->id;
         } catch (\Exception $e) {
-            logger('[ERROR] Stripe Transfer failed', ['error' => $e->getMessage()]);
+            logger('[ERROR] Stripe Transfer failed', [
+                'error' => $e->getMessage(),
+                'stack_trace' => $e->getTraceAsString()
+            ]);
             throw $e;
         }
     }

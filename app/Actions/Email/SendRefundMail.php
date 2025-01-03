@@ -16,7 +16,8 @@ class SendRefundMail
             logger('[ERROR] Error sending Refund Mail: ' . $e->getMessage(), [
                 'email' => $email,
                 'name' => $name,
-                'amount' => $amount
+                'amount' => $amount,
+                'stack_trace' => $e->getTraceAsString()
             ]);
         }
     }
