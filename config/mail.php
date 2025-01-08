@@ -15,7 +15,7 @@ return [
 
     'default' => env('MAIL_MAILER', 'smtp'),
 
-    'feedback_mail' => env('FEEDBACK_MAIL', 'zigacbenko@gmail.com'),
+    'feedback_mail' => env('FEEDBACK_MAIL', 'ziga@openpledge.io'),
 
     /*
     |--------------------------------------------------------------------------
