@@ -21,7 +21,7 @@
                                 </NavLink>
                                 <div class="cursor-pointer inline-flex uppercase items-center px-1 pb-2 pt-1 border-b-2 border-transparent text-sm leading-5 text-rich-black dark:text-platinum hover:text-green dark:hover:text-green"
                                     @click="displayLeaderBoardModal = true">
-                                    Leaderboard {{ isAuthenticated }}
+                                    Leaderboard
                                 </div>
                             </div>
                         </div>
