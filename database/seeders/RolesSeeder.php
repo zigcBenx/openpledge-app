@@ -16,9 +16,5 @@ class RolesSeeder extends Seeder
     {
         $role_admin = Role::create(['name' => 'admin']);
         $role_standard = Role::create(['name' => 'standard']);
-
-        $permission_read = Permission::create(['name' => 'read subscribers']);
-
-        $role_admin->givePermissionTo($permission_read);
     }
 }

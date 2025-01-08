@@ -1,11 +1,9 @@
 <?php
 
-use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\GithubController;
 use App\Http\Controllers\IssueController;
 use App\Http\Controllers\SearchController;
-use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\PaymentController;
@@ -58,7 +56,6 @@ Route::middleware([
 
     Route::get('/home', [MainController::class, 'index'])->name('home');
     Route::get('/dashboard', [MainController::class, 'dashboard'])->name('dashboard');
-    Route::get('/subscribers', [SubscriberController::class, 'index'])->name('subscribers');
 
     // TODO: this route is for displaying request view -> which will be removed
     // since whenever user comes from github repo to openpledge, repos should be automatically created
@@ -69,7 +66,6 @@ Route::middleware([
 
     Route::resource('repositories', RepositoryController::class)->only('index', 'store');
     Route::resource('issues', IssueController::class)->only(['store'])->except(['show']);
-    Route::resource('campaigns', CampaignController::class);
     Route::resource('donations', DonationController::class)->only('index', 'show', 'store');
 
 
@@ -104,8 +100,6 @@ Route::middleware([
     Route::get('/user/profile/finished', [ProfileController::class, 'showAuthUsersFinishedIssues'])->name('profile.finished-show');
 
     Route::post('/user/new-user-quiz-submission', [UserController::class, 'handleNewUserQuizSubmission'])->name('user.new-user-quiz');
-
-    Route::post('/subscribe-user', [SubscriberController::class, 'subscribeUser']);
     
     // Stripe Connect routes
     Route::get('/stripe/connect', [StripeConnectController::class, 'stripeConnect'])->name('stripe.connect');
@@ -122,8 +116,6 @@ Route::middleware([
 
 Route::get('/auth/github/callback', [GithubController::class, 'callback'])->name('callback');
 Route::get('/auth/github', [GithubController::class, 'redirect'])->name('redirect');
-
-Route::get('/unsubscribe-user', [SubscriberController::class, 'unsubscribe'])->name('unsubscribe');
 
 // GitHub App Webhook
 Route::post('/github/webhook', [GithubController::class, 'handleGithubAppWebhook'])->name('github.webhook');
