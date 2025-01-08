@@ -301,8 +301,7 @@
                                     <div class="t17" style="mso-line-height-rule:exactly;mso-line-height-alt:30px;line-height:30px;font-size:1px;display:block;">&nbsp;&nbsp;</div>
                                   </td>
                                 </tr>
-								<tr>HEllo</tr>
-								@yield('content')
+								                @yield('content')
                                 <tr>
                                   <td>
                                     <div class="t48" style="mso-line-height-rule:exactly;mso-line-height-alt:40px;line-height:40px;font-size:1px;display:block;">&nbsp;&nbsp;</div>
@@ -337,7 +336,7 @@
                                                             </tr>
                                                           </table>
                                                         </td>
-                                                        <td class="t43" valign="top">
+                                                        <!-- <td class="t43" valign="top">
                                                           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" class="t42" style="width:auto;">
                                                             <tr>
                                                               <td class="t41" style="background-color:#FFFFFF;text-align:center;line-height:20px;mso-line-height-rule:exactly;mso-text-raise:2px;">
@@ -345,7 +344,7 @@
                                                               </td>
                                                             </tr>
                                                           </table>
-                                                        </td>
+                                                        </td> -->
                                                         <td></td>
                                                       </tr>
                                                     </table>
