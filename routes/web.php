@@ -26,6 +26,13 @@ use Inertia\Inertia;
 |
 */
 
+
+Route::middleware([
+    'bypass.maintenance'
+])->group(function () {
+
+
+
 Route::get('/', function () {
     return Redirect::route('discover.issues');
 });
@@ -120,6 +127,8 @@ Route::get('/auth/github', [GithubController::class, 'redirect'])->name('redirec
 // GitHub App Webhook
 Route::post('/github/webhook', [GithubController::class, 'handleGithubAppWebhook'])->name('github.webhook');
 
+
+}); // END MAINTENANCE MIDDLEWARE GROUP
 
 Route::get('/{any}', function () {
     return Inertia::render('Error');
