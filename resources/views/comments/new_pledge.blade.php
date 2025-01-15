@@ -12,8 +12,6 @@ ${\textsf{\color{red}🚨 Time's ticking! This pledge expires on {{ $expireDate 
 
 Thanks for helping us keep the bugs at bay and the code purring like a kitten! :cat: :heart:
 
-*Note: Since we're still in Beta, all rewards are purely fictional for now — so no actual cash, just a lot of love and appreciation! :wink:*
-
 Here's a little joke for you:
 
 <details>

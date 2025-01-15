@@ -61,10 +61,6 @@
                     </p>
                     <div style="height:10px;line-height:10px;">&nbsp;</div>
                     <p class="t24" style="margin:0;Margin:0;font-family:Exo,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:25px;font-weight:400;font-style:normal;font-size:15px;text-decoration:none;text-transform:none;letter-spacing:-0.1px;direction:ltr;color:#141414;text-align:left;mso-line-height-rule:exactly;mso-text-raise:3px;">
-                        <b>Note: Since we're still in Beta, all rewards are purely fictional for now—so no actual cash, just a lot of love and appreciation! 😉</b>
-                    </p>
-                    <div style="height:10px;line-height:10px;">&nbsp;</div>
-                    <p class="t24" style="margin:0;Margin:0;font-family:Exo,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:25px;font-weight:400;font-style:normal;font-size:15px;text-decoration:none;text-transform:none;letter-spacing:-0.1px;direction:ltr;color:#141414;text-align:left;mso-line-height-rule:exactly;mso-text-raise:3px;">
                         Sincerely,<br>The OpenPledge.io Team
                     </p>
                 </td>

@@ -19,7 +19,7 @@
                                 <NavLink :href="route('discover.issues')" :active="route().current('discover.issues')">
                                     Discover
                                 </NavLink>
-                                <div class="cursor-pointer inline-flex uppercase items-center px-1 pb-2 pt-1 border-b-2 border-transparent text-sm leading-5 text-rich-black dark:text-platinum hover:text-green dark:hover:text-green"
+                                <div title="We are still working on that one :)" class="cursor-pointer inline-flex uppercase items-center px-1 pb-2 pt-1 border-b-2 border-transparent text-sm leading-5 text-rich-black dark:text-platinum hover:text-green dark:hover:text-green"
                                     @click="displayLeaderBoardModal = true">
                                     Leaderboard
                                 </div>
@@ -195,7 +195,7 @@
         </div>
     </div>
     <div class="fixed bottom-0 left-0 w-full text-white w-100 bg-openpledge-yellow p-2 text-center">
-        OpenPledge is in <b>BETA</b>. Things might get a little quirky! 🚀 All donations are fictional.
+        OpenPledge is in <b>BETA</b>. Things might get a little quirky! 🚀
     </div>
     <Button
             @click="displayFeedbackModal = true"
