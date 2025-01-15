@@ -7,7 +7,7 @@
 | {{ $donorName }} | ${{ $amount }} |
 
 @if($expireDate)
-${\textsf{\color{red}🚨 Time's ticking! This pledge expires on {{ $expireDate }} 🚨}}$
+${\textsf{\color{red}🚨 Time's ticking! This pledge expires on {{ $expireDate }} 🚨}}€
 @endif
 
 Thanks for helping us keep the bugs at bay and the code purring like a kitten! :cat: :heart:

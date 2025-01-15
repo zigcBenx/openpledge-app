@@ -32,8 +32,8 @@
             v-model:input="form.amount" 
             inputClass="!bg-transparent" 
             wrapperClass="w-full !bg-transparent mt-2.5 !pl-0 !border-none" 
-            icon="dollar" 
-            currency="USD"
+            icon="euro"
+            currency="EUR"
             required
             iconClass="fill-green"
             @onInput="form.amount = preventStringInputWithNumber(form.amount)"

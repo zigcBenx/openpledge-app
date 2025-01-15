@@ -55,7 +55,7 @@ onUnmounted(() => {
       <p class="flex gap-1.5 mb-4 text-sm text-tundora dark:text-spun-pearl">
         <span class="font-medium text-mondo dark:text-seashell">{{ pledgeActivity.user?.name || 'Anonymous Pledger'}}</span>
         pledged
-        <span class="font-medium text-purple-heart">${{ pledgeActivity.amount }}</span>
+        <span class="font-medium text-purple-heart">€{{ pledgeActivity.amount }}</span>
       </p>
       <p 
         v-if="pledgeActivity.expire_date" 
