@@ -45,6 +45,7 @@
         "canvas-confetti": "^1.9.3",
         "date-fns": "^3.1.0",
         "dayjs": "^1.11.10",
+        "flag-icons": "^7.2.3",
         "marked": "^15.0.3",
         "shepherd.js": "^14.1.0",
         "vue-intersect": "^3.0.0",

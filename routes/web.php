@@ -110,7 +110,7 @@ Route::middleware([
     
     // Stripe Connect routes
     Route::get('/stripe/connect', [StripeConnectController::class, 'stripeConnect'])->name('stripe.connect');
-    Route::get('/stripe/create-account-link', [StripeConnectController::class, 'createAccountLink'])->name('stripe.create.account.link');
+    Route::post('/stripe/create-account-link', [StripeConnectController::class, 'createAccountLink'])->name('stripe.create.account.link');
     Route::get('/stripe/onboarding/refresh', [StripeConnectController::class, 'onboardingRefresh'])->name('stripe.onboarding.refresh');
     Route::get('/stripe/onboarding/return', [StripeConnectController::class, 'onboardingReturn'])->name('stripe.onboarding.return');
     Route::get('/stripe/verify-installation', [StripeConnectController::class, 'verifyInstallation'])->name('stripe.verify.installation');

@@ -13,10 +13,12 @@ class StripeConnect
 {
     public static function createAccountLink(Request $request)
     {
+        $countryCode = $request->input('country_code');
         $request->session()->forget('stripe_id');
         Stripe::setApiKey(config('app.stripe_secret'));
 
         $account = Account::create([
+            'country' => $countryCode,
             'type' => 'express',
             'capabilities' => [
                 'transfers' => ['requested' => true],
