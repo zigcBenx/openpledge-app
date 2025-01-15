@@ -16,12 +16,14 @@ watch(country, () => {
   connectStripe(country.value.code);
 });
 
+onMounted(() => {
+  if (usePage().props.auth.user.stripe_id) {
+      isConnected.value = true;
+    }
+});
+
 const connectStripe = async (countryCode) => {
   try {
-    if (usePage().props.auth.user.stripe_id) {
-      isConnected.value = true;
-      return;
-    }
     const createAccountLinkResponse = await axios.post(route('stripe.create.account.link'), { country_code: countryCode });
     isConnected.value = createAccountLinkResponse.data.isConnected;
     stripeUrl.value = createAccountLinkResponse.data.url;
