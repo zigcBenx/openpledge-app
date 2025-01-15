@@ -19,7 +19,8 @@ class Donation extends Model
         'donor_id',
         'expire_date',
         'refund_transaction_id',
-        'payout_transaction_id'
+        'payout_transaction_id',
+        'charge_id'
     ];
 
     public function user(): BelongsTo

@@ -36,6 +36,7 @@ class ProcessPayment
                     'donatable_id' => $issueId,
                     'amount' => $amount,
                     'transaction_id' => $paymentDetail->id,
+                    'charge_id' => $paymentDetail->latest_charge,
                     'donor_id' => $isPledgingAnonymously ? null : Auth::id(),
                     'expire_date' => $expireDate,
                 ]
@@ -76,26 +77,63 @@ class ProcessPayment
     public static function processDonations(Issue $issue, User $dbUser)
     {
         $today = Carbon::now()->toDateString();
-        $donationsSumAmount = Donation::where('donatable_id', $issue->id)
+        $donations = Donation::where('donatable_id', $issue->id)
             ->where(function ($query) use ($today) {
                 $query->whereNull('expire_date')
                     ->orWhere('expire_date', '>', $today);
             })
             ->where('paid', false)
-            ->sum('amount');
+            ->get();
 
+        if ($donations->isEmpty()) {
+            logger('[INFO] No unpaid donations found for issue', ['issue_id' => $issue->id]);
+            return;
+        }
+
+        $donationsSumAmount = $donations->sum('amount');
         $feePercentage = config('app.platform_fee_percentage');
-        $payoutAmount = $donationsSumAmount - $donationsSumAmount * ($feePercentage / 100);
+        $totalPayoutAmount = $donationsSumAmount - $donationsSumAmount * ($feePercentage / 100);
         $resolverMail = $dbUser->email;
         $destinationStripeId = $dbUser->stripe_id;
         $issueId = $issue->id;
 
         if (isset($destinationStripeId)) {
-            $transferId = TransferFunds::transfer($destinationStripeId, $payoutAmount);
-            Donation::where('donatable_id', $issue->id)->update(['paid' => true, 'payout_transaction_id' => $transferId]);
-            logger('[INFO] Funds transferred', ['issue_id' => $issue->id, 'amount' => $payoutAmount, 'stripe_transfer_id' => $transferId]);
+            $transferIds = [];
+            
+            foreach ($donations as $donation) {
+                if (!$donation->charge_id) {
+                    logger('[WARNING] Donation missing charge_id', [
+                        'donation_id' => $donation->id,
+                        'issue_id' => $issue->id
+                    ]);
+                    continue;
+                }
+
+                try {
+                    $transferAmount = $donation->amount - $donation->amount * ($feePercentage / 100);
+                    $transferId = TransferFunds::transfer($destinationStripeId, $transferAmount, $donation->charge_id);
+                    $transferIds[] = $transferId;
+
+                    Donation::where('charge_id', $donation->charge_id)
+                        ->update(['paid' => true, 'payout_transaction_id' => $transferId]);
+                } catch (\Exception $e) {
+                    logger('[ERROR] Failed to transfer funds for donation', [
+                        'donation_id' => $donation->id,
+                        'charge_id' => $donation->charge_id,
+                        'stack_trace' => $e->getTraceAsString()
+                    ]);
+                    continue;
+                }
+            }
+            
+            logger('[INFO] Funds transferred', [
+                'issue_id' => $issue->id, 
+                'amount' => $totalPayoutAmount, 
+                'stripe_transfer_ids' => $transferIds,
+                'successful_transfers' => count($transferIds)
+            ]);
         } else {
-            SendConnectStripeMail::send($resolverMail, $dbUser->name, $payoutAmount, "Payout");
+            SendConnectStripeMail::send($resolverMail, $dbUser->name, $totalPayoutAmount, "Payout");
             logger('[WARNING] Cannot transfer funds: User does not have a connected Stripe account.', ['user_id' => $dbUser->id]);
         }
 
