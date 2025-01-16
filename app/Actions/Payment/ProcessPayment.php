@@ -52,7 +52,7 @@ class ProcessPayment
 
         $installationId = $issue['repository']['githubInstallation']['installation_id'];
 
-        $donorName = $isAuthenticated || !$isPledgingAnonymously ? Auth::user()->name : "Anonymous Pledger";
+        $donorName = ($isAuthenticated && !$isPledgingAnonymously) ? Auth::user()->name : "Anonymous Pledger";
         $formattedExpireDate = $expireDate ? Carbon::parse($expireDate)->format('F j, Y') : null;
         $totalBounty = $issue->donations_sum_amount;
         $existingPledge = ($issue->donations_sum_amount - $amount) > 0;
