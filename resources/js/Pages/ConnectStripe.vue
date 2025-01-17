@@ -6,7 +6,7 @@ import { usePage } from '@inertiajs/vue3';
 import Radio from '@/Components/Form/Radio.vue';
 import Button from '@/Components/Button.vue';
 import CountrySelect from '@/Components/Custom/CountrySelect.vue';
-import { toSentenceCase } from '@/utils/toSentenceCase';
+import { toTitleCase } from '@/utils/toTitleCase';
 
 const StripeBusinessType = {
   Individual: 'individual',
@@ -92,7 +92,7 @@ const openStripeDashboard = async () => {
                     v-model="businessType"
                     :name="StripeBusinessType.Individual"
                     :value="StripeBusinessType.Individual"
-                    :label="toSentenceCase(StripeBusinessType.Individual)"
+                    :label="toTitleCase(StripeBusinessType.Individual)"
                     :id="StripeBusinessType.Individual"
                     labelClass="text-sm"
                   />
@@ -100,7 +100,7 @@ const openStripeDashboard = async () => {
                     v-model="businessType"
                     :name="StripeBusinessType.Company"
                     :value="StripeBusinessType.Company"
-                    :label="toSentenceCase(StripeBusinessType.Company)"
+                    :label="toTitleCase(StripeBusinessType.Company)"
                     :id="StripeBusinessType.Company"
                     labelClass="text-sm"
                   />
