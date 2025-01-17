@@ -1,5 +1,5 @@
 <template>
-    <div class="custom-select" :tabindex="0">
+    <div class="custom-select" :tabindex="0" ref="selectRef">
         <div class="selected" :class="{ open: open, 'dark': isDark }" @click="handleOpen">
             <span v-if="modelValue" class="flag-option">
                 <span :class="`fi fi-${modelValue.code.toLowerCase()}`"></span>
@@ -43,7 +43,7 @@
 <script setup>
 import 'flag-icons/css/flag-icons.min.css'
 import { countries } from '@/constants/countries'
-import { ref, computed, nextTick } from 'vue';
+import { ref, computed, nextTick, onMounted, onBeforeUnmount } from 'vue';
 import { useDark } from '@vueuse/core';
 
 const props = defineProps({
@@ -58,6 +58,7 @@ const isDark = useDark()
 const open = ref(false);
 const search = ref('');
 const searchInput = ref(null);
+const selectRef = ref(null);
 
 const updateValue = (country) => {
     emit('update:modelValue', country);
@@ -79,6 +80,21 @@ const handleOpen = () => {
         });
     }
 };
+
+const handleClickOutside = (event) => {
+    if (selectRef.value && !selectRef.value.contains(event.target)) {
+        open.value = false;
+        search.value = '';
+    }
+};
+
+onMounted(() => {
+    document.addEventListener('click', handleClickOutside);
+});
+
+onBeforeUnmount(() => {
+    document.removeEventListener('click', handleClickOutside);
+});
 </script>
 
 <style scoped>
