@@ -14,12 +14,14 @@ class StripeConnect
     public static function createAccountLink(Request $request)
     {
         $countryCode = $request->input('country_code');
+        $businessType = $request->input('business_type');
         $request->session()->forget('stripe_id');
         Stripe::setApiKey(config('app.stripe_secret'));
 
         $account = Account::create([
             'country' => $countryCode,
             'type' => 'express',
+            'business_type' => $businessType,
             'capabilities' => [
                 'transfers' => ['requested' => true],
                 'card_payments' => ['requested' => true],
@@ -70,7 +72,7 @@ class StripeConnect
 
         if (isset($account->requirements->disabled_reason)) {
             return Inertia::render('Error', [
-                'message' => 'Account onboarding incomplete!',
+                'message' => 'Stripe onboarding incomplete!',
                 'redirectRoute' => 'stripe.connect',
                 'redirectButtonText' => 'Try again'
             ]);
