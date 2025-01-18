@@ -121,8 +121,8 @@ Route::middleware([
     Route::post('github/save-redirect-path', [GithubController::class, 'saveRedirectPath'])->name('github.save-redirect-path');
 });
 
-Route::get('/auth/github/callback', [GithubController::class, 'callback'])->name('callback');
-Route::get('/auth/github', [GithubController::class, 'redirect'])->name('redirect');
+Route::get('/auth/github/callback', [GithubController::class, 'handleGithubAuthCallback'])->name('github.auth.callback');
+Route::get('/auth/github', [GithubController::class, 'handleGithubAuthRedirect'])->name('github.auth.redirect');
 
 // GitHub App Webhook
 Route::post('/github/webhook', [GithubController::class, 'handleGithubAppWebhook'])->name('github.webhook');

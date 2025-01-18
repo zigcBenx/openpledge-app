@@ -29,12 +29,21 @@
           <Icon name="key" class="dark:stroke-platinum stroke-rich-black"></Icon>
           <span class="pl-2">API Tokens</span>
         </DropdownLink>
+        <DropdownLink
+          v-if="!isGitHubAuthenticated()"
+          class="dark:text-platinum rounded-sm text-rich-black"
+          :href="route('github.auth.redirect')"
+          as="a"
+        >
+          <Icon name="link" class="dark:stroke-platinum stroke-rich-black"></Icon> 
+          <span class="pl-2">Connect GitHub</span>
+        </DropdownLink>
         <DropdownLink 
-          class="dark:text-platinum rounded-sm text-rich-black pl-2"
+          class="dark:text-platinum rounded-sm text-rich-black"
           @click="connectStripe"
         >
           <Icon name="dollar" class="dark:stroke-platinum stroke-rich-black"></Icon> 
-          <span class="pl-3">{{ hasUserStripeId() ? 'Open Stripe Dashboard' : 'Connect Stripe' }}</span>
+          <span class="pl-2">{{ hasUserStripeId() ? 'Open Stripe Dashboard' : 'Connect Stripe' }}</span>
         </DropdownLink>
         <DropdownLink 
           class="dark:text-platinum rounded-sm text-rich-black" 
@@ -107,6 +116,10 @@ const authenticatedUser = () => {
 
 const hasUserStripeId = () => {
   return authenticatedUser()?.stripe_id
+}
+
+const isGitHubAuthenticated = () => {
+  return authenticatedUser()?.github_id
 }
 
 const isAuthenticated = ref(authenticatedUser() !== null);
