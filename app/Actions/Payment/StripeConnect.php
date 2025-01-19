@@ -11,6 +11,25 @@ use Inertia\Inertia;
 
 class StripeConnect
 {
+    public static function stripeConnect()
+    {
+        if (!Auth::user()->github_id) {
+            return Inertia::render('Error', [
+                'message' => 'You must connect your GitHub account before you can connect Stripe.',
+                'subMessage' => 'Connect your GitHub account to continue by clicking the button below and following the instructions.',
+                'redirectUrl' => route('github.auth.redirect'),
+                'redirectButtonText' => 'Connect GitHub',
+                'actionUrl' => route('save-redirect-path'),
+                'actionData' => [
+                    'redirect_path' => route('stripe.connect', [], false),
+                    'redirect_path_key' => 'github_redirect_path'
+                ]
+            ]);
+        }
+
+        return Inertia::render('ConnectStripe');
+    }
+
     public static function createAccountLink(Request $request)
     {
         $countryCode = $request->input('country_code');

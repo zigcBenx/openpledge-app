@@ -42,24 +42,20 @@ const props = defineProps({
 });
 
 const toast = useToast();
-
-const redirectHref = computed(() => {
-    return props.redirectUrl || route(props.redirectRoute);
-});
-
 const isLoading = ref(false);
 
 const handleClick = async () => {
-    if (!props.actionUrl) return;
-
     try {
         isLoading.value = true;
-        await axios[props.actionMethod.toLowerCase()](props.actionUrl, props.actionData);
+
+        if (props.actionUrl && props.actionData) {
+            await axios[props.actionMethod.toLowerCase()](props.actionUrl, props.actionData);
+        }
 
         if (props.redirectUrl) {
-            window.location.href = redirectHref.value;
+            window.location.href = props.redirectUrl;
         } else {
-            window.Inertia.visit(redirectHref.value);
+            window.Inertia.visit(route(props.redirectRoute));
         }
     } catch (error) {
         toast.error("Something went wrong!");
@@ -78,7 +74,7 @@ const handleClick = async () => {
             <div class="dark:text-spun-pearl text-tundora text-sm mt-4" v-html="props.subMessage"></div>
             <component 
                 :is="props.redirectUrl ? 'a' : Link" 
-                :href="!props.actionUrl ? redirectHref : undefined"
+                :href="!props.actionUrl ? props.redirectUrl : undefined"
                 @click.prevent="handleClick"
                 class="w-[12rem]"
             >

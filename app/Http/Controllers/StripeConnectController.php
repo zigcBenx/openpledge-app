@@ -3,14 +3,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Inertia\Inertia;
 use App\Actions\Payment\StripeConnect;
 
 class StripeConnectController extends Controller
 {
     public function stripeConnect()
     {
-        return Inertia::render('ConnectStripe');
+        return StripeConnect::stripeConnect();
     }
 
     public function createAccountLink(Request $request)
