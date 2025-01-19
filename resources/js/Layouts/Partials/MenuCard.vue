@@ -51,7 +51,7 @@
               before:border-8 before:border-transparent before:border-t-seashell dark:before:border-t-rich-black
               whitespace-nowrap z-10 dark:text-seashell"
           >
-            You must connect your GitHub account before you can connect Stripe.
+            Connecting GitHub is required before you can connect your Stripe account.
           </div>
           <div class="flex items-center pl-2" :class="{ 'opacity-50 cursor-not-allowed': !isGitHubAuthenticated() }">
             <Icon name="dollar" class="dark:stroke-platinum stroke-rich-black"></Icon> 
