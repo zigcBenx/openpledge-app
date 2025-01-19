@@ -1,9 +1,9 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Icon from '@/Components/Icon.vue';
 import Button from '@/Components/Button.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, router } from '@inertiajs/vue3';
 import { useToast } from 'vue-toastification';
 
 const props = defineProps({
@@ -55,7 +55,7 @@ const handleClick = async () => {
         if (props.redirectUrl) {
             window.location.href = props.redirectUrl;
         } else {
-            window.Inertia.visit(route(props.redirectRoute));
+            router.visit(route(props.redirectRoute));
         }
     } catch (error) {
         toast.error("Something went wrong!");
