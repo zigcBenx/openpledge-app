@@ -63,6 +63,7 @@ Route::middleware([
 
     Route::get('/home', [MainController::class, 'index'])->name('home');
     Route::get('/dashboard', [MainController::class, 'dashboard'])->name('dashboard');
+    Route::post('/save-redirect-path', [MainController::class, 'saveRedirectPath'])->name('save-redirect-path');
 
     // TODO: this route is for displaying request view -> which will be removed
     // since whenever user comes from github repo to openpledge, repos should be automatically created
@@ -118,7 +119,6 @@ Route::middleware([
 
     // GitHub App integration route
     Route::get('/github/installation/callback', [GithubController::class, 'handleGithubAppCallback'])->name('github.installation.callback');
-    Route::post('github/save-redirect-path', [GithubController::class, 'saveRedirectPath'])->name('github.save-redirect-path');
 });
 
 Route::get('/auth/github/callback', [GithubController::class, 'handleGithubAuthCallback'])->name('github.auth.callback');

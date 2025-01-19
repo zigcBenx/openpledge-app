@@ -82,7 +82,7 @@
                                 </template>
 
                                 <template #footer>
-                                    <Button @click="savePathAndRedirect" class="mt-9 px-8 h-11" color="primary">
+                                    <Button @click="savePathAndInstallApp" class="mt-9 px-8 h-11" color="primary">
                                         Connect
                                     </Button>
                                 </template>
@@ -219,9 +219,10 @@ const addFavorites = (repository) => {
         });
 }
 
-const savePathAndRedirect = async () => {
+const savePathAndInstallApp = async () => {
     try {
-        await axios.post(route('github.save-redirect-path'), {
+        await axios.post(route('save-redirect-path'), {
+            redirect_path_key: 'github_redirect_path',
             redirect_path: window.location.pathname
         });
         window.location.href = githubAppInstallationUrl

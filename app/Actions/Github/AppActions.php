@@ -273,10 +273,4 @@ class AppActions
 
         $issue->save();
     }
-
-    public static function saveRedirectPath($request)
-    {
-        $redirectPath = $request->input('redirect_path');
-        session(['github_redirect_path' => $redirectPath]);
-    }
 }
