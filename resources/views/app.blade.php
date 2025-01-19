@@ -13,6 +13,8 @@
 
         <script src="https://js.stripe.com/v3/"></script>
 
+        <script defer src="https://cloud.umami.is/script.js" data-website-id="d1060324-fa90-4d15-958c-5f979e4f1083"></script>
+
         <!-- Scripts -->
         @routes
         @vite(['resources/css/app.css', 'resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
