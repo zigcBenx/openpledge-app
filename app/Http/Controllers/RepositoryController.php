@@ -52,8 +52,15 @@ class RepositoryController extends Controller
                     'subMessage' => view('instructions.connect_repository_instructions')->render(),
                     'redirectUrl' => $isAuthenticated ? config('services.github.app_installation_url') : route('login'),
                     'redirectButtonText' => 'Connect',
-                    'actionUrl' => $isAuthenticated ? route('github.save-redirect-path') : null,
-                    'actionData' => $isAuthenticated ? ['redirect_path' => "/repositories/{$githubUser}/{$repositoryName}"] : null
+                    'actionUrl' => $isAuthenticated ? route('save-redirect-path') : null,
+                    'actionData' => $isAuthenticated ? [
+                        'redirect_path' => route(
+                            'repositories.show', 
+                            ['githubUser' => $githubUser, 'repository' => $repositoryName], 
+                            false
+                        ),
+                        'redirect_path_key' => 'github_redirect_path'
+                    ] : null
                 ]);
             }
             $repository = [

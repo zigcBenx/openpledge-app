@@ -63,6 +63,7 @@ Route::middleware([
 
     Route::get('/home', [MainController::class, 'index'])->name('home');
     Route::get('/dashboard', [MainController::class, 'dashboard'])->name('dashboard');
+    Route::post('/save-redirect-path', [MainController::class, 'saveRedirectPath'])->name('save-redirect-path');
 
     // TODO: this route is for displaying request view -> which will be removed
     // since whenever user comes from github repo to openpledge, repos should be automatically created
@@ -113,16 +114,14 @@ Route::middleware([
     Route::post('/stripe/create-account-link', [StripeConnectController::class, 'createAccountLink'])->name('stripe.create.account.link');
     Route::get('/stripe/onboarding/refresh', [StripeConnectController::class, 'onboardingRefresh'])->name('stripe.onboarding.refresh');
     Route::get('/stripe/onboarding/return', [StripeConnectController::class, 'onboardingReturn'])->name('stripe.onboarding.return');
-    Route::get('/stripe/verify-installation', [StripeConnectController::class, 'verifyInstallation'])->name('stripe.verify.installation');
     Route::get('/stripe/dashboard/link', [StripeConnectController::class, 'getDashboardLink'])->name('stripe.dashboard.link');
 
     // GitHub App integration route
     Route::get('/github/installation/callback', [GithubController::class, 'handleGithubAppCallback'])->name('github.installation.callback');
-    Route::post('github/save-redirect-path', [GithubController::class, 'saveRedirectPath'])->name('github.save-redirect-path');
 });
 
-Route::get('/auth/github/callback', [GithubController::class, 'callback'])->name('callback');
-Route::get('/auth/github', [GithubController::class, 'redirect'])->name('redirect');
+Route::get('/auth/github/callback', [GithubController::class, 'handleGithubAuthCallback'])->name('github.auth.callback');
+Route::get('/auth/github', [GithubController::class, 'handleGithubAuthRedirect'])->name('github.auth.redirect');
 
 // GitHub App Webhook
 Route::post('/github/webhook', [GithubController::class, 'handleGithubAppWebhook'])->name('github.webhook');

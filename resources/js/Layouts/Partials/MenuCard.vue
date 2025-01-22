@@ -29,12 +29,34 @@
           <Icon name="key" class="dark:stroke-platinum stroke-rich-black"></Icon>
           <span class="pl-2">API Tokens</span>
         </DropdownLink>
-        <DropdownLink 
-          class="dark:text-platinum rounded-sm text-rich-black pl-2"
-          @click="connectStripe"
+        <DropdownLink
+          v-if="!isGitHubAuthenticated()"
+          class="dark:text-platinum rounded-sm text-rich-black"
+          :href="route('github.auth.redirect')"
+          as="a"
         >
-          <Icon name="dollar" class="dark:stroke-platinum stroke-rich-black"></Icon> 
-          <span class="pl-3">{{ hasUserStripeId() ? 'Open Stripe Dashboard' : 'Connect Stripe' }}</span>
+          <Icon name="link" class="dark:stroke-platinum stroke-rich-black"></Icon> 
+          <span class="pl-2">Connect GitHub</span>
+        </DropdownLink>
+        <DropdownLink 
+          class="dark:text-platinum rounded-sm text-rich-black group relative"
+          @click="connectStripe"
+          as="button"
+        >
+          <div 
+            v-if="!isGitHubAuthenticated()"
+            class="invisible group-hover:visible absolute -top-12 left-1/2 transform -translate-x-1/2 px-3 py-2 
+              bg-seashell dark:bg-rich-black text-sm rounded-md shadow-lg ring-2 ring-green
+              before:content-[''] before:absolute before:top-full before:left-1/2 before:-translate-x-1/2 
+              before:border-8 before:border-transparent before:border-t-seashell dark:before:border-t-rich-black
+              whitespace-nowrap z-10 dark:text-seashell"
+          >
+            Connecting GitHub is required before you can connect your Stripe account.
+          </div>
+          <div class="flex items-center pl-2" :class="{ 'opacity-50 cursor-not-allowed': !isGitHubAuthenticated() }">
+            <Icon name="dollar" class="dark:stroke-platinum stroke-rich-black"></Icon> 
+            <span class="pl-2">{{ hasUserStripeId() ? 'Open Stripe Dashboard' : 'Connect Stripe' }}</span>
+          </div>
         </DropdownLink>
         <DropdownLink 
           class="dark:text-platinum rounded-sm text-rich-black" 
@@ -94,6 +116,9 @@ const register = () => {
 const page = usePage()
 
 const connectStripe = async () => {
+  if (!isGitHubAuthenticated()) {
+    return
+  }
   if (hasUserStripeId()) {
     await redirectToStripeDashboard()
     return
@@ -107,6 +132,10 @@ const authenticatedUser = () => {
 
 const hasUserStripeId = () => {
   return authenticatedUser()?.stripe_id
+}
+
+const isGitHubAuthenticated = () => {
+  return authenticatedUser()?.github_id
 }
 
 const isAuthenticated = ref(authenticatedUser() !== null);

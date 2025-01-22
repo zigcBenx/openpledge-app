@@ -2,6 +2,7 @@
 
 namespace App\Services;
 use App\Actions\Github\AppActions;
+use App\Actions\Github\AuthActions;
 use App\Actions\Github\IssueActions;
 use App\Actions\Github\RepositoryActions;
 use App\Actions\Github\UserActions;
@@ -13,6 +14,16 @@ class GithubService
     public static function getRepositoryByName($githubUser, $repositoryName)
     {
         return RepositoryActions::getByName($githubUser, $repositoryName);
+    }
+
+    public static function handleGithubAuthCallback()
+    {
+        return AuthActions::handleAuthCallback();
+    }
+
+    public static function handleGithubAuthRedirect()
+    {
+        return AuthActions::handleAuthRedirect();
     }
 
     public static function handleGithubAppCallback($request)
@@ -63,10 +74,5 @@ class GithubService
     public static function getIssuesBySearchQuery($searchQuery, $resultsToFetch, $localResults)
     {
         return IssueActions::getBySearchQuery($searchQuery, $resultsToFetch, $localResults);
-    }
-
-    public static function saveRedirectPath($request)
-    {
-        return AppActions::saveRedirectPath($request);
     }
 }

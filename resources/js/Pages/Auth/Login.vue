@@ -51,7 +51,7 @@ const submit = () => {
     </div>
     <p class="text-xl mb-6 dark:text-whitish-gray">Log in</p>
     <div class="flex items-center justify-end mt-4">
-      <a href="/auth/github"
+      <a :href="route('github.auth.redirect')"
          @click="loading = true"
          class="flex items-center justify-center w-full py-5 h-9 rounded-full font-medium text-sm focus:outline-none focus:ring-0 transition duration-150 ease-in-out dark:bg-turquoise bg-dark-green text-white dark:text-black dark:text-dark-black dark:hover:border-green">
         <i class="fa-brands fa-github mr-1 text-lg"></i>

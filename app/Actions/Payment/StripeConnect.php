@@ -2,15 +2,37 @@
 
 namespace App\Actions\Payment;
 
+use App\Models\Issue;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Stripe\Stripe;
 use Stripe\Account;
 use Stripe\AccountLink;
 use Inertia\Inertia;
+use App\Models\Donation;
+use Carbon\Carbon;
 
 class StripeConnect
 {
+    public static function stripeConnect()
+    {
+        if (!Auth::user()->github_id) {
+            return Inertia::render('Error', [
+                'message' => 'You must connect your GitHub account before you can connect Stripe.',
+                'subMessage' => 'Connect your GitHub account to continue by clicking the button below and following the instructions.',
+                'redirectUrl' => route('github.auth.redirect'),
+                'redirectButtonText' => 'Connect GitHub',
+                'actionUrl' => route('save-redirect-path'),
+                'actionData' => [
+                    'redirect_path' => route('stripe.connect', [], false),
+                    'redirect_path_key' => 'github_redirect_path'
+                ]
+            ]);
+        }
+
+        return Inertia::render('ConnectStripe');
+    }
+
     public static function createAccountLink(Request $request)
     {
         $countryCode = $request->input('country_code');
@@ -78,7 +100,58 @@ class StripeConnect
             ]);
         }
 
-        Auth::user()->update(['stripe_id' => $stripeId]);
+        $authenticatedUser = Auth::user();
+        $authenticatedUser->stripe_id = $stripeId;
+        $authenticatedUser->save();
+
+        $today = Carbon::now()->toDateString();
+        $unpaidRewards = Donation::where('donatable_type', Issue::class)
+            ->whereHas('donatable', function($query) use ($authenticatedUser, $today) {
+                $query->where('resolver_github_id', $authenticatedUser->github_id);
+                $query->whereNull('expire_date')
+                    ->orWhere('expire_date', '>', $today);
+            })
+            ->where('paid', false)
+            ->get();
+        
+        $unpaidRewardsSumAmount = $unpaidRewards->sum('amount');
+        $feePercentage = config('app.platform_fee_percentage');
+        $totalPayoutAmount = $unpaidRewardsSumAmount - $unpaidRewardsSumAmount * ($feePercentage / 100);
+            
+        foreach ($unpaidRewards as $unpaidReward) {
+            if (!$unpaidReward->charge_id) {
+                logger('[WARNING] Donation missing charge_id', [
+                    'donation_id' => $unpaidReward->id
+                ]);
+                continue;
+            }
+
+            try {
+                $transferAmount = $unpaidReward->amount - $unpaidReward->amount * ($feePercentage / 100);
+                $transferId = TransferFunds::transfer($stripeId, $transferAmount, $unpaidReward->charge_id);
+                $transferIds[] = $transferId;
+
+                $unpaidReward->paid = true;
+                $unpaidReward->payout_transaction_id = $transferId;
+                $unpaidReward->save();
+            } catch (\Exception $e) {
+                logger('[ERROR] Failed to transfer funds for donation', [
+                    'donation_id' => $unpaidReward->id,
+                    'charge_id' => $unpaidReward->charge_id,
+                    'stack_trace' => $e->getTraceAsString()
+                ]);
+                continue;
+            }
+        }
+
+        if (isset($transferIds) && count($transferIds) > 0) {
+            logger('[INFO] Funds transferred', [
+                'amount' => $totalPayoutAmount, 
+                'stripe_transfer_ids' => $transferIds,
+                'successful_transfers' => count($transferIds)
+            ]);
+        }
+
         return Inertia::render('ConnectStripe');
     }
 
