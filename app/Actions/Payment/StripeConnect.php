@@ -2,12 +2,15 @@
 
 namespace App\Actions\Payment;
 
+use App\Models\Issue;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Stripe\Stripe;
 use Stripe\Account;
 use Stripe\AccountLink;
 use Inertia\Inertia;
+use App\Models\Donation;
+use Carbon\Carbon;
 
 class StripeConnect
 {
@@ -97,7 +100,58 @@ class StripeConnect
             ]);
         }
 
-        Auth::user()->update(['stripe_id' => $stripeId]);
+        $authenticatedUser = Auth::user();
+        $authenticatedUser->stripe_id = $stripeId;
+        $authenticatedUser->save();
+
+        $today = Carbon::now()->toDateString();
+        $unpaidRewards = Donation::where('donatable_type', Issue::class)
+            ->whereHas('donatable', function($query) use ($authenticatedUser, $today) {
+                $query->where('resolver_github_id', $authenticatedUser->github_id);
+                $query->whereNull('expire_date')
+                    ->orWhere('expire_date', '>', $today);
+            })
+            ->where('paid', false)
+            ->get();
+        
+        $unpaidRewardsSumAmount = $unpaidRewards->sum('amount');
+        $feePercentage = config('app.platform_fee_percentage');
+        $totalPayoutAmount = $unpaidRewardsSumAmount - $unpaidRewardsSumAmount * ($feePercentage / 100);
+            
+        foreach ($unpaidRewards as $unpaidReward) {
+            if (!$unpaidReward->charge_id) {
+                logger('[WARNING] Donation missing charge_id', [
+                    'donation_id' => $unpaidReward->id
+                ]);
+                continue;
+            }
+
+            try {
+                $transferAmount = $unpaidReward->amount - $unpaidReward->amount * ($feePercentage / 100);
+                $transferId = TransferFunds::transfer($stripeId, $transferAmount, $unpaidReward->charge_id);
+                $transferIds[] = $transferId;
+
+                $unpaidReward->paid = true;
+                $unpaidReward->payout_transaction_id = $transferId;
+                $unpaidReward->save();
+            } catch (\Exception $e) {
+                logger('[ERROR] Failed to transfer funds for donation', [
+                    'donation_id' => $unpaidReward->id,
+                    'charge_id' => $unpaidReward->charge_id,
+                    'stack_trace' => $e->getTraceAsString()
+                ]);
+                continue;
+            }
+        }
+
+        if (isset($transferIds) && count($transferIds) > 0) {
+            logger('[INFO] Funds transferred', [
+                'amount' => $totalPayoutAmount, 
+                'stripe_transfer_ids' => $transferIds,
+                'successful_transfers' => count($transferIds)
+            ]);
+        }
+
         return Inertia::render('ConnectStripe');
     }
 
