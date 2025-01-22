@@ -103,6 +103,11 @@ class AuthActions
             $authenticatedUser->github_id = $githubAccountData->id;
             $authenticatedUser->save();
             Auth::login($authenticatedUser);
+            $redirectPath = session('github_redirect_path');
+            if ($redirectPath) {
+                session()->forget('github_redirect_path');
+                return redirect($redirectPath);
+            }
             return redirect('/');
         }
         
@@ -131,9 +136,7 @@ class AuthActions
                 'message' => 'Account with this email already exists.',
                 'subMessage' => 'Please contact support from <b>' . $githubAccountData->email . '</b> to verify ownership of this email.',
                 'redirectUrl' => route('login'),
-                'redirectButtonText' => 'Retry logging in',
-                'actionUrl' => null,
-                'actionData' => null
+                'redirectButtonText' => 'Retry logging in'
             ]);
         }
 
@@ -162,9 +165,7 @@ class AuthActions
                 'message' => 'Failed to create user. Please try again.',
                 'subMessage' => 'If the issue persists, please contact support.',
                 'redirectUrl' => route('login'),
-                'redirectButtonText' => 'Retry logging in',
-                'actionUrl' => null,
-                'actionData' => null
+                'redirectButtonText' => 'Retry logging in'
             ]);
         }
 

@@ -24,6 +24,14 @@ class MainController extends Controller
         return Inertia::render('Dashboard');
     }
 
+    public function saveRedirectPath(Request $request)
+    {
+        $redirectPath = $request->input('redirect_path');
+        $redirectPathKey = $request->input('redirect_path_key');
+        session([$redirectPathKey => $redirectPath]);
+        return response()->json(['success' => true, 'message' => 'Redirect path saved successfully!']);
+    }
+
     private function getPaginationParameters(Request $request)
     {
         $filters = $request->query('filters', []);

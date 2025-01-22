@@ -75,9 +75,4 @@ class GithubService
     {
         return IssueActions::getBySearchQuery($searchQuery, $resultsToFetch, $localResults);
     }
-
-    public static function saveRedirectPath($request)
-    {
-        return AppActions::saveRedirectPath($request);
-    }
 }
