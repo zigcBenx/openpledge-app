@@ -82,49 +82,69 @@
                                 </template>
 
                                 <template #footer>
-                                    <a :href="githubAppInstallationUrl">
-                                        <Button class="mt-9 px-8 h-11" color="primary">
-                                            Connect
-                                        </Button>
-                                    </a>
+                                    <Button @click="savePathAndInstallApp" class="mt-9 px-8 h-11" color="primary">
+                                        Connect
+                                    </Button>
                                 </template>
                             </DialogModal>
                         </div>
                     </div>
-                    <div>
-                        <div class="w-full flex mt-8 items-center">
-                            <p class="w-2/12 text-tundora dark:text-spun-pearl uppercase text-xs">About</p>
+                    <div v-if="repository.direct_from_github">
+                        <p class="text-gunmetal dark:text-lavender-mist text-lg text-center px-28 mt-24">
+                            Connect this repository to OpenPledge to make its issues visible on our platform. Once connected, issues can be pledged for support and solved by contributors, helping you drive meaningful progress.
+                        </p>
+                        <div class="flex justify-between mt-24">
+                            <p class="text-2xl dark:text-lavender-mist text-oil">Issues</p>
+                            <div class="flex gap-2" id="issue-types-container">
+                                <Pill color="secondary">Open ?</Pill>
+                            </div>
                         </div>
-
-                        <div class="w-full flex mt-8 items-center">
-                            <p class="w-2/12 text-tundora dark:text-spun-pearl uppercase text-xs">Languages</p>
-                            <div class="w-10/12">
-                                <div class="flex gap-2 text-oil dark:text-lavender-mist">
-                                    <Pill v-for="language in repository.programming_languages" :key="language.id"
-                                        color="present" :contentClasses="['px-2']">
-                                        {{ language.name }}
-                                    </Pill>
-                                </div>
+                        <div class="mt-4 p-8 rounded-md border-2 border-dashed border-gray-300 dark:border-gray-600">
+                            <div class="text-center">
+                                <Icon name="key" class="stroke-tundora mx-auto mb-2" size="lg" />
+                                <p class="text-gray-500 dark:text-gray-400 mb-2">Repository Not Connected</p>
+                                <p class="text-sm text-gray-400 dark:text-gray-500">
+                                    Connect this repository to view and interact with its issues
+                                </p>
                             </div>
                         </div>
                     </div>
-                    <div class="mt-28">
-                        <div class="flex justify-between">
-                            <p class="text-2xl dark:text-lavender-mist text-oil">Issues</p>
-                            <div class="flex gap-2" id="issue-types-container">
-                                <Pill :color="selectedPledgedIssues ? 'secondary' : 'primary'"
-                                    @click="selectedPledgedIssues = true">
-                                    Pledged {{ repository.issues_count }}
-                                </Pill>
-                                <Pill :color="selectedPledgedIssues ? 'primary' : 'secondary'"
-                                    @click="selectedPledgedIssues = false">
-                                    Open {{ listOfIssues.length }}
-                                </Pill>
+                    <div v-else>
+                        <div>
+                            <div class="w-full flex mt-8 items-center">
+                                <p class="w-2/12 text-tundora dark:text-spun-pearl uppercase text-xs">About</p>
+                            </div>
+
+                            <div class="w-full flex mt-8 items-center">
+                                <p class="w-2/12 text-tundora dark:text-spun-pearl uppercase text-xs">Languages</p>
+                                <div class="w-10/12">
+                                    <div class="flex gap-2 text-oil dark:text-lavender-mist">
+                                        <Pill v-for="language in repository.programming_languages" :key="language.id"
+                                            color="present" :contentClasses="['px-2']">
+                                            {{ language.name }}
+                                        </Pill>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div>
-                            <IssuesTable v-if="selectedPledgedIssues" :issues="repository.issues" :pledged="true" />
-                            <IssuesTable v-else :issues="listOfIssues" :repository="repository" />
+                        <div class="mt-28">
+                            <div class="flex justify-between">
+                                <p class="text-2xl dark:text-lavender-mist text-oil">Issues</p>
+                                <div class="flex gap-2" id="issue-types-container">
+                                    <Pill :color="selectedPledgedIssues ? 'secondary' : 'primary'"
+                                        @click="selectedPledgedIssues = true">
+                                        Pledged {{ repository.issues_count }}
+                                    </Pill>
+                                    <Pill :color="selectedPledgedIssues ? 'primary' : 'secondary'"
+                                        @click="selectedPledgedIssues = false">
+                                        Open {{ listOfIssues.length }}
+                                    </Pill>
+                                </div>
+                            </div>
+                            <div>
+                                <IssuesTable v-if="selectedPledgedIssues" :issues="repository.issues" :pledged="true" />
+                                <IssuesTable v-else :issues="listOfIssues" :repository="repository" />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -149,7 +169,11 @@ import DialogModal from '@/Components/DialogModal.vue'
 import TrendingToday from '@/Components/Custom/TrendingToday.vue'
 import { useToast } from "vue-toastification";
 import { getRepositoryTour } from '@/utils/onboardingWalkthrough.js';
+import { router } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3';
 
+const toast = useToast()
+const page = usePage();
 const props = defineProps
     ({
         repository: Object,
@@ -167,20 +191,45 @@ const githubAppInstallationUrl = import.meta.env.VITE_GITHUB_APP_INSTALLATION_UR
 const showConnectRepositoryModal = ref(false)
 const showContactOwnerModal = ref(false)
 
+const isAuthenticated = page.props.auth.user !== null;
+
 const addFavorites = (repository) => {
-    const toast = useToast()
+    if (!isAuthenticated) {
+        toast.error('Please log in to add this repository to favorites');
+        return;
+    }
+
     axios.post(route('favorites.store'), {
         favorable_id: repository.id,
         favorable_type: 'Repository',
     })
         .then(response => {
-            toast.success(response.data.message)
+            const toastOptions = response.data.message.includes('added') 
+                ? {
+                    onClick: () => router.visit(route('profile.favorites-show')),
+                    toastClassName: 'cursor-pointer hover:opacity-90'
+                } 
+                : {};
+            toast.success(response.data.message, toastOptions);
             repository.favorite = !repository.favorite
         })
         .catch(error => {
             toast.error('Something went wrong!')
             console.error(error);
         });
+}
+
+const savePathAndInstallApp = async () => {
+    try {
+        await axios.post(route('save-redirect-path'), {
+            redirect_path_key: 'github_redirect_path',
+            redirect_path: window.location.pathname
+        });
+        window.location.href = githubAppInstallationUrl
+    } catch (error) {
+        toast.error('Something went wrong!')
+        console.error(error);
+    }
 }
 
 onMounted(() => {

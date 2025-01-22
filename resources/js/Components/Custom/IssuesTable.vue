@@ -26,7 +26,7 @@
               'dark:bg-rich-black bg-ghost-white': issue.isExternal
             }]"
           >
-              <IssueItemPledged v-if="pledged && !issue.isExternal" :issue="issue"/>
+              <IssueItemPledged v-if="pledged && !issue.isExternal" :issue="issue" :isAuthenticated="isAuthenticated"/>
               <IssueItemExternal v-else :issue="issue" :repository="repository ?? issue.repository"/>
           </tr>
           <tr v-intersection-observer="onIntersectionObserver"></tr>
@@ -40,6 +40,10 @@
     import { vIntersectionObserver } from '@vueuse/components'
     import IssueItemPledged from '@/Components/Custom/IssueItemPledged.vue'
     import IssueItemExternal from '@/Components/Custom/IssueItemExternal.vue'
+    import { usePage } from '@inertiajs/vue3';
+
+    const page = usePage();
+    const isAuthenticated = page.props.auth.user !== null;
 
     defineProps({
         issues: {
@@ -59,7 +63,7 @@
             return false
           }
         },
-        repository: Object,
+        repository: Object
     })
 
     const emit = defineEmits(['onLazyLoading'])

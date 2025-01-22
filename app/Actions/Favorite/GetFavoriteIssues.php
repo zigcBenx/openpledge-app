@@ -13,10 +13,12 @@ class GetFavoriteIssues
         $favoriteIssueIds = GetFavorites::getFavoriteIdsByUserAndType($userId, Issue::class);
 
         return Issue::with([
-            'repository.githubInstallation',
+            'repository.programmingLanguages',
             'donations.user',
             'userFavorite',
             'programmingLanguages:id,name',
+            'resolvedBy',
+            'labels'
         ])
             ->withSum('donations', 'amount')
             ->whereIn('id', $favoriteIssueIds)
@@ -37,10 +39,12 @@ class GetFavoriteIssues
         $favoriteIssueIds = GetFavorites::getFavoriteIdsByUserAndType($userId, Issue::class);
 
         $query = Issue::with([
-            'repository.githubInstallation',
+            'repository.programmingLanguages',
             'donations.user',
             'userFavorite',
             'programmingLanguages:id,name',
+            'resolvedBy',
+            'labels'
         ])
             ->withSum('donations', 'amount')
             ->whereIn('id', $favoriteIssueIds);

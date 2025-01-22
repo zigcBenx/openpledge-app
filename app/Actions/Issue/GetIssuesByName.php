@@ -6,17 +6,18 @@ use App\Models\Issue;
 use App\Services\GithubService;
 use App\Models\GitHubInstallation;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\DB;
+use App\Models\Label;
 
 class GetIssuesByName
 {
-    public static function get($githubUser, $repositoryName, $repositoryGithubInstallationId)
+    public static function get($githubUser, $repositoryName, $repositoryGithubInstallationId, $state = null)
     {
-        $pledgedIssues = Issue::query()
-            ->where('github_url', 'LIKE', "https://github.com/$githubUser/$repositoryName/issues%")
-            ->leftJoin('donations', 'donations.donatable_id', '=', 'issues.id')
-            ->select('issues.*', DB::raw('SUM(donations.amount) as donations_sum_amount'))
-            ->groupBy('issues.id')
+        $pledgedIssues = Issue::where('github_url', 'LIKE', "https://github.com/$githubUser/$repositoryName/issues%")
+            ->withSum('donations', 'amount')
+            ->having('donations_sum_amount', '>', 0)
+            ->when($state, function ($query, $state) {
+                return $query->where('state', $state);
+            })
             ->get();
 
         if (!isset($repositoryGithubInstallationId)) {
@@ -34,30 +35,30 @@ class GetIssuesByName
         $repositoryData = array_values($repositoryData);
         $repositoryData = !empty($repositoryData) ? $repositoryData[0] : null;
 
-        $issues = self::getIssuesFromGitHub($repositoryData["issues_url"]);
+        $githubIssues = self::getIssuesFromGitHub($repositoryData["issues_url"]);
 
-        $mergedIssues = [];
+        $filteredGithubIssues = array_filter($githubIssues, callback: function ($issue) use ($pledgedIssues) {
+            return !in_array((string) $issue['id'], $pledgedIssues->pluck('github_id')->toArray());
+        });
 
-        foreach ($pledgedIssues as $pledgedIssue) {
-            $mergedIssues[$pledgedIssue['github_id']] = $pledgedIssue;
-        }
+        $formattedGithubIssues = array_map(function ($issue) {
+            return [
+                'id' => $issue['id'],
+                'title' => $issue['title'],
+                'github_url' => $issue['html_url'],
+                'state' => $issue['state'],
+                'labels' => array_values(array_filter($issue['labels'], function ($label) {
+                    return in_array($label['name'], Label::$allowedLabels);
+                })),
+                'user_avatar' => $issue['user']['avatar_url'],
+                'github_created_at' => $issue['created_at'],
+                'isExternal' => true,
+                'description' => $issue['body'],
+                'github_username' => $issue['user']['login']
+            ];
+        }, $filteredGithubIssues);
 
-        foreach ($issues as $issue) {
-            if (!isset($mergedIssues[$issue['id']])) {
-                $mergedIssues[$issue['id']] = [
-                    'id' => $issue['id'],
-                    'title' => $issue['title'],
-                    'github_url' => $issue['html_url'],
-                    'state' => $issue['state'],
-                    'labels' => $issue['labels'],
-                    'user_avatar' => $issue['user']['avatar_url'],
-                    'github_created_at' => $issue['created_at'],
-                    'isExternal' => true
-                ];
-            }
-        }
-
-        return array_values($mergedIssues);
+        return array_values($formattedGithubIssues);
     }
 
     private static function getIssuesFromGitHub($issuesUrl)

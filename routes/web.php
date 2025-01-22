@@ -1,11 +1,9 @@
 <?php
 
-use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\GithubController;
 use App\Http\Controllers\IssueController;
 use App\Http\Controllers\SearchController;
-use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\PaymentController;
@@ -28,9 +26,34 @@ use Inertia\Inertia;
 |
 */
 
+
+Route::middleware([
+    'bypass.maintenance'
+])->group(function () {
+
+
+
 Route::get('/', function () {
-    return Redirect::route('login');
+    return Redirect::route('discover.issues');
 });
+
+Route::get('/discover/issues', [MainController::class, 'discoverIssues'])->name('discover.issues');
+Route::get('issues/{issue}', [IssueController::class, 'show'])->name('issues.show');
+Route::get('/repositories/{githubUser}/{repository}', [RepositoryController::class, 'show'])->name('repositories.show');
+
+Route::post('/get-payment-intent', [PaymentController::class, 'getPaymentIntent'])->name('get-payment-intent');
+Route::post('/payment-process', [PaymentController::class, 'processPayment'])->name('payment-process');
+Route::post('issues/pledgeExternalIssue', [IssueController::class, 'pledgeExternalIssue'])->name('issues.pledge-external-issue');
+Route::post('/user/user-feedback-submission', [UserController::class, 'handleUserFeedbackSubmission'])->name('user.feedback');
+
+// top lists endpoints
+Route::get('/trending-today-issues', [IssueController::class, 'getTrendingToday'])->name('trending-today-issues');
+Route::get('/top-contributors', [Maincontroller::class, 'getTopContributors'])->name('top-contributors');
+Route::get('/top-donors', [Maincontroller::class, 'getTopDonors'])->name('top-donors');
+Route::get('/anonymous-donations', [Maincontroller::class, 'getAnonymousDonations'])->name('anonymous-donations');
+
+// Internal and external Issue and Repository search
+Route::get('/search', [SearchController::class, 'getSearchResults'])->name('search');
 
 Route::middleware([
     'auth:sanctum',
@@ -40,11 +63,7 @@ Route::middleware([
 
     Route::get('/home', [MainController::class, 'index'])->name('home');
     Route::get('/dashboard', [MainController::class, 'dashboard'])->name('dashboard');
-    Route::get('/subscribers', [SubscriberController::class, 'index'])->name('subscribers');
-
-    Route::get('/discover/issues', [MainController::class, 'discoverIssues'])->name('discover.issues');
-
-
+    Route::post('/save-redirect-path', [MainController::class, 'saveRedirectPath'])->name('save-redirect-path');
 
     // TODO: this route is for displaying request view -> which will be removed
     // since whenever user comes from github repo to openpledge, repos should be automatically created
@@ -52,14 +71,9 @@ Route::middleware([
     // but mybe it would be better when 0 results to request all github repos with certain filters
     // and if found automatically add and show index page...
     Route::get('/repositories/request', [RepositoryController::class, 'getRequestNew'])->name('repositories-request-get');
-    
-    Route::get('/repositories/{githubUser}/{repository}', [RepositoryController::class, 'show'])->name('repositories.show');
-
 
     Route::resource('repositories', RepositoryController::class)->only('index', 'store');
-    Route::resource('issues', IssueController::class)->only('show', 'store');
-    Route::post('issues/pledgeExternalIssue', [IssueController::class, 'pledgeExternalIssue'])->name('issues.pledge-external-issue');
-    Route::resource('campaigns', CampaignController::class);
+    Route::resource('issues', IssueController::class)->only(['store'])->except(['show']);
     Route::resource('donations', DonationController::class)->only('index', 'show', 'store');
 
 
@@ -67,11 +81,10 @@ Route::middleware([
 
     Route::post('issues/solve', [IssueController::class, 'solve'])->name('issues.solve');
 
-    Route::post('/get-payment-intent', [PaymentController::class, 'getPaymentIntent'])->name('get-payment-intent');
-
     // override of profile route
     Route::get('/user/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/user/profile/settings', [ProfileController::class, 'settings'])->name('profile.settings');
+    Route::post('/user/profile/settings/anonymous-pledging', [ProfileController::class, 'updateAnonymousPledging'])->name('profile.settings.anonymous-pledging');
 
     // Get favorites from currently authenticated user
     Route::get('/user/favorites', [ProfileController::class, 'getFavorites'])->name('profile.favorites');
@@ -95,34 +108,26 @@ Route::middleware([
     Route::get('/user/profile/finished', [ProfileController::class, 'showAuthUsersFinishedIssues'])->name('profile.finished-show');
 
     Route::post('/user/new-user-quiz-submission', [UserController::class, 'handleNewUserQuizSubmission'])->name('user.new-user-quiz');
-    Route::post('/user/user-feedback-submission', [UserController::class, 'handleUserFeedbackSubmission'])->name('user.feedback');
-
-    Route::post('/subscribe-user', [SubscriberController::class, 'subscribeUser']);
-    Route::post('/stripe-connect', [StripeConnectController::class, 'handleStripeConnectCallback'])->name('stripe-connect');
-    Route::post('/stripe-redirect', [StripeConnectController::class, 'redirectToStripe'])->name('stripe-redirect');
-    Route::post('/payment-process', [PaymentController::class, 'processPayment'])->name('payment-process');
+    
+    // Stripe Connect routes
+    Route::get('/stripe/connect', [StripeConnectController::class, 'stripeConnect'])->name('stripe.connect');
+    Route::post('/stripe/create-account-link', [StripeConnectController::class, 'createAccountLink'])->name('stripe.create.account.link');
+    Route::get('/stripe/onboarding/refresh', [StripeConnectController::class, 'onboardingRefresh'])->name('stripe.onboarding.refresh');
+    Route::get('/stripe/onboarding/return', [StripeConnectController::class, 'onboardingReturn'])->name('stripe.onboarding.return');
+    Route::get('/stripe/dashboard/link', [StripeConnectController::class, 'getDashboardLink'])->name('stripe.dashboard.link');
 
     // GitHub App integration route
     Route::get('/github/installation/callback', [GithubController::class, 'handleGithubAppCallback'])->name('github.installation.callback');
-
-    // Search
-    Route::get('/search', [SearchController::class, 'getSearchResults'])->name('search');
-
-
-    // top lists endpoints
-    Route::get('/trending-today-issues', [IssueController::class, 'getTrendingToday'])->name('trending-today-issues');
-    Route::get('/top-contributors', [Maincontroller::class, 'getTopContributors'])->name('top-contributors');
-    Route::get('/top-donors', [Maincontroller::class, 'getTopDonors'])->name('top-donors');
 });
 
-Route::get('/auth/github/callback', [GithubController::class, 'callback'])->name('callback');
-Route::get('/auth/github', [GithubController::class, 'redirect'])->name('redirect');
-
-Route::get('/unsubscribe-user', [SubscriberController::class, 'unsubscribe'])->name('unsubscribe');
+Route::get('/auth/github/callback', [GithubController::class, 'handleGithubAuthCallback'])->name('github.auth.callback');
+Route::get('/auth/github', [GithubController::class, 'handleGithubAuthRedirect'])->name('github.auth.redirect');
 
 // GitHub App Webhook
 Route::post('/github/webhook', [GithubController::class, 'handleGithubAppWebhook'])->name('github.webhook');
 
+
+}); // END MAINTENANCE MIDDLEWARE GROUP
 
 Route::get('/{any}', function () {
     return Inertia::render('Error');

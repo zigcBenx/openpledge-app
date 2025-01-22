@@ -1,11 +1,24 @@
 <template>
     <Row class="dark:bg-rich-black bg-seashell rounded-md gap-0 md:gap-0 lg:gap-0 xl:gap-0">
         <!-- Conditional Checkbox Row -->
-        <Col v-if="checkboxLabel" class="dark:text-seashell pt-4 hover:ring-2 hover:ring-green rounded-md">
-            <label class="pb-2.5 px-5 flex items-center space-x-4 cursor-pointer">
-                <Checkbox v-model:checked="isChecked" />
+        <Col 
+            v-if="checkboxLabel" 
+            class="dark:text-seashell pt-4 hover:ring-2 hover:ring-green rounded-md group relative"
+        >
+            <label class="pb-2.5 px-5 flex items-center space-x-4" :class="[isCheckboxDisabled ? 'cursor-not-allowed' : 'cursor-pointer']">
+                <Checkbox v-model:checked="isChecked" :disabled="isCheckboxDisabled" :class="[isCheckboxDisabled ? 'cursor-not-allowed' : 'cursor-pointer']" />
                 <span>{{ checkboxLabel }}</span>
             </label>
+            
+            <!-- Tooltip -->
+            <div v-if="isCheckboxDisabled && tooltipText.length > 0" 
+                 class="invisible group-hover:visible absolute -top-12 left-1/2 transform -translate-x-1/2 px-3 py-2 
+                        bg-seashell dark:bg-rich-black text-sm rounded-md shadow-lg ring-2 ring-green
+                        before:content-[''] before:absolute before:top-full before:left-1/2 before:-translate-x-1/2 
+                        before:border-8 before:border-transparent before:border-t-seashell dark:before:border-t-rich-black
+                        whitespace-nowrap z-10 dark:text-seashell">
+                {{ tooltipText }}
+            </div>
         </Col>
 
         <!-- Dynamic Rows -->
@@ -50,6 +63,14 @@
             getSearchItemHref: {
                 type: Function,
                 required: true
+            },
+            isCheckboxDisabled: {
+                type: Boolean,
+                default: false
+            },
+            tooltipText: {
+                type: String,
+                default: ''
             }
         },
         components: {

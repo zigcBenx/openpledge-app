@@ -8,7 +8,12 @@
                 <Activity :issue="issue" class="mt-14 pb-10" id="issue-activity-container" />
             </div>
             <div class="pt-[6.43rem]">
-                <IssueDetailsSidebar :issue="issue" :stripePublicKey="stripePublicKey" id="issue-sidebar-container" />
+                <IssueDetailsSidebar 
+                    :issue="issue" 
+                    :stripePublicKey="stripePublicKey" 
+                    :isAuthenticated="isAuthenticated" 
+                    id="issue-sidebar-container" 
+                />
             </div>
         </div>
     </AppLayout>
@@ -24,7 +29,8 @@ import IssueDetailsSidebar from './Partials/IssueDetailsSidebar/IssueDetailsSide
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import { useToast } from "vue-toastification";
 import { getIssueTour } from '@/utils/onboardingWalkthrough.js';
-
+import { router } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3';
 const props = defineProps({
     issue: {
         type: Object,
@@ -44,14 +50,29 @@ const breadcrumbsData = [{
     url: `/issues/${props.issue.id}`
 }];
 
+const page = usePage();
+const isAuthenticated = page.props.auth.user !== null;
+
 function handleFavoriteClick() {
     const toast = useToast()
+
+    if (!isAuthenticated) {
+        toast.error('Please log in to add this issue to favorites');
+        return;
+    }
+
     axios.post(route('favorites.store'), {
         favorable_id: props.issue.id,
         favorable_type: 'Issue',
     })
         .then(response => {
-            toast.success(response.data.message)
+            const toastOptions = response.data.message.includes('added') 
+                ? {
+                    onClick: () => router.visit(route('profile.favorites-show')),
+                    toastClassName: 'cursor-pointer hover:opacity-90'
+                } 
+                : {};
+            toast.success(response.data.message, toastOptions);
             props.issue.favorite = !props.issue.favorite
         })
         .catch(error => {

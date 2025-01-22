@@ -9,10 +9,12 @@ class GetUsersFinishedIssues
     public static function get($githubId)
     {
         return Issue::with([
-            'repository.githubInstallation',
+            'repository.programmingLanguages',
             'donations.user',
             'userFavorite',
             'programmingLanguages:id,name',
+            'resolvedBy',
+            'labels'
         ])
             ->where('resolver_github_id', $githubId)
             ->withSum('donations', 'amount')
@@ -30,10 +32,12 @@ class GetUsersFinishedIssues
         $pageName = 'page';
 
         $query = Issue::with([
-            'repository.githubInstallation',
+            'repository.programmingLanguages',
             'donations.user',
             'userFavorite',
             'programmingLanguages:id,name',
+            'resolvedBy',
+            'labels'
         ])
             ->where('resolver_github_id', $githubId)
             ->withSum('donations', 'amount');

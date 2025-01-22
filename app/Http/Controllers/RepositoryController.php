@@ -10,7 +10,6 @@ use App\Actions\Issue\GetIssuesByName;
 use App\Http\Requests\CreateNewRepositoryRequest;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
@@ -41,14 +40,28 @@ class RepositoryController extends Controller
      */
     public function show($githubUser, $repositoryName)
     {
-        $authenticatedUser = Auth::user();
         $repository = GetRepositoryByTitle::get($githubUser . '/' . $repositoryName);
 
         if (!$repository) {
             try {
                 $githubRepo = GithubService::getRepositoryByName($githubUser, $repositoryName);
             } catch(Exception $e) {
-                return Redirect::route('error', ['any' => 'error']);
+                $isAuthenticated = Auth::check();
+                return Inertia::render('Error', [
+                    'message' => 'Repository access failed. It might be private. Connect with our GitHub app for seamless access to your repositories.',
+                    'subMessage' => view('instructions.connect_repository_instructions')->render(),
+                    'redirectUrl' => $isAuthenticated ? config('services.github.app_installation_url') : route('login'),
+                    'redirectButtonText' => 'Connect',
+                    'actionUrl' => $isAuthenticated ? route('save-redirect-path') : null,
+                    'actionData' => $isAuthenticated ? [
+                        'redirect_path' => route(
+                            'repositories.show', 
+                            ['githubUser' => $githubUser, 'repository' => $repositoryName], 
+                            false
+                        ),
+                        'redirect_path_key' => 'github_redirect_path'
+                    ] : null
+                ]);
             }
             $repository = [
                 'title'              => $githubRepo['full_name'],
@@ -64,13 +77,15 @@ class RepositoryController extends Controller
             $issues = GetIssuesByName::get($githubUser, $repositoryName, $repository->github_installation_id);
         }
 
-        $currentUserGithubId = (int) $authenticatedUser->github_id;
-        $isRepositoryOwner = isset($repository['owner_id']) && $repository['owner_id'] === $currentUserGithubId;
-        $isGithubAppConnected = $authenticatedUser->hasGitHubAppInstalled();
+        $authenticatedUser = Auth::user();
+        $isGithubAppConnected = $authenticatedUser?->hasGitHubAppInstalled() ?? false;
+        $isRepositoryOwner = isset($authenticatedUser, $repository['owner_id']) && $repository['owner_id'] === (int) $authenticatedUser->github_id;
 
         return Inertia::render('Repositories/Show', [
             'repository' => $repository,
-            'issues' => $issues,
+            'issues' => array_values(collect($issues)->filter(function ($issue) {
+                return $issue instanceof \App\Models\Issue ? $issue->state !== 'closed' : true;
+            })->all()),
             'isRepositoryOwner' => $isRepositoryOwner,
             'isGithubAppConnected' => $isGithubAppConnected
         ]);

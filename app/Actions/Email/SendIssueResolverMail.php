@@ -24,6 +24,7 @@ class SendIssueResolverMail
                 'resolverMail' => $resolverMail,
                 'resolverName' => $resolverName,
                 'issueId' => $issueId,
+                'stack_trace' => $e->getTraceAsString()
             ]);
         }
     }

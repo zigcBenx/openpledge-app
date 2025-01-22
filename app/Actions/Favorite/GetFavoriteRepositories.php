@@ -19,11 +19,9 @@ class GetFavoriteRepositories
             'githubInstallation',
         ])
             ->withSum('donations', 'amount')
-            ->withCount([
-                'issues as pledged_issues_count' => function ($query) {
-                    $query->where('state', 'open');
-                }
-            ])
+            ->withCount(['issues as pledged_issues_count' => function ($query) {
+                $query->whereHas('donations');
+            }])
             ->whereIn('id', $favoriteRepositoryIds)
             ->take(2)
             ->get()
@@ -47,11 +45,9 @@ class GetFavoriteRepositories
             'githubInstallation',
         ])
             ->withSum('donations', 'amount')
-            ->withCount([
-                'issues as pledged_issues_count' => function ($query) {
-                    $query->where('state', 'open');
-                }
-            ])
+            ->withCount(['issues as pledged_issues_count' => function ($query) {
+                $query->whereHas('donations');
+            }])
             ->whereIn('id', $favoriteRepositoryIds);
 
         $repositories = $query->paginate($perPage, $columns, $pageName, $page);

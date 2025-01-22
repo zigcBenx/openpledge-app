@@ -30,12 +30,12 @@
                             class="float-left flex"
                         >
                             <Pill
-                                :key="selectedValue.value"
-                                :color="filters.find(item => item.key === keys.languages && item.value === selectedValue.value) ? 'secondary' : 'primary'"
-                                @select="() => handleSelectOption(selectedValue.value, keys.languages)"
-                                @dismiss="() => handleRemoveOption(selectedValue.value, keys.languages)"
+                                :key="selectedValue.name"
+                                :color="filters.find(item => item.key === keys.languages && item.value === selectedValue.name) ? 'secondary' : 'primary'"
+                                @select="() => handleSelectOption(selectedValue.name, keys.languages)"
+                                @dismiss="() => handleRemoveOption(selectedValue.name, keys.languages)"
                             >
-                                {{ selectedValue.label }}
+                                {{ selectedValue.name }}
                             </Pill>
                         </div>
                     </div>
@@ -119,14 +119,17 @@
     }
   };
 
-  const handleRemoveOption = (value) => {
-    const indexToRemove = props.labels.findIndex(labelObj => labelObj.value === value);
-    if (indexToRemove !== -1) {
-      filters.value.labels.splice(indexToRemove, 1);
-    }
-    const indexLangToRemove = props.languages.findIndex(lang => lang.value === value);
-    if (indexLangToRemove !== -1) {
-      filters.value.languages.splice(indexLangToRemove, 1);
+  const handleRemoveOption = (value, key) => {
+    if (key === props.keys.labels) {
+        const indexToRemove = props.labels.findIndex(labelObj => labelObj.value === value);
+        if (indexToRemove !== -1) {
+            filters.value.labels.splice(indexToRemove, 1);
+        }
+    } else if (key === props.keys.languages) {
+        const indexLangToRemove = props.languages.findIndex(lang => lang.name === value);
+        if (indexLangToRemove !== -1) {
+            filters.value.languages.splice(indexLangToRemove, 1);
+        }
     }
   };
 

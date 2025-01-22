@@ -1,37 +1,47 @@
 <script setup>
-    import { ref } from 'vue';
+    import { ref, computed } from 'vue';
     import Pill from '@/Components/Form/Pill.vue';
     import dayjs from '../../../libs/dayjs.js';
     import { Link } from '@inertiajs/vue3';
+    import { marked } from 'marked';
 
-    defineProps({
+    const props = defineProps({
         class: {
             type: String
         },
         issue: {
-            type: Object,
-            // validator: (value) =>
-            //     value.id && value.description && value.user && value.changed_at && value.hasOwnProperty('state')
+            type: Object
         }
     });
 
-    const isDescriptionFullVisible = ref(false);
+    const isDescriptionFullyVisible = ref(false);
+
+    marked.setOptions({
+        gfm: true,
+        breaks: true,
+        headerIds: false,
+    });
+
+    const parsedDescription = computed(() => {
+        if (!props.issue.description) return null;
+        return marked(props.issue.description);
+    });
 </script>
 <template>
   <div :class="class">
       <div class="flex">
           <span class="dark:text-spun-pearl text-tundora text-xs capitalize min-w-[10.75rem]">DESCRIPTION</span> 
-          <div>
-              <p :class="['dark:text-lavender-mist text-oil text-sm', {
-                'line-clamp-2': !isDescriptionFullVisible
+          <div v-if="parsedDescription">
+              <div :class="['markdown-body dark:text-lavender-mist text-oil text-sm overflow-hidden', {
+                  'max-h-24': !isDescriptionFullyVisible
               }]">
-                  {{ issue.description }}
-              </p>
+                  <div v-html="parsedDescription"></div>
+              </div>
               <button 
                 class='font-medium text-mondo dark:text-seashell'
-                @click="isDescriptionFullVisible=!isDescriptionFullVisible"
+                @click="isDescriptionFullyVisible=!isDescriptionFullyVisible"
               >
-                {{ isDescriptionFullVisible ? 'Read less' : 'Read more' }}
+                {{ isDescriptionFullyVisible ? 'Read less' : 'Read more' }}
             </button>
           </div>
       </div>
@@ -53,24 +63,14 @@
       </div>
       <div class="flex mt-8">
           <span class="dark:text-spun-pearl text-tundora text-xs capitalize min-w-[10.75rem]">LANGUAGES</span> 
-          <div class='flex gap-1' title="Beta alert: Not working yet ;)">
+          <div class='flex gap-1' title="Beta alert: Not working yet ;)" v-if="issue.repository?.programming_languages?.length > 0">
               <Pill 
-                color="secondary"
-                size='sm'
-              >
-                  Javascript
-              </Pill>
-              <Pill 
+                  v-for="language in issue.repository.programming_languages"
+                  :key="language.id"
                   color="secondary"
                   size='sm'
               >
-                  Ruby
-              </Pill>
-              <Pill 
-                  color="secondary"
-                  size='sm'
-              >
-                  Java
+                  {{ language.name }}
               </Pill>
           </div>
       </div>

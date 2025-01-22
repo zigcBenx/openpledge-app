@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise\Utils as PromiseUtils;
+use App\Models\Label;
 
 class IssueActions
 {
@@ -30,7 +31,7 @@ class IssueActions
         }
     }
 
-    public static function getActivityTimeline($issueGithubUrl, $githubAccessToken, $donations)
+    public static function getActivityTimeline($issueGithubUrl, $githubAccessToken, $donations, $resolver, $resolvedAt)
     {
         if (!preg_match('/^https:\/\/github\.com\/([\w\-]+)\/([\w\-]+)\/issues\/(\d+)$/', $issueGithubUrl, $matches)) {
             logger("[WARNING] Invalid GitHub issue URL provided: {$issueGithubUrl}");
@@ -51,6 +52,17 @@ class IssueActions
                 $activities = array_merge($activities, $donations->toArray());
             }
 
+            if (isset($resolver) && isset($resolvedAt)) {
+                $activities = array_merge($activities, [[
+                    'actor' => [
+                        'avatar_url' => $resolver['avatar_url'],
+                        'login' => $resolver['login'],
+                    ],
+                    'event' => 'resolved',
+                    'created_at' => $resolvedAt,
+                ]]);
+            }
+
             // Get the latest activities first
             usort($activities, function ($a, $b) {
                 return strtotime($b['created_at']) - strtotime($a['created_at']);
@@ -65,7 +77,7 @@ class IssueActions
 
     public static function getConnectedInBatch($neededIssues, $existingIssues)
     {
-        $connectedRepositories = Repository::inRandomOrder()->get();
+        $connectedRepositories = Repository::inRandomOrder()->with('programmingLanguages')->get();
         $allConnectedIssues = [];
 
         if ($connectedRepositories->isEmpty()) {
@@ -111,7 +123,11 @@ class IssueActions
                                 'github_username' => $issue['user']['login'],
                                 'github_created_at' => $issue['created_at'],
                                 'isExternal' => true,
-                                'state' => $issue['state']
+                                'state' => $issue['state'],
+                                'description' => $issue['body'],
+                                'labels' => array_values(array_filter($issue['labels'], function ($label) {
+                                    return in_array($label['name'], Label::$allowedLabels);
+                                }))
                             ];
                             if (++$totalIssuesCollected >= $neededIssues) {
                                 break 2; // Break out of both loops if needed issues are collected
@@ -149,7 +165,9 @@ class IssueActions
 
             $githubResults = json_decode($response->getBody()->getContents(), true);
         } catch (\Exception $e) {
-            logger('[ERROR] Error fetching GitHub issues: ' . $e->getMessage());
+            logger('[ERROR] Error fetching GitHub issues: ' . $e->getMessage(), [
+                'stack_trace' => $e->getTraceAsString()
+            ]);
             return [];
         }
 

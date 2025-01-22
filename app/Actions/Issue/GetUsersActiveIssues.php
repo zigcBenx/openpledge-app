@@ -9,10 +9,11 @@ class GetUsersActiveIssues
     public static function get($userId)
     {
         return Issue::with([
-            'repository.githubInstallation',
+            'repository.programmingLanguages',
             'donations.user',
             'userFavorite',
             'programmingLanguages:id,name',
+            'labels'
         ])
             ->whereHas('resolvers', function ($query) use ($userId) {
                 $query->where('user_id', $userId);
@@ -33,10 +34,11 @@ class GetUsersActiveIssues
         $pageName = 'page';
 
         $query = Issue::with([
-            'repository.githubInstallation',
+            'repository.programmingLanguages',
             'donations.user',
             'userFavorite',
             'programmingLanguages:id,name',
+            'labels'
         ])
             ->whereHas('resolvers', function ($query) use ($userId) {
                 $query->where('user_id', $userId);

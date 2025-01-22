@@ -4,8 +4,8 @@
         title="Top donors" 
         subtitle="A list of top donors based on their donations"
     >
-        <li v-for="donor in donors" :key="donor.user.id" class="flex justify-between overflow-hidden py-1.5">
-            <UserListItem :userImageUrl="donor.user.profile_photo_url" :userName="donor.user.name" />
+        <li v-for="donor in donors" :key="donor.user?.id" class="flex justify-between overflow-hidden py-1.5">
+            <UserListItem :userImageUrl="donor.user?.profile_photo_url" :userName="donor.user?.name" />
             <span class="text-purple-heart font-medium text-xs">{{ donor.total_donated }} €</span>
         </li>
     </TopList>
@@ -26,6 +26,5 @@ const donors = ref([])
 async function fetchTopDonors() {
     const response = await axios.get(route('top-donors'));
     donors.value = response.data
-
 }
 </script>

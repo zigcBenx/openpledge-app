@@ -34,6 +34,6 @@ class StoreFavorite
             'favorable_type' => $favorableModel,
         ]);
 
-        return response()->json(['message' => "$favorableType added to Favorites"]);
+        return response()->json(['message' => "$favorableType added to Favorites. View all >"]);
     }
 }

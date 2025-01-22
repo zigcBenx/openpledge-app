@@ -2,6 +2,7 @@
 
 namespace App\Services;
 use App\Actions\Github\AppActions;
+use App\Actions\Github\AuthActions;
 use App\Actions\Github\IssueActions;
 use App\Actions\Github\RepositoryActions;
 use App\Actions\Github\UserActions;
@@ -13,6 +14,16 @@ class GithubService
     public static function getRepositoryByName($githubUser, $repositoryName)
     {
         return RepositoryActions::getByName($githubUser, $repositoryName);
+    }
+
+    public static function handleGithubAuthCallback()
+    {
+        return AuthActions::handleAuthCallback();
+    }
+
+    public static function handleGithubAuthRedirect()
+    {
+        return AuthActions::handleAuthRedirect();
     }
 
     public static function handleGithubAppCallback($request)
@@ -35,6 +46,11 @@ class GithubService
         return RepositoryActions::getByInstallationId($installationId, $accessToken);
     }
 
+    public static function getRepositoryProgrammingLanguages($repositoryTitle, $accessToken)
+    {
+        return RepositoryActions::getProgrammingLanguages($repositoryTitle, $accessToken);
+    }
+
     public static function getRepositoriesBySearchQuery($searchQuery, $resultsToFetch, $localResults)
     {
         return RepositoryActions::getBySearchQuery($searchQuery, $resultsToFetch, $localResults);
@@ -45,9 +61,9 @@ class GithubService
         return IssueActions::comment($installationId, $owner, $repo, $issueNumber, $comment);
     }
 
-    public static function getIssueActivityTimeline($issueGithubUrl, $githubAccessToken, $donations)
+    public static function getIssueActivityTimeline($issueGithubUrl, $githubAccessToken, $donations, $resolver, $resolvedAt)
     {
-        return IssueActions::getActivityTimeline($issueGithubUrl, $githubAccessToken, $donations);
+        return IssueActions::getActivityTimeline($issueGithubUrl, $githubAccessToken, $donations, $resolver, $resolvedAt);
     }
 
     public static function getConnectedIssuesInBatch($neededIssues, $existingIssues)

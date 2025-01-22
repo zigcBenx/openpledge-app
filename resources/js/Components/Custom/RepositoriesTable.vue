@@ -11,8 +11,8 @@
         <thead>
             <tr class="text-tundora dark:text-spun-pearl uppercase text-xs text-left">
                 <th class="pb-5 font-normal">Name</th>
-                <th class="pb-5 font-normal">Open Issues</th>
                 <th class="pb-5 font-normal">Pledged Issues</th>
+                <th class="pb-5 font-normal">Open Issues</th>
                 <th class="pb-5 font-normal">Issue Donations Total</th>
                 <th></th>
             </tr>

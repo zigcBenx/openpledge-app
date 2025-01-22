@@ -44,7 +44,7 @@
                         </div>
                     </template>
                     <template v-slot="">
-                        <IssuesTable :issues="issues" @onLazyLoading="handleLazyLoadingIssues" :pledged="true"
+                        <IssuesTable :issues="issues" @onLazyLoading="handleLazyLoadingIssues" :pledged="true" :isAuthenticated="isAuthenticated"
                             class="table" />
                         <TableRowSkeleton v-if="loading" />
                     </template>
@@ -64,7 +64,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { parseQueryFilters, updateQueryFilters, prepareFiltersForQuery } from '../../utils/parseQuery.js';
-import { languages as languagesList, labels as labelsList } from '../../assets/mockedData.js';
+import { labels as labelsList } from '../../assets/mockedData.js';
 import { router } from '@inertiajs/vue3'
 import Page from '@/Components/Page.vue';
 import Filters from './Filters.vue';
@@ -77,6 +77,7 @@ import { useElementSize } from '@vueuse/core';
 import TableRowSkeleton from '@/Components/Custom/TableRowSkeleton.vue';
 import NewUserQuizModal from '@/Components/Custom/NewUserQuizModal.vue';
 import { getDiscoverIssuesTour } from '@/utils/onboardingWalkthrough.js';
+import { usePage } from '@inertiajs/vue3';
 
 const props = defineProps
     ({
@@ -86,11 +87,14 @@ const props = defineProps
         programmingLanguages: Array
     });
 
+const inertiaPage = usePage();
+const isAuthenticated = inertiaPage.props.auth.user !== null;
+
 const keys = { labels: 'labels', languages: 'languages', range: 'range', date: 'date', storageDiscoverKey: 'discover' };
 
 const isQuizModalVisible = ref(!props.userIsContributor && !props.userIsResolver);
 const labels = ref(labelsList);
-const languages = ref(languagesList);
+const languages = ref(props.programmingLanguages);
 const issues = ref(props.issues);
 const displayFilterModal = ref(false);
 const queryFilters = ref({});
@@ -168,7 +172,9 @@ const handleLazyLoadingIssues = () => {
             existingUrls: existingIssueURLs
         }
     }).then(response => {
-        issues.value = [...issues.value, ...response.data.issues];
+        if(response.data.issues) {
+            issues.value = [...issues.value, ...response.data.issues];
+        }
         loading.value = false;
     }).catch(error => {
         console.error('Failed to load issues:', error);
@@ -195,7 +201,7 @@ const getValue = (value) => {
     } else if (languages.value.find(item => keys.languages === value.key && item.value === value.value)) {
         return languages.value.find(item => keys.languages === value.key && item.value === value.value).label;
     } else if (value.key === keys.range) {
-        return '$' + value.value.start + '-$' + value.value.end;
+        return '€' + value.value.start + '-€' + value.value.end;
     } else if (value.key === keys.date) {
         return value.value.year;
     }

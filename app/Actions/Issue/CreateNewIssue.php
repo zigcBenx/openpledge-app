@@ -11,6 +11,7 @@ class CreateNewIssue
     {            
         return Issue::create([
             'title'              => $input['title'],
+            'description'        => $input['description'],
             'github_url'         => $input['github_url'],
             'github_id'          => $input['github_id'],
             'repository_id'      => $input['repository_id'],

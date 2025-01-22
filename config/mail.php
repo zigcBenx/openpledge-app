@@ -15,6 +15,8 @@ return [
 
     'default' => env('MAIL_MAILER', 'smtp'),
 
+    'feedback_mail' => env('FEEDBACK_MAIL', 'ziga@openpledge.io'),
+
     /*
     |--------------------------------------------------------------------------
     | Mailer Configurations

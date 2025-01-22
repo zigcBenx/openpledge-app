@@ -1,36 +1,34 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
-use Stripe\Exception\OAuth\OAuthErrorException;
-use Stripe\OAuth;
-use Symfony\Component\HttpFoundation\Response;
+use App\Actions\Payment\StripeConnect;
 
 class StripeConnectController extends Controller
 {
-    public function redirectToStripe(Request $request): Response
+    public function stripeConnect()
     {
-        return Inertia::location(config('app.stripe_connect_url'));
+        return StripeConnect::stripeConnect();
     }
 
-    public function handleStripeConnectCallback(Request $request): RedirectResponse
+    public function createAccountLink(Request $request)
     {
-        try {
-            $user = Auth::user();
-            $response = OAuth::token([
-                'grant_type' => 'authorization_code',
-                'code' => $request->code
-            ]);
+        return StripeConnect::createAccountLink($request);
+    }
 
-            User::query()->where('id', $user->id)->update(['stripe_id' => $response->stripe_user_id]);
-            return redirect()->route('home')->with('success', 'Successfully connected to stripe');
-        } catch (OAuthErrorException $e) {
-            return redirect()->route('home')->with('error', $e->getMessage());
-        }
+    public function onboardingRefresh(Request $request)
+    {
+        return StripeConnect::handleOnboardingRefresh($request);
+    }
+
+    public function onboardingReturn(Request $request)
+    {
+        return StripeConnect::handleOnboardingReturn($request);
+    }
+
+    public function getDashboardLink()
+    {
+        return StripeConnect::getDashboardLink();
     }
 }

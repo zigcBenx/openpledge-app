@@ -21,7 +21,8 @@ class Issue extends Model
         'github_username',
         'github_created_at',
         'resolver_github_id',
-        'resolved_at'
+        'resolved_at',
+        'description'
     ];
 
     public function repository()
@@ -37,6 +38,11 @@ class Issue extends Model
     public function programmingLanguages()
     {
         return $this->morphToMany(ProgrammingLanguage::class, 'programming_languageable');
+    }
+
+    public function labels()
+    {
+        return $this->hasMany(Label::class);
     }
 
     public function getDonationSumAttribute()
@@ -64,5 +70,10 @@ class Issue extends Model
     public function resolvers()
     {
         return $this->belongsToMany(User::class, 'user_solve_issue');
+    }
+
+    public function resolvedBy()
+    {
+        return $this->belongsTo(User::class, 'resolver_github_id', 'github_id');
     }
 }

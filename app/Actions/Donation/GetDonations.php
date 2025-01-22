@@ -10,4 +10,10 @@ class GetDonations
     {
         return Donation::all();
     }
+
+    public static function getAnonymous()
+    {
+        return Donation::whereNull('donor_id')
+            ->sum('amount');
+    }
 }

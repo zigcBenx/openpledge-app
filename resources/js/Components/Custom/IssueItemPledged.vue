@@ -26,18 +26,26 @@
             <span class="dark:text-spun-pearl text-tundora text-xs font-medium">{{ issue.github_username }}</span>
             <span class="dark:text-spun-pearl text-tundora text-xs font-light">{{ dayjs(issue.github_created_at).fromNow() }}</span>
         </div>
+
+        <div class="flex gap-1 mt-3" v-if="issue.resolved_by">
+            <Avatar :url="issue.resolved_by.profile_photo_url" size="sm" />
+            <span class="text-ocean-green dark:text-green text-xs font-medium">{{ issue.resolved_by.name }}</span>
+            <span class="text-ocean-green dark:text-green text-xs font-light">was paid out</span>
+            <span class="text-ocean-green dark:text-green text-xs font-medium">{{ issue.donations_sum_amount ?? 0 }} €</span>
+            <span class="text-ocean-green dark:text-green text-xs font-light">{{ dayjs(issue.resolved_at).fromNow() }}</span>
+        </div>
     </td>
     <td class="py-6 pr-4 align-middle">
         <div class="flex flex-wrap gap-1">
             <Pill
                 v-if="issue.labels && issue.labels.length > 0"
-                v-for="label in issue.labels.split(',')"
-                :key="label"
+                v-for="label in issue.labels"
+                :key="label.id"
                 color="present"
                 size="sm"
                 :disabled="issue.state === 'closed'"
             >
-            {{ label }}
+                {{ label.name.charAt(0).toUpperCase() + label.name.slice(1) }}
             </Pill>
         </div>
     </td>
@@ -51,7 +59,7 @@
     <td class="py-6 pr-4 align-middle">
         <div class="flex flex-wrap gap-1">
             <Pill 
-                v-if="issue.programming_languages"
+                v-if="issue.programming_languages?.length > 0"
                 v-for="issue_lang in issue.programming_languages" 
                 :key="issue_lang"
                 color="present" 
@@ -61,7 +69,7 @@
                 {{ issue_lang.name }}
             </Pill>
             <Pill 
-                v-else-if="issue.repository"
+                v-else-if="issue.repository?.programming_languages?.length > 0"
                 v-for="lang in issue.repository.programming_languages" 
                 :key="lang"
                 color="present" 
@@ -90,12 +98,6 @@
             @click="addFavorites(issue)"
         />
     </td>
-    <DialogModal :show="displayFavoriteModal" @close="closeModal">
-        <template #title>
-            <b>Oops!</b><br> The 'Mark as Favorite' button is still in the oven, baking to perfection. Stay tuned!" 🍪
-            <br> <b>#BetaVersion</b>
-        </template>
-    </DialogModal>
 </template>
 
 <script setup>
@@ -106,18 +108,24 @@
     import Avatar from '@/Components/Avatar.vue'
     import { Link } from '@inertiajs/vue3'
     import Pill from '@/Components/Form/Pill.vue'
-    import DialogModal from '../DialogModal.vue'
     import { useToast } from "vue-toastification";
+    import { router } from '@inertiajs/vue3';
+    import { usePage } from '@inertiajs/vue3';
 
     const props = defineProps({
         issue: {
             type: Object,
             required: true,
         },
+        isAuthenticated: {
+            type: Boolean,
+            default: true,
+        },
     })
 
     const isDark = useDark()
-
+    const page = usePage()
+    const isAuthenticated = page.props.auth.user !== null
 
     const getIconStrokeColor = (isFavorite, isDisabled) => {
         if (isDark.value) {
@@ -130,15 +138,26 @@
         return isFavorite ? 'stroke-ocean-green fill-ocean-green' : 'stroke-tundora hover:stroke-ocean-green';
     }
 
-    const displayFavoriteModal = ref(false)
     const addFavorites = (issue) => {
         const toast = useToast()
+
+        if (!isAuthenticated) {
+            toast.error('Please log in to add this issue to favorites');
+            return;
+        }
+
         axios.post(route('favorites.store'), {
             favorable_id: issue.id,
             favorable_type: 'Issue',
         })
         .then(response => {
-            toast.success(response.data.message)
+            const toastOptions = response.data.message.includes('added') 
+                ? {
+                    onClick: () => router.visit(route('profile.favorites-show')),
+                    toastClassName: 'cursor-pointer hover:opacity-90'
+                } 
+                : {};
+            toast.success(response.data.message, toastOptions);
             issue.favorite = !issue.favorite;
         })
         .catch(error => {
@@ -146,7 +165,4 @@
             console.error(error);
         });
     }
-    const closeModal = () => {
-        displayFavoriteModal.value = false
-    };
 </script>

@@ -26,6 +26,21 @@ class RepositoryActions
         }
     }
 
+    public static function getProgrammingLanguages($repositoryTitle, $accessToken)
+    {
+        $url = GithubService::BASE_URL . "/repos/{$repositoryTitle}/languages";
+
+        $response = Http::withToken($accessToken)
+            ->get($url);
+
+        if ($response->successful()) {
+            return $response->json() ?? [];
+        } else {
+            logger('[ERROR] Failed to fetch GitHub programming languages', ['response' => $response->body(), 'repositoryTitle' => $repositoryTitle]);
+            return [];
+        }
+    }
+
     public static function getBySearchQuery($searchQuery, $resultsToFetch, $localResults)
     {
         $accessToken = AuthActions::getAccessTokenByAuthenticatedUser(Auth::user());
@@ -40,7 +55,9 @@ class RepositoryActions
 
             $githubResults = json_decode($response->getBody()->getContents(), true);
         } catch (Exception $e) {
-            logger('[ERROR] Error fetching GitHub repositories: ' . $e->getMessage());
+            logger('[ERROR] Error fetching GitHub repositories: ' . $e->getMessage(), [
+                'stack_trace' => $e->getTraceAsString()
+            ]);
         }
 
         if (!isset($githubResults['items'])) {

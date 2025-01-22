@@ -3,45 +3,37 @@
     <FormTypeButtons :type="form.type" @change="updateFormType" />
 
     <span v-if="form.type === 'solve'">
-      <SolveIssue :issue="issue" />
+      <SolveIssue :issue="issue" :isAuthenticated="isAuthenticated" />
     </span>
     <span v-else>
     <PledgeMethod :pledgeMethod="form.pledgeMethod" @onChange="handleMethodChange" />
 
     <div>
       <div :class="{ 'opacity-60 pointer-events-none': loading }" class="p-6 flex flex-col gap-6">
-        <div v-if="form.pledgeMethod === PAYMENT_FORM_METHODS.EXPIRE_DATE" class="flex gap-2">
-          <label class="dark:text-lavender-mist text-oil text-sm flex-grow">
+        <div v-if="form.pledgeMethod === PAYMENT_FORM_METHODS.EXPIRE_DATE">
+          <label class="dark:text-lavender-mist text-oil text-sm">
             <p class="mb-2.5">Pledge expiration</p>
-            <Input 
-              v-model:input="form.pledgeExpirationDate.value" 
-              inputClass="w-full !bg-transparent" 
-              placeholder="DD/MM"
-              :maxlength="5"
-              :minlength="5"
-              @onInput="form.pledgeExpirationDate.value = formatExpireDate(form.pledgeExpirationDate.value)"
-              @onBlur="handlePledgeExpireDateValidation"
+            <DatePicker
+              v-model="form.pledgeExpirationDate.value"
+              :min-date="minExpiryDate"
+              :is-open="isDatePickerOpen"
+              @update:is-open="isDatePickerOpen = $event"
+              placeholder="Select expiry date"
+              @update:modelValue="handlePledgeExpireDateValidation"
             />
             <small v-if="form.pledgeExpirationDate.error" :class="classes.error">
-                Expiration date must be at least 3 weeks from today.
+              Expiration date must be at least 3 weeks from today.
             </small>
           </label>
-
-          <Select 
-            class="flex-grow !w-[50%] mt-[29px]" 
-            :default="yearsData[0]" 
-            :data="yearsData"
-            @input="form.pledgeExpirationYear = $event"
-          />
-        </div>  
+        </div>
         <label class="dark:text-lavender-mist text-oil text-sm">
           Pledge amount
           <MoneyInput 
             v-model:input="form.amount" 
             inputClass="!bg-transparent" 
             wrapperClass="w-full !bg-transparent mt-2.5 !pl-0 !border-none" 
-            icon="dollar" 
-            currency="USD"
+            icon="euro"
+            currency="EUR"
             required
             iconClass="fill-green"
             @onInput="form.amount = preventStringInputWithNumber(form.amount)"
@@ -50,7 +42,7 @@
           <small v-if="form.errors?.amount" :class="classes.error">{{form.errors?.amount[0]}}</small>
         </label>
 
-        <label class="dark:text-lavender-mist text-oil text-sm">
+        <label class="dark:text-lavender-mist text-oil text-sm" v-if="!isAuthenticated">
           <p class="mb-2.5">Contact details</p>
           <Input 
             v-model:input="form.email"
@@ -74,7 +66,7 @@
             </div>
             <Button 
               :loading="loading" 
-              :disabled="(form.pledgeExpirationDate?.error || false) && form.pledgeMethod === PAYMENT_FORM_METHODS.EXPIRE_DATE" 
+              :disabled="!isPledgeAmountValid || !isStripePaymentFormValid" 
               class="mt-8" 
               :plain="true" 
               size="lg" 
@@ -104,26 +96,16 @@ import FormTypeButtons from './FormTypeButtons.vue';
 import Input from '@/Components/Input.vue';
 import MoneyInput from '@/Components/MoneyInput.vue';
 import { preventStringInputWithNumber } from '@/utils/preventStringInputWithNumber.js';
-import { formatExpireDate } from '@/utils/formatExpireDate.js';
 import { PAYMENT_FORM_METHODS } from '@/constants';
-import Select from '@/Components/Select.vue';
 import dayjs from '@/libs/dayjs.js'
 import SolveIssue from './SolveIssue.vue';
-import { ref, onMounted } from "vue"
-import { useDark } from '@vueuse/core';
+import { ref } from "vue"
+import { useDark, useDebounceFn } from '@vueuse/core';
 import { useToast } from 'vue-toastification';
-import { router } from '@inertiajs/vue3'
-
-const stripe = ref(null);
-const elements = ref(null);
-const paymentId = ref(null);
-const isDark = useDark();
-const toast = useToast()
-
-onMounted(() => {
-  paymentIntent();
-});
-
+import { router, usePage } from '@inertiajs/vue3'
+import { validateEmail } from '@/utils/validateEmail.js';
+import DatePicker from '@/Components/Form/DatePicker.vue';
+import confetti from 'canvas-confetti';
 
 const props = defineProps({
   'minAmount': String,
@@ -131,44 +113,15 @@ const props = defineProps({
   stripePublicKey: String
 });
 
-const paymentIntent = () => {
-  axios.post('/get-payment-intent', {
-    amount: 25,
-    currency: 'USD'
-  }).then(response => {
-    stripe.value = Stripe(props.stripePublicKey);
-    const appearance = {
-      theme: isDark.value ? 'night' : 'stripe',
-      variables: {
-        colorPrimary: isDark.value ? 'rgb(240 239 241)' : 'rgb(24 124 101)',
-        colorBackground: isDark.value ? 'rgb(32 31 35)' : 'rgb(252 252 253)',
-        colorText: isDark.value ? 'rgb(240 239 241)' : 'rgb(24 124 101)',
-        colorDanger: isDark.value ? 'rgb(172 168 179)' : 'rgb(102 97 112)',
-        fontFamily: 'Ideal Sans, system-ui, sans-serif',
-      },
-      rules: {
-        '.Input': {
-          boxShadow: 'none',
-          border: '1px solid rgb(172 168 179)'
-        },
-        '.Input--empty': {
-          boxShadow: 'none',
-          border: '1px solid rgb(172 168 179)'
-        },
-      }
-    };
-    const options = {
-      clientSecret: response.data.clientSecret,
-      appearance
-    }
-    paymentId.value = response.data.paymentId;
-    elements.value = stripe.value.elements(options,);
-    const paymentElement = elements.value.create('payment');
-    paymentElement.mount('#payment-element');
-  }).catch(error => {
-    console.log(error);
-  });
-};
+const stripe = ref(null);
+const elements = ref(null);
+const paymentId = ref(null);
+const isDark = useDark();
+const toast = useToast();
+const isPledgeAmountValid = ref(false);
+const page = usePage();
+const isAuthenticated = page.props.auth.user !== null;
+const isStripePaymentFormValid = ref(false);
 
 const form = reactive({
   type: 'pledge',
@@ -185,18 +138,86 @@ const form = reactive({
   errors: {}
 });
 
+const debouncedPaymentIntent = useDebounceFn(() => {
+  paymentIntent();
+}, 500);
+
+watch([() => form.amount, () => form.email], ([newAmount, newEmail]) => {
+  if (newAmount && newAmount > 0) {
+    isPledgeAmountValid.value = true;
+  } else {
+    document.getElementById('payment-element').innerHTML = '';
+    isPledgeAmountValid.value = false;
+  }
+
+  if ((isAuthenticated || (newEmail && validateEmail(newEmail))) && isPledgeAmountValid.value) {
+    debouncedPaymentIntent();
+  }
+});
+
+const paymentIntent = () => {
+  if (!isPledgeAmountValid.value) {
+    return;
+  }
+
+  axios.post('/get-payment-intent', {
+    amount: form.amount,
+    email: form.email
+  }).then(response => {
+    stripe.value = Stripe(props.stripePublicKey);
+    const appearance = {
+      theme: isDark.value ? 'night' : 'stripe',
+      variables: {
+        colorPrimary: isDark.value ? 'rgb(240 239 241)' : 'rgb(24 124 101)',
+        colorBackground: isDark.value ? 'rgb(32 31 35)' : 'rgb(252 252 253)',
+        colorText: isDark.value ? 'rgb(240 239 241)' : 'rgb(24 124 101)',
+        colorDanger: isDark.value ? 'rgb(172 168 179)' : 'rgb(102 97 112)',
+        fontFamily: 'Ideal Sans, system-ui, sans-serif',
+      },
+      rules: {
+        '.Input': {
+          boxShadow: 'none',
+          border: '1px solid rgb(172 168 179)'
+        },
+        '.Input:hover': {
+          border: '1px solid rgb(55 195 162)'
+        },
+        '.Input--empty': {
+          boxShadow: 'none',
+          border: '1px solid rgb(55 195 162)'
+        },
+        '.Input--invalid': {
+          boxShadow: 'none',
+          border: '1px solid rgb(178 53 212)'
+        }
+      }
+    };
+    const options = {
+      clientSecret: response.data.clientSecret,
+      appearance
+    }
+    paymentId.value = response.data.paymentId;
+    elements.value = stripe.value.elements(options,);
+    const paymentElement = elements.value.create('payment');
+    paymentElement.mount('#payment-element');
+    paymentElement.on('change', (event) => {
+      isStripePaymentFormValid.value = event.complete;
+    });
+  }).catch(error => {
+    console.log(error);
+    toast.error(error.response.data.message);
+  });
+};
+
 const classes = {
   error: "mt-1.5 text-xs block dark:text-spun-pearl text-tundora"
 }
 
-const yearsData = [...new Array(10)].map((_, index) => 2024 + index);
-
 const handleMethodChange = (value) => form.pledgeMethod = value;
 const handlePledgeExpireDateValidation = () => {
-  const expirationDate = dayjs(form.pledgeExpirationDate.value, 'DD/MM', true);
-  const minDate = dayjs().add(3, 'weeks');
-
-  form.pledgeExpirationDate.error = !expirationDate.isValid() || expirationDate.isBefore(minDate);
+  const expirationDate = dayjs(form.pledgeExpirationDate.value);
+  form.pledgeExpirationDate.error = !expirationDate.isValid();
+  isDatePickerOpen.value = false;
 };
 
 const getIsValidInfiniteForm = () => form.amount && !form.name && !form.cardNumber && !form.expireDate && !form.cvc && !form.email && form.country;
@@ -213,11 +234,11 @@ const handleFormSubmit = async () => {
   loading.value = true
   form.issue_id = props.issue.id;
   form.paymentId = paymentId.value;
+  const pledgeExpirationDate = form.pledgeExpirationDate;
 
-  console.log(form)
-
-  if (form.pledgeExpirationDate.value.trim() !== '') {
-    form.pledgeExpirationDate = `${form.pledgeExpirationYear}-${form.pledgeExpirationDate.value.split("/")[1]}-${form.pledgeExpirationDate.value.split("/")[0]}`;
+  if (pledgeExpirationDate.value) {
+    const expirationDate = dayjs(pledgeExpirationDate.value);
+    form.pledgeExpirationDate = expirationDate.format('YYYY-MM-DD');
   } else {
     form.pledgeExpirationDate = null;
   }
@@ -230,10 +251,12 @@ const handleFormSubmit = async () => {
   }).then(function(result) {
       form.paymentId = result.paymentIntent?.id;
       if (result.error) {
-          // Handle errors
-          toast.error('Something went wrong!')
+          console.error(result.error)
+          toast.error(result.error.message)
+          loading.value = false
+          form.pledgeExpirationDate = pledgeExpirationDate;
       } else {
-        axios.post('/payment-process', form).then(response => {
+        axios.post(route('payment-process'), form).then(response => {
           if(response.data.success) {
             form.amount = '';
             form.cardSave = false;
@@ -241,10 +264,32 @@ const handleFormSubmit = async () => {
             form.paymentId = '';
             form.pledgeExpirationDate = {
               value: '',
-                  error: false
+              error: false
             };
             form.pledgeExpirationYear = '';
-            paymentIntent();
+
+            const animationEnd = Date.now() + 4000;
+            
+            const interval = setInterval(function() {
+              const timeLeft = animationEnd - Date.now();
+              
+              if (timeLeft <= 0) {
+                return clearInterval(interval);
+              }
+
+              confetti({
+                particleCount: 200,
+                angle: 90,
+                spread: 180,
+                origin: { x: 0.5, y: 1 },
+                colors: ['#551e5b', '#88f5dc', '#152825'],
+                gravity: 0.5,
+                scalar: 1.4,
+                startVelocity: 80,
+                ticks: 200
+              });
+            }, 150);
+
             toast.success('Pledge submitted! You are awesome!')
             router.reload();
           }
@@ -268,5 +313,7 @@ const updateFormType = (value) => {
   form.type = value;
 }
 
-const isDisabled = computed(() => props.issue.state === 'closed');
+const minExpiryDate = dayjs().add(3, 'weeks').toDate();
+
+const isDatePickerOpen = ref(false);
 </script>

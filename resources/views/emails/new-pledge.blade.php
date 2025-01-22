@@ -1,41 +1,79 @@
 @extends('emails.layouts.basic')
 
 @section('content')
-    <table class="row row-3" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
-        <tbody>
+
+<tr>
+    <td align="center">
+    <table class="t22" role="presentation" cellpadding="0" cellspacing="0" style="Margin-left:auto;Margin-right:auto;">
+        <tr>
+        <!--[if mso]>
+                                                        <td width="514" class="t21" style="border-bottom:1px solid #EFF1F4;width:514px;">
+                                                            <![endif]-->
+        <!--[if !mso]>-->
+        <td class="t21" style="border-bottom:1px solid #EFF1F4;width:514px;">
+            <!--
+                                                                <![endif]-->
+            <table class="t20" role="presentation" cellpadding="0" cellspacing="0" width="100%" style="width:100%;">
             <tr>
-                <td>
-                    <table class="row-content stack" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-radius: 0; color: #000; width: 600px; margin: 0 auto;" width="600">
-                        <tbody>
-                            <tr>
-                                <td class="column column-1" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 5px; padding-top: 5px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;">
-                                    <table class="heading_block block-1" width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
-                                        <tr>
-                                            <td class="pad">
-                                                <h1 style="margin: 0; color: #ffffff; direction: ltr; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 38px; font-weight: 700; letter-spacing: normal; line-height: 120%; text-align: center; margin-top: 0; margin-bottom: 0;"><span class="tinyMce-placeholder">Thank You!</span></h1>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                    <table class="paragraph_block block-1" width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
-                                        <tr>
-                                            <td class="pad">
-                                                <div style="color:#ffffff;direction:ltr;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:16px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:19.2px;">
-                                                    <p style="margin: 0; margin-bottom: 16px;">Dear {{ $donorName }},</p>
-                                                    <p style="margin: 0; margin-bottom: 16px;">Thank you for your pledge on OpenPledge.io. Your support helps maintain and improve the open-source projects that we all use and love.</p>
-                                                    <p style="margin: 0; margin-bottom: 16px;">We are committed to bridging the gap between open-source project maintainers and supporters. Your contribution ensures that developers are rewarded for their hard work and dedication.</p>
-                                                    <p style="margin: 0;">We appreciate your support and look forward to continuing our journey together. You can view the issue you supported <a href="{{ $issueLink }}">here</a>.</p>
-                                                    <p><b>Note: Since we're still in Beta, all rewards are purely fictional for now—so no actual cash, just a lot of love and appreciation! 😉</b></p>
-                                                    <p style="margin: 0; margin-top: 16px;">Sincerely,<br>The OpenPledge.io Team</p>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <td class="t19" style="padding:0 0 18px 0;">
+                <h1 class="t18" style="margin:0;Margin:0;font-family:Montserrat,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:28px;font-weight:700;font-style:normal;font-size:24px;text-decoration:none;text-transform:none;letter-spacing:-1px;direction:ltr;color:#141414;text-align:left;mso-line-height-rule:exactly;mso-text-raise:1px;">You are awesome!</h1>
                 </td>
             </tr>
-        </tbody>
+            </table>
+        </td>
+        </tr>
     </table>
+    </td>
+</tr>
+<tr>
+    <td>
+    <div class="t23" style="mso-line-height-rule:exactly;mso-line-height-alt:18px;line-height:18px;font-size:1px;display:block;">&nbsp;&nbsp;</div>
+    </td>
+</tr>
+<tr>
+    <td align="center">
+    <table class="t28" role="presentation" cellpadding="0" cellspacing="0" style="Margin-left:auto;Margin-right:auto;">
+        <tr>
+        <!--[if mso]>
+                                                            <td width="514" class="t27" style="width:514px;">
+                                                                <![endif]-->
+        <!--[if !mso]>-->
+        <td class="t27" style="width:514px;">
+            <!--
+                                                                    <![endif]-->
+            <table class="t26" role="presentation" cellpadding="0" cellspacing="0" width="100%" style="width:100%;">
+            <tr>
+                <td class="t25">
+                    <p class="t24" style="margin:0;Margin:0;font-family:Exo,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:25px;font-weight:400;font-style:normal;font-size:15px;text-decoration:none;text-transform:none;letter-spacing:-0.1px;direction:ltr;color:#141414;text-align:left;mso-line-height-rule:exactly;mso-text-raise:3px;">
+                        Dear {{ $donorName }},
+                    </p>
+                    <div style="height:10px;line-height:10px;">&nbsp;</div>
+                    <p class="t24" style="margin:0;Margin:0;font-family:Exo,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:25px;font-weight:400;font-style:normal;font-size:15px;text-decoration:none;text-transform:none;letter-spacing:-0.1px;direction:ltr;color:#141414;text-align:left;mso-line-height-rule:exactly;mso-text-raise:3px;">
+                        Thank you for your pledge on OpenPledge.io. Your support helps maintain and improve the open-source projects that we all use and love.
+                    </p>
+                    <div style="height:10px;line-height:10px;">&nbsp;</div>
+                    <p class="t24" style="margin:0;Margin:0;font-family:Exo,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:25px;font-weight:400;font-style:normal;font-size:15px;text-decoration:none;text-transform:none;letter-spacing:-0.1px;direction:ltr;color:#141414;text-align:left;mso-line-height-rule:exactly;mso-text-raise:3px;">
+                        We are committed to bridging the gap between open-source project maintainers and supporters. Your contribution ensures that developers are rewarded for their hard work and dedication.
+                    </p>
+                    <div style="height:10px;line-height:10px;">&nbsp;</div>
+                    <p class="t24" style="margin:0;Margin:0;font-family:Exo,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:25px;font-weight:400;font-style:normal;font-size:15px;text-decoration:none;text-transform:none;letter-spacing:-0.1px;direction:ltr;color:#141414;text-align:left;mso-line-height-rule:exactly;mso-text-raise:3px;">
+                        We appreciate your support and look forward to continuing our journey together. You can view the issue you supported <a href="{{ $issueLink }}">here</a>.
+                    </p>
+                    <div style="height:10px;line-height:10px;">&nbsp;</div>
+                    <p class="t24" style="margin:0;Margin:0;font-family:Exo,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:25px;font-weight:400;font-style:normal;font-size:15px;text-decoration:none;text-transform:none;letter-spacing:-0.1px;direction:ltr;color:#141414;text-align:left;mso-line-height-rule:exactly;mso-text-raise:3px;">
+                        Sincerely,<br>The OpenPledge.io Team
+                    </p>
+                </td>
+            </tr>
+            </table>
+        </td>
+        </tr>
+    </table>
+    </td>
+</tr>
+<tr>
+    <td>
+    <div class="t30" style="mso-line-height-rule:exactly;mso-line-height-alt:24px;line-height:24px;font-size:1px;display:block;">&nbsp;&nbsp;</div>
+    </td>
+</tr>
 @endsection

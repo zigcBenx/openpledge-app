@@ -19,7 +19,7 @@
                                 <NavLink :href="route('discover.issues')" :active="route().current('discover.issues')">
                                     Discover
                                 </NavLink>
-                                <div class="cursor-pointer inline-flex uppercase items-center px-1 pb-2 pt-1 border-b-2 border-transparent text-sm leading-5 text-rich-black dark:text-platinum hover:text-green dark:hover:text-green"
+                                <div title="We are still working on that one :)" class="cursor-pointer inline-flex uppercase items-center px-1 pb-2 pt-1 border-b-2 border-transparent text-sm leading-5 text-rich-black dark:text-platinum hover:text-green dark:hover:text-green"
                                     @click="displayLeaderBoardModal = true">
                                     Leaderboard
                                 </div>
@@ -48,8 +48,10 @@
                                             class="w-[44.375rem]" 
                                             :data="filteredData" 
                                             checkboxLabel="Show GitHub results"
+                                            :isCheckboxDisabled="!isAuthenticated"
                                             :getSearchItemHref="generateSearchItemHref"
                                             @checkbox-toggled="includeGitHubResults = $event"
+                                            :tooltipText="!isAuthenticated ? 'Log In to show GitHub results' : ''"
                                         />
                                     </template>
                                 </Dropdown>                                
@@ -135,15 +137,18 @@
                     <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
                         <div class="flex items-center px-4">
                             <div v-if="$page.props.jetstream.managesProfilePhotos" class="shrink-0 me-3">
-                                <img class="h-10 w-10 rounded-full object-cover" :src="$page.props.auth.user.profile_photo_url" :alt="$page.props.auth.user.name">
+                                <img
+                                    class="h-10 w-10 rounded-full object-cover" 
+                                    :src="$page.props.auth?.user?.profile_photo_url || '/images/anonymous_pledger.png'"
+                                    :alt="$page.props.auth?.user?.name || 'Anonymous Pledger'">
                             </div>
 
                             <div>
                                 <div class="font-medium text-base text-gray-800 dark:text-gray-200">
-                                    {{ $page.props.auth.user.name }}
+                                    {{ $page.props.auth?.user?.name || 'Anonymous Pledger' }}
                                 </div>
                                 <div class="font-medium text-sm text-gray-500">
-                                    {{ $page.props.auth.user.email }}
+                                    {{ $page.props.auth?.user?.email || 'anonymous@openpledge.io' }}
                                 </div>
                             </div>
                         </div>
@@ -190,7 +195,7 @@
         </div>
     </div>
     <div class="fixed bottom-0 left-0 w-full text-white w-100 bg-openpledge-yellow p-2 text-center">
-        OpenPledge is in <b>BETA</b>. Things might get a little quirky! 🚀 All donations are fictional.
+        OpenPledge is in <b>BETA</b>. Things might get a little quirky! 🚀
     </div>
     <Button
             @click="displayFeedbackModal = true"
@@ -207,7 +212,7 @@
         <template #content>
             <div v-if="feedbackModalMessage" class="mb-6">{{ feedbackModalMessage }}</div>
             <div v-else>
-                <div class="mb-4">
+                <div class="mb-4" v-if="!$page.props.auth?.user">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Your Email
                     </label>
@@ -265,6 +270,7 @@
     import Button from '@/Components/Button.vue';
     import TextArea from '@/Components/TextArea.vue';
     import { useToast } from "vue-toastification";
+    import { validateEmail } from '@/utils/validateEmail';
 
     export default {
         props: {
@@ -296,7 +302,7 @@
             const displayFeedbackModal = ref(false);
             const feedbackModalMessage = ref('');
             const feedbackData = ref({
-                email: '',
+                email: usePage().props.auth.user?.email || '',
                 content: ''
             });
             const data = ref({
@@ -304,10 +310,17 @@
                 issues: []
             });
             const includeGitHubResults = ref(false);
-            const user = usePage().props.auth.user;
+            const user = computed(() => usePage().props.auth.user);
+            const isAuthenticated = computed(() => {
+                return user.value !== null;
+            });
 
             const logout = () => {
                 router.post(route('logout'));
+            };
+
+            const login = () => {
+                router.visit(route('login'));
             };
 
             const fetchSearchResults = async (query, includeGitHub) => {
@@ -378,6 +391,11 @@
             const submitFeedback = () => {
                 const toast = useToast();
 
+                if (!validateEmail(feedbackData.value.email)) {
+                    toast.error('Oops! That email address looks a bit wonky.');
+                    return;
+                }
+
                 axios.post(route('user.feedback'), {
                     email: feedbackData.value.email,
                     content: feedbackData.value.content
@@ -398,6 +416,7 @@
             return {
                 showingNavigationDropdown,
                 logout,
+                login,
                 user,
                 toggleDark,
                 isDark,
@@ -410,7 +429,8 @@
                 displayFeedbackModal,
                 feedbackData,
                 submitFeedback,
-                feedbackModalMessage
+                feedbackModalMessage,
+                isAuthenticated
             };
         }
     };
