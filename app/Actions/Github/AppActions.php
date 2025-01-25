@@ -218,7 +218,11 @@ class AppActions
     private static function handleWebhookRepository($payload)
     {
         $repositoryId = $payload['repository']['id'];
-        $repository = Repository::where('github_id', $repositoryId)->firstOrFail();
+        $repository = Repository::where('github_id', $repositoryId)->first();
+
+        if (!$repository) {
+            return;
+        }
 
         $repositoryIssues = Issue::where('repository_id', $repository->id)->get();
         foreach ($repositoryIssues as $issue) {

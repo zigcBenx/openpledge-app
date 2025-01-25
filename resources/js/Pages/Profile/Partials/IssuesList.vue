@@ -5,7 +5,7 @@
                 <h5 class="text-xl leading-none text-gray-900 dark:text-white">{{ title }}</h5>
                 <a 
                     :href="viewAllLink"
-                    @click.prevent="issues.length === 0 ? null : null"
+                    @click="issues.length === 0 ? $event.preventDefault() : null"
                     :class="[
                         'text-turquoise',
                         { 'cursor-not-allowed opacity-50 pointer-events-none': issues.length === 0 }
