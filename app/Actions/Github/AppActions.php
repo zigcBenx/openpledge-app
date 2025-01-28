@@ -155,11 +155,8 @@ class AppActions
         DB::beginTransaction();
         try {
             $action = $payload['action'] ?? null;
-            $pullRequest = $payload['pull_request'] ?? null;
 
-            if ($pullRequest && isset($pullRequest['merged']) && $pullRequest['merged']) {
-                self::handleWebhookPullRequest($pullRequest, $action);
-            } elseif (isset($payload['issue'])) {
+            if (isset($payload['issue'])) {
                 self::handleWebhookIssue($payload, $action);
             } elseif (isset($payload['repository'])) {
                 self::handleWebhookRepository($payload);
@@ -175,53 +172,6 @@ class AppActions
             return response()->json(['status' => 'error', 'message' => 'Transaction failed'], 500);
         }
         return response()->json(['status' => 'success'], 200);
-    }
-
-    private static function handleWebhookPullRequest(array $pullRequest, ?string $action)
-    {
-        $issueHeadData = $pullRequest['base'];
-        $repositoryData = $issueHeadData['repo'];
-
-        $isPullRequestMerged = ($pullRequest['merged'] ?? false) === true;
-
-        if (!$isPullRequestMerged) {
-            return;
-        }
-
-        $issueEventsUrl = str_replace('{/number}', '', $repositoryData['issue_events_url']);
-        $issueEventsResponse = Http::withToken(AuthActions::getAccessTokenByRepositoryUrl($repositoryData['html_url']))->get($issueEventsUrl);
-        $issueEvents = $issueEventsResponse->json();
-
-        $closedIssueGithubId = null;
-
-        foreach ($issueEvents as $issueEvent) {
-            if (isset($issueEvent["event"]) && $issueEvent["event"] === "closed") {
-                $closedIssueGithubId = $issueEvent["issue"]["id"];
-                break;
-            }
-        }
-
-        $issue = Issue::where('github_id', $closedIssueGithubId)->first();
-        if (!$issue) {
-            return;
-        }
-
-        $user = $pullRequest['user'];
-
-        $issue->state = $action === "reopened" ? "open" : $action;
-        $issue->resolver_github_id = $user['id'];
-        $issue->resolved_at = Carbon::parse($pullRequest['merged_at'])
-            ->setTimezone(config('app.timezone'));
-        $issue->save();
-
-        $dbUser = User::where('github_id', $user['id'])->first();
-
-        if ($dbUser) {
-            ProcessPayment::processDonations($issue, $dbUser);
-        } else {
-            logger('[WARNING] No user with the following GitHub id is connected to our app', ['id' => $user['id']]);
-            // TODO: What to do here? We can't send email to the user to register to OpenPledge & connect with Stripe to claim the reward because the email is not publicly available
-        }
     }
 
     private static function handleWebhookRepository($payload)
@@ -299,17 +249,27 @@ class AppActions
         $repository = $payload['repository'];
         $repositoryOwner = $repository['owner']['login'];
         $repositoryName = $repository['name'];
+        $mergedState = 'MERGED';
 
         $connectedPullRequestsResponse = GithubService::getConnectedPullRequests($repositoryOwner, $repositoryName, $githubIssueNumber);
 
         if ($connectedPullRequestsResponse) {
             $mergedPullRequest = collect($connectedPullRequestsResponse['data']['repository']['issue']['timelineItems']['nodes'])
                 ->first(function ($item) {
-                    return $item['subject']['state'] === 'MERGED' || $item['source']['state'] === 'MERGED';
+                    // For ConnectedEvent
+                    if (isset($item['subject'])) {
+                        return $item['subject']['state'] === 'MERGED';
+                    }
+                    // For CrossReferencedEvent
+                    if (isset($item['source'])) {
+                        return $item['source']['state'] === 'MERGED';
+                    }
+                    return false;
                 });
 
             if ($mergedPullRequest) {
-                $mergedPullRequestNumber = $mergedPullRequest['subject']['number'];
+                $prData = $mergedPullRequest['subject'] ?? $mergedPullRequest['source'];
+                $mergedPullRequestNumber = $prData['number'];
                 $mergedPullRequestData = GithubService::getPullRequestData($repositoryOwner, $repositoryName, $mergedPullRequestNumber);
 
                 $resolverGithubId = $mergedPullRequestData['user']['id'];
