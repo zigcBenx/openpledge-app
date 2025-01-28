@@ -32,9 +32,10 @@ class CheckExpiredDonations extends Command
             $donorEmail = $donor->email;
             $donorName = $donor->name;
             $destinationStripeId = $donor->stripe_id;
+            $donationChargeId = $donation->charge_id;
 
             if (isset($destinationStripeId)) {
-                $transferId = TransferFunds::transfer($destinationStripeId, $refundAmount);
+                $transferId = TransferFunds::transfer($destinationStripeId, $refundAmount, $donationChargeId);
                 $donation->update([
                     'paid' => true,
                     'refund_transaction_id' => $transferId

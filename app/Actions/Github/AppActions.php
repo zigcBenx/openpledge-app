@@ -2,22 +2,31 @@
 
 namespace App\Actions\Github;
 
-use App\Actions\Payment\ProcessPayment;
-use App\Http\Requests\CreateNewRepositoryRequest;
-use App\Models\ProgrammingLanguage;
-use App\Models\Repository;
-use App\Models\Label;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Auth;
-use App\Models\GitHubInstallation;
+use Illuminate\Support\Facades\{
+    Auth,
+    DB,
+    Http,
+    Validator
+};
+
+use App\Models\{
+    GitHubInstallation,
+    Issue,
+    Label,
+    ProgrammingLanguage,
+    Repository,
+    User
+};
+
+use App\Actions\Payment\ProcessPayment;
 use App\Actions\Repository\CreateNewRepository;
 use App\Services\GitHubService;
-use App\Models\Issue;
-use App\Models\User;
+
+use App\Http\Requests\CreateNewRepositoryRequest;
+
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Validator;
+use Exception;
 
 class AppActions
 {
@@ -47,7 +56,7 @@ class AppActions
             $data = [];
             parse_str($response->body(), $data);
             $accessToken = $data['access_token'];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             logger('[ERROR] Failed to fetch GitHub access token: ' . $e->getMessage(), [
                 'stack_trace' => $e->getTraceAsString()
             ]);
@@ -122,7 +131,7 @@ class AppActions
 
                 $githubUser = $fullNameParts[2];
                 $repository = $fullNameParts[3];
-    
+
                 return redirect(route('repositories.show', [
                     'githubUser' => $githubUser,
                     'repository' => $repository,
@@ -130,7 +139,7 @@ class AppActions
             }
 
             return redirect(route('discover.issues'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             logger('[ERROR] Transaction failed: ' . $e->getMessage(), [
                 'stack_trace' => $e->getTraceAsString()
@@ -157,7 +166,7 @@ class AppActions
             }
 
             DB::commit();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             logger('[ERROR] Transaction failed', [
                 'error' => $e->getMessage(),
@@ -211,7 +220,7 @@ class AppActions
             ProcessPayment::processDonations($issue, $dbUser);
         } else {
             logger('[WARNING] No user with the following GitHub id is connected to our app', ['id' => $user['id']]);
-            // TODO: Send email to notify the user to register to OpenPledge & connect with Stripe to claim the reward
+            // TODO: What to do here? We can't send email to the user to register to OpenPledge & connect with Stripe to claim the reward because the email is not publicly available
         }
     }
 
@@ -254,18 +263,19 @@ class AppActions
 
     private static function handleWebhookIssue($payload, $action)
     {
-        $issueGithubId = $payload['issue']['id'];
+        $githubIssue = $payload['issue'];
+        $issueGithubId = $githubIssue['id'];
         $issue = Issue::where('github_id', $issueGithubId)->first();
         if (!$issue) {
             return;
         }
         $issue->state = $action === "closed" ? "closed" : "open";
-        $issue->title = $payload['issue']['title'];
-        $issue->description = $payload['issue']['body'];
+        $issue->title = $githubIssue['title'];
+        $issue->description = $githubIssue['body'];
         $issue->labels()->delete();
 
         $allowedLabels = Label::$allowedLabels;
-        $labels = $payload['issue']['labels'];
+        $labels = $githubIssue['labels'];
 
         foreach ($labels as $label) {
             if (in_array(strtolower($label['name']), $allowedLabels)) {
@@ -276,5 +286,48 @@ class AppActions
         }
 
         $issue->save();
+
+        $isIssueWithDonations = $issue->donations->isNotEmpty();
+
+        if ($action === "closed" && $isIssueWithDonations) {
+            self::handleWebhookIssueClosed($payload, $issue, $githubIssue['number']);
+        }
+    }
+
+    private static function handleWebhookIssueClosed($payload, $issue, $githubIssueNumber)
+    {
+        $repository = $payload['repository'];
+        $repositoryOwner = $repository['owner']['login'];
+        $repositoryName = $repository['name'];
+
+        $connectedPullRequestsResponse = GithubService::getConnectedPullRequests($repositoryOwner, $repositoryName, $githubIssueNumber);
+
+        if ($connectedPullRequestsResponse) {
+            $mergedPullRequest = collect($connectedPullRequestsResponse['data']['repository']['issue']['timelineItems']['nodes'])
+                ->first(function ($item) {
+                    return $item['subject']['state'] === 'MERGED' || $item['source']['state'] === 'MERGED';
+                });
+
+            if ($mergedPullRequest) {
+                $mergedPullRequestNumber = $mergedPullRequest['subject']['number'];
+                $mergedPullRequestData = GithubService::getPullRequestData($repositoryOwner, $repositoryName, $mergedPullRequestNumber);
+
+                $resolverGithubId = $mergedPullRequestData['user']['id'];
+
+                $issue->resolver_github_id = $resolverGithubId;
+                $issue->resolved_at = Carbon::parse($mergedPullRequestData['merged_at'])
+                    ->setTimezone(config('app.timezone'));
+                $issue->save();
+
+                $dbUser = User::where('github_id', $resolverGithubId)->first();
+
+                if ($dbUser) {
+                    ProcessPayment::processDonations($issue, $dbUser);
+                } else {
+                    logger('[WARNING] No user with the following GitHub id is connected to our app', ['id' => $resolverGithubId]);
+                    // TODO: What to do here? We can't send email to the user to register to OpenPledge & connect with Stripe to claim the reward because the email is not publicly available
+                }
+            }
+        }
     }
 }
