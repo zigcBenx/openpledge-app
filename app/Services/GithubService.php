@@ -1,15 +1,25 @@
 <?php
 
 namespace App\Services;
-use App\Actions\Github\AppActions;
-use App\Actions\Github\AuthActions;
-use App\Actions\Github\IssueActions;
-use App\Actions\Github\RepositoryActions;
-use App\Actions\Github\UserActions;
+
+use App\Actions\Github\{
+    AppActions,
+    AuthActions,
+    GraphQLActions,
+    IssueActions,
+    PullRequestActions,
+    RepositoryActions,
+    UserActions
+};
 
 class GithubService
 {
-    const BASE_URL = 'https://api.github.com';
+    public const BASE_URL = 'https://api.github.com';
+
+    public static function executeGraphQLQuery($accessToken, $query, $variables)
+    {
+        return GraphQLActions::executeQuery($accessToken, $query, $variables);
+    }
 
     public static function getRepositoryByName($githubUser, $repositoryName)
     {
@@ -74,5 +84,15 @@ class GithubService
     public static function getIssuesBySearchQuery($searchQuery, $resultsToFetch, $localResults)
     {
         return IssueActions::getBySearchQuery($searchQuery, $resultsToFetch, $localResults);
+    }
+
+    public static function getPullRequestData($repositoryOwner, $repositoryName, $pullRequestNumber)
+    {
+        return PullRequestActions::getPullRequestData($repositoryOwner, $repositoryName, $pullRequestNumber);
+    }
+
+    public static function getConnectedPullRequests($repositoryOwner, $repositoryName, $githubIssueNumber)
+    {
+        return PullRequestActions::getConnectedPullRequests($repositoryOwner, $repositoryName, $githubIssueNumber);
     }
 }

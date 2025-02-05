@@ -53,14 +53,16 @@ class IssueActions
             }
 
             if (isset($resolver) && isset($resolvedAt)) {
-                $activities = array_merge($activities, [[
-                    'actor' => [
-                        'avatar_url' => $resolver['avatar_url'],
-                        'login' => $resolver['login'],
-                    ],
-                    'event' => 'resolved',
-                    'created_at' => $resolvedAt,
-                ]]);
+                $activities = array_merge($activities, [
+                    [
+                        'actor' => [
+                            'avatar_url' => $resolver['avatar_url'],
+                            'login' => $resolver['login'],
+                        ],
+                        'event' => 'resolved',
+                        'created_at' => $resolvedAt,
+                    ]
+                ]);
             }
 
             // Get the latest activities first

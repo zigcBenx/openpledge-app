@@ -96,6 +96,15 @@ For example of "issues":
 
 As you will find out, we are not consistent on using Options or Composition API in Vue components. This is because of my habbit of using options API and Jetstream came with Composition API presets...
 
+### GitHub API Integration
+
+This project interacts with GitHub through two primary APIs:
+
+- #### GraphQL API
+    - Documentation: [GitHub GraphQL API](https://docs.github.com/en/graphql)
+
+- #### REST API
+    - Documentation: [GitHub REST API](https://docs.github.com/en/rest)
 
 ### GitHub Application
 This project also includes a [GitHub Application](https://github.com/apps/openpledge-io), which we use to receive webhook payloads from installed repositories events (e.g. Pull Request is merged, Issue is closed, ...).

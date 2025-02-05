@@ -15,6 +15,7 @@ use App\Actions\Email\SendNewPledgeMail;
 use Stripe\Exception\ApiErrorException;
 use App\Services\GithubService;
 use App\Actions\Email\SendIssueResolverMail;
+use App\Actions\Email\SendNotifyPledgersMail;
 use App\Models\Donation;
 use Carbon\Carbon;
 
@@ -69,7 +70,7 @@ class ProcessPayment
         })->get();
 
         GithubService::commentOnIssue($installationId, $owner, $repo, $issueNumber, $comment);
-        SendNewPledgeMail::send($donorEmail, $donorName, $issueId, $amount, $usersWithActiveIssue);
+        SendNewPledgeMail::send($donorEmail, Auth::user()->name ?? "Anonymous Pledger", $issueId, $amount, $usersWithActiveIssue);
 
         return new JsonResponse(['success' => true]);
     }
@@ -83,6 +84,7 @@ class ProcessPayment
                     ->orWhere('expire_date', '>', $today);
             })
             ->where('paid', false)
+            ->with('user')
             ->get();
 
         if ($donations->isEmpty()) {
@@ -143,5 +145,9 @@ class ProcessPayment
         })->where('email', '!=', $resolverMail)->get();
 
         SendIssueResolverMail::send($resolverMail, $dbUser->name, $issue->id, $usersWithActiveIssue); // Send emails to all resolvers during beta, regardless of Stripe connection
+
+        // Send emails to users that pledged to this issue notifying them that the issue has been resolved
+        $pledgers = $donations->pluck('user')->filter()->values()->toArray();
+        SendNotifyPledgersMail::send($pledgers, $issue->id);
     }
 }
