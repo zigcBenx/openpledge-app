@@ -13,7 +13,7 @@ class SearchController extends Controller
     {
         $searchQuery = $request->input('query');
         $isAuthenticated = Auth::check();
-        $includeGitHubResults = $isAuthenticated || filter_var($request->input('includeGitHub'), FILTER_VALIDATE_BOOLEAN);
+        $includeGitHubResults = $isAuthenticated && filter_var($request->input('includeGitHub'), FILTER_VALIDATE_BOOLEAN);
         $totalResultsLimit = 5;
 
         $repositoryResults = SearchRepositories::search($totalResultsLimit, $searchQuery, $includeGitHubResults);

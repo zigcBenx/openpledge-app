@@ -1,0 +1,30 @@
+query GetConnectedPullRequests($repoOwner: String!, $repoName: String!, $issueNumber: Int!) {
+    repository(owner: $repoOwner, name: $repoName) {
+        issue(number: $issueNumber) {
+            timelineItems(first: 100, itemTypes: [CONNECTED_EVENT, CROSS_REFERENCED_EVENT]) {
+                nodes {
+                    ... on ConnectedEvent {
+                        subject {
+                            ... on PullRequest {
+                                title
+                                number
+                                url
+                                state
+                            }
+                        }
+                    }
+                    ... on CrossReferencedEvent {
+                        source {
+                            ... on PullRequest {
+                                title
+                                number
+                                url
+                                state
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
