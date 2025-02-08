@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\DonationCreatedEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,6 +22,10 @@ class Donation extends Model
         'refund_transaction_id',
         'payout_transaction_id',
         'charge_id'
+    ];
+
+    protected $dispatchesEvents = [
+        'created'  => DonationCreatedEvent::class
     ];
 
     public function user(): BelongsTo
