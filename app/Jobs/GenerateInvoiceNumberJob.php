@@ -18,19 +18,19 @@ class GenerateInvoiceNumberJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private $donation;
+    private $invoiceData;
     /**
      * Create a new job instance.
      */
-    public function __construct($donation)
+    public function __construct($invoiceData)
     {
-        $this->donation = $donation;
+        $this->invoiceData = $invoiceData;
     }
 
     /**
      * Execute the job.
      */
-    public function handle(): void
+    public function handle(): Invoice
     {
         try {
             $invoiceNumber = $this->generateInvoiceNumber();
@@ -45,6 +45,7 @@ class GenerateInvoiceNumberJob implements ShouldQueue
                 'exception' => $e
             ]);
         }
+        return $invoice;
     }
 
     private function generateInvoiceNumber(): string
@@ -56,7 +57,7 @@ class GenerateInvoiceNumberJob implements ShouldQueue
     {
         return Pdf::loadView('invoices.invoice_pledge', [
             'invoice_number' => $invoiceNumber,
-            'donation' => $this->donation,
+            'invoice_data' => $this->invoiceData,
         ])->setPaper('a4')->setOptions([
             'defaultFont' => 'dejavusans',
             'isHtml5ParserEnabled' => true,
@@ -76,7 +77,7 @@ class GenerateInvoiceNumberJob implements ShouldQueue
     {
         return Invoice::create([
             'number' => $invoiceNumber,
-            'donation_id' => $this->donation->id,
+            'donation_id' => $this->invoiceData['invoice']['donation_id'],
             'pdf_path' => $pdfPath,
         ]);
     }

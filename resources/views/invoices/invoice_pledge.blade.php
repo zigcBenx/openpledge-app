@@ -10,7 +10,7 @@
         .header { text-align: left; display: flex; justify-content: space-between; align-items: center; }
         .header img { max-width: 140px; }
         .company-details { font-size: 12px; color: #555; }
-        .invoice-title { font-size: 24px; font-weight: bold; text-align: right; }
+        .invoice-title { font-size: 20px; font-weight: bold; }
         .invoice-details, .donation-details { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
         .invoice-details td, .donation-details td { padding: 8px; border: 1px solid #ddd; }
         .invoice-details td:first-child, .donation-details td:first-child { font-weight: bold; }
@@ -26,30 +26,47 @@
             <!-- Header -->
             <div class="header">
                 <img src="https://app.openpledge.io/images/logo.png" alt="OpenPledge Logo">
-                <div class="invoice-title">INVOICE</div>
             </div>
 
             <!-- Company Details -->
-            <div class="company-details">
+            <!-- <div class="company-details">
                 <strong>Open Pledge j.d.o.o.</strong><br>
                 Radnička cesta 20, Zagreb 10000, Croatia<br>
-            </div>
+            </div> -->
 
             <!-- Invoice Details -->
-            <table class="invoice-details">
+             <table style="width: 100%; margin-bottom: 100px;">
                 <tr>
-                    <td>Invoice #:</td>
-                    <td>{{ $invoice_number }}</td>
-                    <td>Invoice Date:</td>
-                    <td>{{ now()->format('Y-m-d') }}</td>
+                    <td>
+                        <p>{{ $invoice_data['customer']['name'] }}</p>
+                        <p>{{ $invoice_data['customer']['email'] }}</p>
+                    </td>
+                    <td>
+                        <table style="width: 100%">
+                            <tr>
+                                <td><div class="invoice-title">INVOICE</div></td>
+                                <td>{{ $invoice_number }}</td>
+                            </tr>
+                            <tr>
+                                <td>Invoice Date:</td>
+                                <td>{{ $invoice_data['invoice']['invoice_date'] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Payment Date:</td>
+                                <td>{{ $invoice_data['invoice']['payment_date'] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Service Date:</td>
+                                <td>{{ $invoice_data['invoice']['service_date'] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Payment Method:</td>
+                                <td>{{ $invoice_data['invoice']['payment_method'] }}</td>
+                            </tr>
+                        </table>
+                    </td>
                 </tr>
-                <tr>
-                    <td>Payment Method:</td>
-                    <td>Online (Stripe)</td>
-                    <td>Payment Date:</td>
-                    <td>{{ $donation->created_at->format('Y-m-d') }}</td>
-                </tr>
-            </table>
+             </table>
 
             <!-- Invoice Items -->
             <table class="donation-details">
@@ -59,19 +76,21 @@
                     <th>Price/Unit</th>
                     <th>Total (without VAT)</th>
                 </tr>
+                @foreach($invoice_data['items'] as $item)
                 <tr>
-                    <td>Donation to OpenPledge</td>
-                    <td>1</td>
-                    <td>€{{ number_format($donation->amount, 2) }}</td>
-                    <td>€{{ number_format($donation->amount, 2) }}</td>
+                    <td>{{ $item['name'] }}</td>
+                    <td>{{ $item['quantity'] }}</td>
+                    <td>{{ $item['currency'] }}{{ number_format($item['price_per_unit'], 2) }}</td>
+                    <td>{{ $item['currency'] }}{{ number_format($item['item_total'], 2) }}</td>
                 </tr>
+                @endforeach
             </table>
 
             <!-- Total Section -->
             <div class="total">
-                Total (without VAT): €{{ number_format($donation->amount, 2) }}<br>
-                0% VAT: €0.00<br>
-                <strong>Invoice TOTAL: €{{ number_format($donation->amount, 2) }}</strong>
+                Total (without VAT): {{ $item['currency'] }}{{ number_format($invoice_data['invoice']['total'], 2) }}<br>
+                {{ $invoice_data['invoice']['vat'] }}% VAT: {{ $item['currency'] }}{{ $invoice_data['invoice']['vat_value'] }}<br>
+                <strong>Invoice TOTAL: {{ $item['currency'] }}{{ number_format($invoice_data['invoice']['total_vat'], 2) }}</strong>
             </div>
 
             <div>
