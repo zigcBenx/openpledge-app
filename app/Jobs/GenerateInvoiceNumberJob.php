@@ -34,8 +34,8 @@ class GenerateInvoiceNumberJob implements ShouldQueue
     {
         $invoiceNumber = $this->generateInvoiceNumber();
         $pdf = $this->generateInvoicePdf($invoiceNumber);
-        $pdfPath = $this->storePdf($pdf, $invoiceNumber);
-        $invoice = $this->saveInvoiceRecord($invoiceNumber, $pdfPath);
+        list($pdfPath, $urlPath) = $this->storePdf($pdf, $invoiceNumber);
+        $invoice = $this->saveInvoiceRecord($invoiceNumber, $urlPath);
         $this->sendInvoiceMail($pdfPath, $invoice);
 
         logger()->info("Invoice PDF generated successfully: {$invoiceNumber}");
@@ -60,11 +60,11 @@ class GenerateInvoiceNumberJob implements ShouldQueue
         ]);
     }
 
-    private function storePdf(\Barryvdh\DomPDF\PDF $pdf, string $invoiceNumber): string
+    private function storePdf(\Barryvdh\DomPDF\PDF $pdf, string $invoiceNumber): array
     {
         $pdfPath = "invoices/{$invoiceNumber}.pdf";
         Storage::put($pdfPath, $pdf->output());
-        return $pdfPath;
+        return [$pdfPath, Storage::url($pdfPath)];
     }
 
     private function saveInvoiceRecord(string $invoiceNumber, string $pdfPath): Invoice

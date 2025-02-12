@@ -33,7 +33,7 @@
 
             <div class="mb-4">
                 <label class="block mb-1">VAT</label>
-                <input v-model="form.invoice.vat" type="text" class="w-full p-2 bg-gray-700 border border-gray-600 rounded">
+                <input v-model="form.invoice.vat" type="number" class="w-full p-2 bg-gray-700 border border-gray-600 rounded">
             </div>
 
             <div class="mb-4">
@@ -54,8 +54,10 @@
 </template>
 
 <script setup>
+import { watch } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { addDays, endOfMonth, format, subMonths } from 'date-fns';
 
 
 const form = useForm({
@@ -89,4 +91,21 @@ const removeItem = (index) => {
 const submit = () => {
     form.post(route('invoices.store'));
 };
+
+watch(() => form.invoice.invoice_date, (newDate) => {
+  if (newDate) {
+    // Apply +10 days to payment_date if it's null
+    if (!form.invoice.payment_date) {
+      const invoiceDate = new Date(newDate)
+      form.invoice.payment_date = format(addDays(invoiceDate, 10), 'yyyy-MM-dd')
+    }
+
+    // Apply last day of previous month to service_date if it's null
+    if (!form.invoice.service_date) {
+      const invoiceDate = new Date(newDate)
+      const prevMonthLastDay = endOfMonth(subMonths(invoiceDate, 1))
+      form.invoice.service_date = format(prevMonthLastDay, 'yyyy-MM-dd')
+    }
+  }
+})
 </script>

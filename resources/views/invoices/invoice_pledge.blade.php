@@ -35,10 +35,11 @@
             </div> -->
 
             <!-- Invoice Details -->
-             <table style="width: 100%; margin-bottom: 100px;">
+             <table style="width: 100%; margin-bottom: 50px;">
                 <tr>
                     <td style="width: 50%">
-                        <p>{{ $invoice_data['customer']['name'] }}</p>
+                        <br>
+                        <p>{!! nl2br(e($invoice_data['customer']['name'])) !!}</p>
                         <p>{{ $invoice_data['customer']['email'] }}</p>
                     </td>
                     <td style="width: 50%">
