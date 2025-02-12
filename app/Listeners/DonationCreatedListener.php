@@ -36,19 +36,18 @@ class DonationCreatedListener implements ShouldQueue
                     'price_per_unit' => $event->donation->amount,
                     'quantity' => 1,
                     'currency' => '€',
-                    'item_total' => $event->donation->amount,
                 ]
             ],
             'invoice' => [
-                'invoice_date' => now()->format('d.m.Y'),
-                'payment_date' => $event->donation->created_at->format('d.m.Y'),
-                'service_date' => $event->donation->created_at->format('F Y'),
+                'invoice_date' => now(),
+                'payment_date' => $event->donation->created_at,
+                'service_date' => $event->donation->created_at,
                 'donation_id' => $event->donation->id,
                 'vat' => 0,
                 'vat_value' => 0,
                 'total' => $event->donation->amount,
                 'total_vat' => $event->donation->amount,
-                'payment_method' => 'Online (Stripe)',
+                'payment_method' => 'Online (Stripe)'
             ]
         ];
         dispatch(new GenerateInvoiceNumberJob($invoiceData));

@@ -3,18 +3,91 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\GenerateInvoiceNumberJob;
+use App\Models\Invoice;
+use Inertia\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class InvoiceController extends Controller
 {
-    public function generate(Request $request)
+    public function index(): Response
     {
-        $invoiceData = [];
+        if (!Auth::user()->hasRole('admin')) {
+            abort(403, 'Unauthorized');
+        }
+
+        return Inertia::render('Invoices/Index', [
+            'invoices' => Invoice::with('donation')->latest()->paginate(10)
+        ]);
+    }
+
+    public function create(): Response
+    {
+        if (!Auth::user()->hasRole('admin')) {
+            abort(403, 'Unauthorized');
+        }
+        return Inertia::render('Invoices/Create');
+    }
+
+    public function store(Request $request)
+    {
+        if (!Auth::user()->hasRole('admin')) {
+            abort(403, 'Unauthorized');
+        }
+
+        $invoiceData = $request->all();
+        $total = $this->calculateTotal($invoiceData['items']);
+        $vatValue = $this->getVatValue($total, $invoiceData['invoice']['vat']);
+        $invoiceData['invoice']['vat_value'] = $vatValue;
+        $invoiceData['invoice']['total'] = $total;
+        $invoiceData['invoice']['total_vat'] = $total + $vatValue;
         $invoice = dispatch_sync(new GenerateInvoiceNumberJob($invoiceData));
 
-        return response()->json([
-            'invoice' => $invoice,
-            'message' => 'Invoice generated successfully'
+        return redirect()->route('invoices.index');
+    }
+
+    private function calculateTotal($items) {
+        $total = 0;
+        foreach ($items as $item) {
+            $total += $item['price_per_unit'] * $item['quantity'];
+        }
+        return $total;
+    }
+    private function getVatValue($total, $vat) {
+        return $total * $vat / 100;
+    }
+
+    public function edit(Invoice $invoice): Response
+    {
+        if (!Auth::user()->hasRole('admin')) {
+            abort(403, 'Unauthorized');
+        }
+        return Inertia::render('Invoices/Edit', compact('invoice'));
+    }
+
+    public function update(Request $request, Invoice $invoice)
+    {
+        if (!Auth::user()->hasRole('admin')) {
+            abort(403, 'Unauthorized');
+        }
+        $request->validate([
+            'number' => 'required|unique:invoices,number,' . $invoice->id,
+            'amount' => 'required|numeric',
         ]);
+
+        $invoice->update($request->all());
+
+        return redirect()->route('invoices.index');
+    }
+
+    public function destroy(Invoice $invoice)
+    {
+        if (!Auth::user()->hasRole('admin')) {
+            abort(403, 'Unauthorized');
+        }
+        $invoice->delete();
+
+        return redirect()->route('invoices.index');
     }
 }

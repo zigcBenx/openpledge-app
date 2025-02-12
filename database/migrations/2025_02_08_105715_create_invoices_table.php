@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('number')->unique();
             $table->string('pdf_path');
             $table->foreignId('donation_id')
+                ->nullable()
                 ->constrained('donations')
                 ->onDelete('cascade');
                 

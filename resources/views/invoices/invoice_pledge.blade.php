@@ -12,7 +12,7 @@
         .company-details { font-size: 12px; color: #555; }
         .invoice-title { font-size: 20px; font-weight: bold; }
         .invoice-details, .donation-details { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        .invoice-details td, .donation-details td { padding: 8px; border: 1px solid #ddd; }
+        .invoice-details td, .donation-details td { padding: 2px; border: 1px solid #ddd; }
         .invoice-details td:first-child, .donation-details td:first-child { font-weight: bold; }
         .total { font-size: 16px; font-weight: bold; text-align: right; margin-top: 10px; }
         .footer { text-align: center; font-size: 12px; margin-top: 20px; color: #777; }
@@ -37,11 +37,11 @@
             <!-- Invoice Details -->
              <table style="width: 100%; margin-bottom: 100px;">
                 <tr>
-                    <td>
+                    <td style="width: 50%">
                         <p>{{ $invoice_data['customer']['name'] }}</p>
                         <p>{{ $invoice_data['customer']['email'] }}</p>
                     </td>
-                    <td>
+                    <td style="width: 50%">
                         <table style="width: 100%">
                             <tr>
                                 <td><div class="invoice-title">INVOICE</div></td>
@@ -49,15 +49,15 @@
                             </tr>
                             <tr>
                                 <td>Invoice Date:</td>
-                                <td>{{ $invoice_data['invoice']['invoice_date'] }}</td>
+                                <td>{{ \Carbon\Carbon::parse($invoice_data['invoice']['invoice_date'])->format('d.m.Y') }}</td>
                             </tr>
                             <tr>
                                 <td>Payment Date:</td>
-                                <td>{{ $invoice_data['invoice']['payment_date'] }}</td>
+                                <td>{{ \Carbon\Carbon::parse($invoice_data['invoice']['payment_date'])->format('d.m.Y') }}</td>
                             </tr>
                             <tr>
                                 <td>Service Date:</td>
-                                <td>{{ $invoice_data['invoice']['service_date'] }}</td>
+                                <td>{{ \Carbon\Carbon::parse($invoice_data['invoice']['service_date'])->format('F Y') }}</td>
                             </tr>
                             <tr>
                                 <td>Payment Method:</td>
@@ -81,7 +81,7 @@
                     <td>{{ $item['name'] }}</td>
                     <td>{{ $item['quantity'] }}</td>
                     <td>{{ $item['currency'] }}{{ number_format($item['price_per_unit'], 2) }}</td>
-                    <td>{{ $item['currency'] }}{{ number_format($item['item_total'], 2) }}</td>
+                    <td>{{ $item['currency'] }}{{ number_format($item['price_per_unit'], 2) * $item['quantity'] }}</td>
                 </tr>
                 @endforeach
             </table>

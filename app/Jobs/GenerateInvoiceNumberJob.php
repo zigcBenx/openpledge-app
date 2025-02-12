@@ -32,19 +32,13 @@ class GenerateInvoiceNumberJob implements ShouldQueue
      */
     public function handle(): Invoice
     {
-        try {
-            $invoiceNumber = $this->generateInvoiceNumber();
-            $pdf = $this->generateInvoicePdf($invoiceNumber);
-            $pdfPath = $this->storePdf($pdf, $invoiceNumber);
-            $invoice = $this->saveInvoiceRecord($invoiceNumber, $pdfPath);
-            $this->sendInvoiceMail($pdfPath, $invoice);
+        $invoiceNumber = $this->generateInvoiceNumber();
+        $pdf = $this->generateInvoicePdf($invoiceNumber);
+        $pdfPath = $this->storePdf($pdf, $invoiceNumber);
+        $invoice = $this->saveInvoiceRecord($invoiceNumber, $pdfPath);
+        $this->sendInvoiceMail($pdfPath, $invoice);
 
-            logger()->info("Invoice PDF generated successfully: {$invoiceNumber}");
-        } catch (\Exception $e) {
-            logger()->error("Failed to generate PDF invoice: {$e->getMessage()}", [
-                'exception' => $e
-            ]);
-        }
+        logger()->info("Invoice PDF generated successfully: {$invoiceNumber}");
         return $invoice;
     }
 
@@ -77,8 +71,17 @@ class GenerateInvoiceNumberJob implements ShouldQueue
     {
         return Invoice::create([
             'number' => $invoiceNumber,
-            'donation_id' => $this->invoiceData['invoice']['donation_id'],
+            'donation_id' => $this->invoiceData['invoice']['donation_id'] ?? null,
             'pdf_path' => $pdfPath,
+            'customer' => $this->invoiceData['customer']['name'],
+            'email' => $this->invoiceData['customer']['email'],
+            'invoice_date' => $this->invoiceData['invoice']['invoice_date'],
+            'payment_date' => $this->invoiceData['invoice']['payment_date'],
+            'service_date' => $this->invoiceData['invoice']['service_date'],
+            'payment_method' => $this->invoiceData['invoice']['payment_method'],
+            'vat' => $this->invoiceData['invoice']['vat'],
+            'items' => json_encode($this->invoiceData['items']),
+            'total' => $this->invoiceData['invoice']['total']
         ]);
     }
 
@@ -86,6 +89,9 @@ class GenerateInvoiceNumberJob implements ShouldQueue
     {
         // Retrieve donor's email
         $invoice->load('donation.user');
+        
+        if (!$invoice->donation) return; // TODO: mkae optional from ui
+
         $donorEmail = $invoice->donation->user->email ?? null;
 
         if ($donorEmail) {

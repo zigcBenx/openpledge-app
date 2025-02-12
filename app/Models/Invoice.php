@@ -9,7 +9,7 @@ class Invoice extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['number', 'donation_id', 'pdf_path'];
+    protected $fillable = ['number', 'donation_id', 'pdf_path', 'customer', 'email', 'invoice_date', 'payment_date', 'service_date', 'payment_method', 'vat', 'items', 'total'];
 
     public static function generateInvoiceNumber()
     {
