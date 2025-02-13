@@ -75,11 +75,11 @@ const closeModal = () => {
             <div v-if="showModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
                 <div class="bg-white p-6 rounded-lg w-full max-w-4xl">
                     <div class="flex justify-between items-center">
-                        <h2 class="text-xl font-semibold">Invoice PDF</h2>
+                        <h2 class="text-xl font-semibold text-black">Invoice PDF</h2>
                         <button @click="closeModal" class="text-gray-500 hover:text-gray-700">&times;</button>
                     </div>
                     <div class="mt-4">
-                        <iframe :src="pdfUrl" class="w-full h-96" frameborder="0"></iframe>
+                        <iframe :src="pdfUrl" class="w-full h-[80vh]" frameborder="0"></iframe>
                     </div>
                 </div>
             </div>

@@ -74,7 +74,7 @@ class GenerateInvoiceNumberJob implements ShouldQueue
             'donation_id' => $this->invoiceData['invoice']['donation_id'] ?? null,
             'pdf_path' => $pdfPath,
             'customer' => $this->invoiceData['customer']['name'],
-            'email' => $this->invoiceData['customer']['email'],
+            'email' => $this->invoiceData['customer']['email'] ?? '',
             'invoice_date' => $this->invoiceData['invoice']['invoice_date'],
             'payment_date' => $this->invoiceData['invoice']['payment_date'],
             'service_date' => $this->invoiceData['invoice']['service_date'],

@@ -15,6 +15,7 @@
         .invoice-details td, .donation-details td { padding: 2px; border: 1px solid #ddd; }
         .invoice-details td:first-child, .donation-details td:first-child { font-weight: bold; }
         .total { font-size: 16px; font-weight: bold; text-align: right; margin-top: 10px; }
+        .additional-ino { font-size: 12px; margin-top: 20px; color: #777; }
         .footer { text-align: center; font-size: 12px; margin-top: 20px; color: #777; }
         .stamp { position: absolute; bottom: 20px; right: 20px; max-width: 120px; opacity: 0.8; }
     </style>
@@ -40,7 +41,9 @@
                     <td style="width: 50%">
                         <br>
                         <p>{!! nl2br(e($invoice_data['customer']['name'])) !!}</p>
-                        <p>{{ $invoice_data['customer']['email'] }}</p>
+                        @if(isset($invoice_data['customer']['email']))
+                            <p>{{ $invoice_data['customer']['email'] }}</p>
+                        @endif
                     </td>
                     <td style="width: 50%">
                         <table style="width: 100%">
@@ -94,16 +97,21 @@
                 <strong>Invoice TOTAL: {{ $item['currency'] }}{{ number_format($invoice_data['invoice']['total_vat'], 2) }}</strong>
             </div>
 
+            <div class="additional-ino">
+                @if($invoice_data['invoice']['status'] !== "Paid")
+                    <p>When paying, please refer to the invoice number: {{ $invoice_number }}</p>
+                @endif
+                <p>
+                    Payment information - IBAN: HR54 24020061101195436 (Erste&Steiermärkische Bank d.d.)<br>
+                    VAT: Oslobođeno PDV a prema čl. 40. st. 1. t. b. Zakona o PDV u
+                </p>
+            </div>
+
             <div>
                 <p>Invoice created by:</p>
                 <p>Neja Gozdnikar Benko</p>
             </div>
 
-            <!-- Footer -->
-            <div class="footer">
-                Thank you for supporting open source development!<br>
-                This document serves as an official receipt for your donation.
-            </div>
             <hr style="color:#87f5dd; margin-top:100px;">
             <div class="footer">
                 OPEN PLEDGE j.d.o.o, registered at Commercial Court in Zagreb <br>

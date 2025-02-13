@@ -42,6 +42,7 @@ class InvoiceController extends Controller
         $invoiceData['invoice']['vat_value'] = $vatValue;
         $invoiceData['invoice']['total'] = $total;
         $invoiceData['invoice']['total_vat'] = $total + $vatValue;
+        $invoiceData['invoice']['status'] = 'NotPaid';
         $invoice = dispatch_sync(new GenerateInvoiceNumberJob($invoiceData));
 
         return redirect()->route('invoices.index');

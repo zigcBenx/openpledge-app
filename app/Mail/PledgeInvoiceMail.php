@@ -21,8 +21,6 @@ class PledgeInvoiceMail extends Mailable
 
     public function build()
     {
-        logger('TOLE:');
-        logger($this->pdfPath);
         return $this->subject('Your Donation Invoice')
                     ->with([
                         'invoice' => $this->invoice

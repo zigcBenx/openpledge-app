@@ -5,10 +5,6 @@
                 <label class="block mb-1">Customer</label>
                 <textarea v-model="form.customer.name" type="text" class="w-full p-2 bg-gray-700 border border-gray-600 rounded">
                 </textarea>
-                <div>
-                    <label class="block mb-1">Email</label>
-                    <input v-model="form.customer.email" type="text" class="w-full p-2 bg-gray-700 border border-gray-600 rounded">
-                </div>
             </div>
 
             <div class="grid grid-cols-3 gap-4">
@@ -63,7 +59,6 @@ import { addDays, endOfMonth, format, subMonths } from 'date-fns';
 const form = useForm({
     customer: {
         name: '',
-        email: '',
     },
     invoice: {
         invoice_date: '',
