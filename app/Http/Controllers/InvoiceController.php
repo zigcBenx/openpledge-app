@@ -58,37 +58,4 @@ class InvoiceController extends Controller
     private function getVatValue($total, $vat) {
         return $total * $vat / 100;
     }
-
-    public function edit(Invoice $invoice): Response
-    {
-        if (!Auth::user()->hasRole('admin')) {
-            abort(403, 'Unauthorized');
-        }
-        return Inertia::render('Invoices/Edit', compact('invoice'));
-    }
-
-    public function update(Request $request, Invoice $invoice)
-    {
-        if (!Auth::user()->hasRole('admin')) {
-            abort(403, 'Unauthorized');
-        }
-        $request->validate([
-            'number' => 'required|unique:invoices,number,' . $invoice->id,
-            'amount' => 'required|numeric',
-        ]);
-
-        $invoice->update($request->all());
-
-        return redirect()->route('invoices.index');
-    }
-
-    public function destroy(Invoice $invoice)
-    {
-        if (!Auth::user()->hasRole('admin')) {
-            abort(403, 'Unauthorized');
-        }
-        $invoice->delete();
-
-        return redirect()->route('invoices.index');
-    }
 }

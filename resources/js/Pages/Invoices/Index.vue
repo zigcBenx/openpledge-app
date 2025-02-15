@@ -10,12 +10,6 @@ defineProps({ invoices: Object });
 const showModal = ref(false);
 const pdfUrl = ref(null);
 
-const deleteInvoice = (id) => {
-    if (confirm('Are you sure?')) {
-        router.delete(route('invoices.destroy', id));
-    }
-};
-
 const generatePdf = (id) => {
     router.post(route('invoices.generatePdf', id));
 };
@@ -45,7 +39,6 @@ const closeModal = () => {
                         <th class="border p-2">Amount</th>
                         <th class="border p-2">Created At</th>
                         <th class="border p-2">PDF</th>
-                        <th class="border p-2">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -55,15 +48,6 @@ const closeModal = () => {
                         <td class="border p-2">{{ new Date(invoice.created_at).toLocaleDateString() }}</td>
                         <td class="border p-2">
                             <a v-if="invoice.pdf_path" @click.prevent="openPdfModal(invoice.pdf_path)" class="bg-green-500 text-white p-1 rounded cursor-pointer">View PDF</a>
-                        </td>
-                        <td class="border p-2">
-                            <template v-if="invoice.donation_id === null">
-                                <button @click="router.visit(route('invoices.edit', invoice.id))" class="bg-yellow-500 text-white p-1 rounded">Edit</button>
-                                <button @click="deleteInvoice(invoice.id)" class="bg-red-500 text-white p-1 ml-2 rounded">Delete</button>
-                            </template>
-                            <template v-else>
-                                /
-                            </template>
                         </td>
                     </tr>
                 </tbody>
