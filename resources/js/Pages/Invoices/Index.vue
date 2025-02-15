@@ -25,6 +25,21 @@ const closeModal = () => {
     showModal.value = false;
     pdfUrl.value = null;
 };
+
+const copyInvoice = (invoice) => {
+    // Create a copy of the invoice, excluding the ID to avoid conflicts
+    const copiedInvoice = {
+        ...invoice,
+        id: null, // Ensure that the ID is null for the new invoice
+        number: '', // Optionally, reset the invoice number for the new copy
+    };
+
+    // Redirect to the create page with the copied data
+    router.visit(route('invoices.create'), {
+        method: 'get',
+        data: copiedInvoice
+    });
+};
 </script>
 
 <template>
@@ -37,17 +52,25 @@ const closeModal = () => {
                     <tr class="bg-gray-200 dark:bg-gray-800">
                         <th class="border p-2">Number</th>
                         <th class="border p-2">Amount</th>
-                        <th class="border p-2">Created At</th>
+                        <th class="border p-2">Invoice date</th>
+                        <th class="border p-2">Service date</th>
                         <th class="border p-2">PDF</th>
+                        <th class="border p-2">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="invoice in invoices.data" :key="invoice.id">
                         <td class="border p-2">{{ invoice.number }}</td>
                         <td class="border p-2">${{ invoice.total }}</td>
-                        <td class="border p-2">{{ new Date(invoice.created_at).toLocaleDateString() }}</td>
+                        <td class="border p-2">{{ new Date(invoice.invoice_date).toLocaleDateString() }}</td>
+                        <td class="border p-2">{{ new Date(invoice.service_date).toLocaleDateString() }}</td>
                         <td class="border p-2">
-                            <a v-if="invoice.pdf_path" @click.prevent="openPdfModal(invoice.pdf_path)" class="bg-green-500 text-white p-1 rounded cursor-pointer">View PDF</a>
+                            <a v-if="invoice.pdf_path" @click.prevent="openPdfModal(invoice.pdf_path)" class="bg-green-500 dark:text-white text-black p-1 rounded cursor-pointer">View PDF</a>
+                        </td>
+                        <td class="border p-2">
+                            <button @click="copyInvoice(invoice)" class="text-blue-500 hover:text-blue-700">
+                                <i class="fa fa-copy"></i> Copy
+                            </button>
                         </td>
                     </tr>
                 </tbody>

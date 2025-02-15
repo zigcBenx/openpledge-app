@@ -22,12 +22,17 @@ class InvoiceController extends Controller
         ]);
     }
 
-    public function create(): Response
+    public function create(Request $request): Response
     {
         if (!Auth::user()->hasRole('admin')) {
             abort(403, 'Unauthorized');
         }
-        return Inertia::render('Invoices/Create');
+        // Get the incoming data (if any)
+        $invoiceData = $request->old() ?: $request->all();
+
+        return Inertia::render('Invoices/Create', [
+            'invoice' => $invoiceData,
+        ]);
     }
 
     public function store(Request $request)

@@ -108,15 +108,16 @@
             </div>
 
             <div>
-                <p>Invoice created by:</p>
-                <p>Neja Gozdnikar Benko</p>
+                <p>CEO:<br>
+                Neja Gozdnikar Benko</p>
             </div>
 
             <hr style="color:#87f5dd; margin-top:100px;">
             <div class="footer">
                 OPEN PLEDGE j.d.o.o, registered at Commercial Court in Zagreb <br>
-                Erste&Steiermärkische Bank d.d., IBAN: HR5424020061101195436 <br>
-                VAT Number: HR09487318276, Registration number (MBS): 081519410
+                Erste&Steiermärkische Bank d.d., IBAN: HR5424020061101195436, SWIFT: ESBCHR22 <br>
+                VAT Number: HR09487318276, Registration number (MBS): 081519410 <br>
+                Contact: info@openpledge.io
             </div>
         </div>
     </div>
