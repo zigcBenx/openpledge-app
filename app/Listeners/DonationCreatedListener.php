@@ -47,7 +47,7 @@ class DonationCreatedListener implements ShouldQueue
                 'vat_value' => 0,
                 'total' => $event->donation->amount,
                 'total_vat' => $event->donation->amount,
-                'payment_method' => 'Online (Stripe)',
+                'payment_method' => 'Stripe',
                 'status' => 'Paid',
             ]
         ];

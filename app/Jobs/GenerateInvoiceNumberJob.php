@@ -44,13 +44,15 @@ class GenerateInvoiceNumberJob implements ShouldQueue
 
     private function generateInvoiceNumber(): string
     {
-        return Invoice::generateInvoiceNumber();
+        return Invoice::generateInvoiceNumber($this->invoiceData['invoice'][Invoice::NUMBERING_DATE_COLUMN]);
     }
 
     private function generateInvoicePdf(string $invoiceNumber): \Barryvdh\DomPDF\PDF
     {
+        // we remove year from numbering, because of accounting requirements
+        $invoiceNumberFormatted = explode('-', $invoiceNumber, 2)[1];
         return Pdf::loadView('invoices.invoice_pledge', [
-            'invoice_number' => $invoiceNumber,
+            'invoice_number' => $invoiceNumberFormatted,
             'invoice_data' => $this->invoiceData,
         ])->setPaper('a4')->setOptions([
             'defaultFont' => 'dejavusans',
