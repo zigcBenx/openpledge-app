@@ -29,7 +29,7 @@
             </div>
 
             <div class="mb-4">
-                <label class="block mb-1">VAT</label>
+                <label class="block mb-1">VAT (%)</label>
                 <input v-model="form.invoice.vat" type="number" class="w-full p-2 dark:bg-oil bg-white border border-gray-600 rounded">
             </div>
 
@@ -68,7 +68,7 @@ const form = useForm({
         payment_date: props.invoice?.payment_date || '',
         service_date: props.invoice?.service_date || '',
         payment_method: props.invoice?.payment_method || '',
-        vat: props.invoice?.vat || '',
+        vat: props.invoice?.vat || 0,
     },
     items: props.invoice?.items ? JSON.parse(props.invoice.items) : [{
         name: '',
