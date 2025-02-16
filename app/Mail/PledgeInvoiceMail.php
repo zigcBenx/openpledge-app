@@ -21,7 +21,7 @@ class PledgeInvoiceMail extends Mailable
 
     public function build()
     {
-        return $this->subject('Your Donation Invoice')
+        return $this->subject('Your Pledge Invoice')
                     ->with([
                         'invoice' => $this->invoice
                     ])
