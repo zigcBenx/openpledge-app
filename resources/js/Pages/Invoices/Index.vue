@@ -63,7 +63,7 @@ const copyInvoice = (invoice) => {
                         <td class="border p-2">{{ new Date(invoice.invoice_date).toLocaleDateString() }}</td>
                         <td class="border p-2">{{ new Date(invoice.service_date).toLocaleDateString() }}</td>
                         <td class="border p-2">
-                            <a v-if="invoice.pdf_path" @click.prevent="openPdfModal(invoice.number)" class="bg-green-500 dark:text-white text-black p-1 rounded cursor-pointer">View PDF</a>
+                            <a v-if="invoice.pdf_path" @click.prevent="openPdfModal(invoice.number)" class="bg-green-500 text-blue-500 hover:text-blue-700 p-1 rounded cursor-pointer"><i class="fa fa-eye" /> View PDF</a>
                         </td>
                         <td class="border p-2">
                             <button @click="copyInvoice(invoice)" class="text-blue-500 hover:text-blue-700">
