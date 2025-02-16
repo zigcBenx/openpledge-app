@@ -103,7 +103,7 @@ class GenerateInvoiceNumberJob implements ShouldQueue
         // Retrieve donor's email
         $invoice->load('donation.user');
         
-        if (!$invoice->donation) return; // TODO: mkae optional from ui
+        if (!$invoice->donation) return;
 
         $donorEmail = $invoice->donation->user->email ?? null;
 
