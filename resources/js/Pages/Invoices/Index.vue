@@ -67,7 +67,7 @@ const copyInvoice = (invoice) => {
                         </td>
                         <td class="border p-2">
                             <button @click="copyInvoice(invoice)" class="text-blue-500 hover:text-blue-700">
-                                <i class="fa fa-copy"></i> Copy
+                                <i class="fa fa-copy"></i> Make Copy
                             </button>
                         </td>
                     </tr>
