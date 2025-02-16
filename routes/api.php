@@ -18,8 +18,3 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-
-// This is for generating correct invoice numbers
-// Used for pledges and custom invoices
-// issues by OpenPledge company
-Route::middleware('auth:sanctum')->post('/generate-invoice', [InvoiceController::class, 'generate']);
