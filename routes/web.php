@@ -5,6 +5,7 @@ use App\Http\Controllers\GithubController;
 use App\Http\Controllers\IssueController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\DonationController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
@@ -125,6 +126,12 @@ Route::get('/auth/github', [GithubController::class, 'handleGithubAuthRedirect']
 
 // GitHub App Webhook
 Route::post('/github/webhook', [GithubController::class, 'handleGithubAppWebhook'])->name('github.webhook');
+
+// ADMIN stuff
+Route::get('/invoices/{invoiceNumber}/pdf', [InvoiceController::class, 'viewPdf'])->name('invoices.pdf');
+Route::resource('invoices', InvoiceController::class)->only([
+    'index', 'create', 'store'
+]);
 
 
 }); // END MAINTENANCE MIDDLEWARE GROUP

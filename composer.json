@@ -6,10 +6,11 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "barryvdh/laravel-dompdf": "^3.1",
         "firebase/php-jwt": "^6.10",
         "graham-campbell/github": "^12.3",
         "guzzlehttp/guzzle": "^7.8",
-        "inertiajs/inertia-laravel": "^0.6.8",
+        "inertiajs/inertia-laravel": "^2.0",
         "laravel/cashier": "^15.0",
         "laravel/framework": "^10.10",
         "laravel/jetstream": "^4.1",
