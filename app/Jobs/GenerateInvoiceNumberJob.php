@@ -34,8 +34,8 @@ class GenerateInvoiceNumberJob implements ShouldQueue
     {
         $invoiceNumber = $this->generateInvoiceNumber();
         $pdf = $this->generateInvoicePdf($invoiceNumber);
-        list($pdfPath, $urlPath) = $this->storePdf($pdf, $invoiceNumber);
-        $invoice = $this->saveInvoiceRecord($invoiceNumber, $urlPath);
+        $pdfPath = $this->storePdf($pdf, $invoiceNumber);
+        $invoice = $this->saveInvoiceRecord($invoiceNumber, $pdfPath);
         $this->sendInvoiceMail($pdfPath, $invoice);
 
         logger()->info("Invoice PDF generated successfully: {$invoiceNumber}");
@@ -49,11 +49,15 @@ class GenerateInvoiceNumberJob implements ShouldQueue
 
     private function generateInvoicePdf(string $invoiceNumber): \Barryvdh\DomPDF\PDF
     {
+        $stampSrc = $this->getBase64DataForImage('images/openpledge_stamp.png');
+        $logoSrc = $this->getBase64DataForImage('images/logotip_black.png');
         // we remove year from numbering, because of accounting requirements
         $invoiceNumberFormatted = explode('-', $invoiceNumber, 2)[1];
         return Pdf::loadView('invoices.invoice_pledge', [
             'invoice_number' => $invoiceNumberFormatted,
             'invoice_data' => $this->invoiceData,
+            'stamp' => $stampSrc,
+            'logo' => $logoSrc
         ])->setPaper('a4')->setOptions([
             'defaultFont' => 'dejavusans',
             'isHtml5ParserEnabled' => true,
@@ -62,11 +66,18 @@ class GenerateInvoiceNumberJob implements ShouldQueue
         ]);
     }
 
-    private function storePdf(\Barryvdh\DomPDF\PDF $pdf, string $invoiceNumber): array
+    private function getBase64DataForImage($imagePath): string
+    {
+        $path = public_path($imagePath);
+        $imgData = base64_encode(file_get_contents($path));
+        return 'data:image/png;base64,' . $imgData;
+    }
+
+    private function storePdf(\Barryvdh\DomPDF\PDF $pdf, string $invoiceNumber): string
     {
         $pdfPath = "invoices/{$invoiceNumber}.pdf";
-        Storage::put($pdfPath, $pdf->output());
-        return [$pdfPath, Storage::url($pdfPath)];
+        Storage::disk('private')->put($pdfPath, $pdf->output());
+        return $pdfPath;
     }
 
     private function saveInvoiceRecord(string $invoiceNumber, string $pdfPath): Invoice

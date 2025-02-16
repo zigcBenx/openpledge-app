@@ -128,6 +128,7 @@ Route::get('/auth/github', [GithubController::class, 'handleGithubAuthRedirect']
 Route::post('/github/webhook', [GithubController::class, 'handleGithubAppWebhook'])->name('github.webhook');
 
 // ADMIN stuff
+Route::get('/invoices/{invoiceNumber}/pdf', [InvoiceController::class, 'viewPdf'])->name('invoices.pdf');
 Route::resource('invoices', InvoiceController::class)->only([
     'index', 'create', 'store'
 ]);

@@ -8,7 +8,7 @@
         .invoice-container { width: 100%; display: flex; justify-content: center; padding: 30px 0; }
         .invoice-box { width: 90%; max-width: 700px; padding: 20px; border: 1px solid #ddd; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1); position: relative; }
         .header { text-align: left; display: flex; justify-content: space-between; align-items: center; }
-        .header img { max-width: 140px; }
+        .header img { max-width: 300px; }
         .company-details { font-size: 12px; color: #555; }
         .invoice-title { font-size: 20px; font-weight: bold; }
         .invoice-details, .donation-details { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
@@ -17,7 +17,7 @@
         .total { font-size: 16px; font-weight: bold; text-align: right; margin-top: 10px; }
         .additional-ino { font-size: 12px; margin-top: 20px; color: #777; }
         .footer { text-align: center; font-size: 12px; margin-top: 20px; color: #777; }
-        .stamp { position: absolute; bottom: 20px; right: 20px; max-width: 120px; opacity: 0.8; }
+        .stamp { max-width: 120px; opacity: 0.8; }
     </style>
 </head>
 <body>
@@ -26,7 +26,7 @@
             
             <!-- Header -->
             <div class="header">
-                <img src="https://app.openpledge.io/images/logo.png" alt="OpenPledge Logo">
+                <img src="{{ $logo }}" alt="OpenPledge Logo">
             </div>
 
             <!-- Company Details -->
@@ -110,6 +110,10 @@
             <div>
                 <p>CEO:<br>
                 Neja Gozdnikar Benko</p>
+            </div>
+
+            <div>
+                <img src="{{ $stamp }}" alt="OpenPledge Stamp" class="stamp">
             </div>
 
             <hr style="color:#87f5dd; margin-top:100px;">

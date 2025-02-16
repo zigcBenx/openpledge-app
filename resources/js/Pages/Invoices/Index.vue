@@ -10,13 +10,9 @@ defineProps({ invoices: Object });
 const showModal = ref(false);
 const pdfUrl = ref(null);
 
-const generatePdf = (id) => {
-    router.post(route('invoices.generatePdf', id));
-};
-
 // Open modal to view PDF
-const openPdfModal = (pdfPath) => {
-    pdfUrl.value = pdfPath;
+const openPdfModal = (number) => {
+    pdfUrl.value = route('invoices.pdf', number);
     showModal.value = true;
 };
 
@@ -51,6 +47,7 @@ const copyInvoice = (invoice) => {
                 <thead>
                     <tr class="bg-gray-200 dark:bg-gray-800">
                         <th class="border p-2">Number</th>
+                        <th class="border p-2">Customer</th>
                         <th class="border p-2">Amount</th>
                         <th class="border p-2">Invoice date</th>
                         <th class="border p-2">Service date</th>
@@ -61,11 +58,12 @@ const copyInvoice = (invoice) => {
                 <tbody>
                     <tr v-for="invoice in invoices.data" :key="invoice.id">
                         <td class="border p-2">{{ invoice.number }}</td>
+                        <td class="border p-2 max-w-28 text-wrap">{{ invoice.customer }}</td>
                         <td class="border p-2">${{ invoice.total }}</td>
                         <td class="border p-2">{{ new Date(invoice.invoice_date).toLocaleDateString() }}</td>
                         <td class="border p-2">{{ new Date(invoice.service_date).toLocaleDateString() }}</td>
                         <td class="border p-2">
-                            <a v-if="invoice.pdf_path" @click.prevent="openPdfModal(invoice.pdf_path)" class="bg-green-500 dark:text-white text-black p-1 rounded cursor-pointer">View PDF</a>
+                            <a v-if="invoice.pdf_path" @click.prevent="openPdfModal(invoice.number)" class="bg-green-500 dark:text-white text-black p-1 rounded cursor-pointer">View PDF</a>
                         </td>
                         <td class="border p-2">
                             <button @click="copyInvoice(invoice)" class="text-blue-500 hover:text-blue-700">

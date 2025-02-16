@@ -7,6 +7,7 @@ use App\Models\Invoice;
 use Inertia\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class InvoiceController extends Controller
@@ -60,7 +61,27 @@ class InvoiceController extends Controller
         }
         return $total;
     }
+
     private function getVatValue($total, $vat) {
         return $total * $vat / 100;
+    }
+
+    public function viewPdf($invoiceNumber)
+    {
+        // Check if the user has permission
+        if (!Auth::user()->hasRole('admin')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // Get the path of the PDF from storage
+        $pdfPath = "invoices/{$invoiceNumber}.pdf";
+
+        // Check if the file exists in private storage
+        if (!Storage::disk('private')->exists($pdfPath)) {
+            abort(404, 'PDF not found.');
+        }
+
+        // Serve the file
+        return response()->file(Storage::disk('private')->path($pdfPath));
     }
 }
