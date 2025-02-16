@@ -51,6 +51,6 @@ class DonationCreatedListener implements ShouldQueue
                 'status' => 'Paid',
             ]
         ];
-        dispatch(new GenerateInvoiceNumberJob($invoiceData));
+        dispatch(new GenerateInvoiceNumberJob($invoiceData))->onQueue('default');
     }
 }

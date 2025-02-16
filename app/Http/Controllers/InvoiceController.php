@@ -49,7 +49,7 @@ class InvoiceController extends Controller
         $invoiceData['invoice']['total'] = $total;
         $invoiceData['invoice']['total_vat'] = $total + $vatValue;
         $invoiceData['invoice']['status'] = 'NotPaid';
-        $invoice = dispatch_sync(new GenerateInvoiceNumberJob($invoiceData));
+        $invoice = dispatch_sync(new GenerateInvoiceNumberJob($invoiceData))->onQueue('default');
 
         return redirect()->route('invoices.index');
     }
