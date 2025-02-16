@@ -85,7 +85,7 @@
                     <td>{{ $item['name'] }}</td>
                     <td>{{ $item['quantity'] }}</td>
                     <td>{{ $item['currency'] }}{{ number_format($item['price_per_unit'], 2) }}</td>
-                    <td>{{ $item['currency'] }}{{ number_format($item['price_per_unit'], 2) * $item['quantity'] }}</td>
+                    <td>{{ $item['currency'] }}{{ number_format($item['price_per_unit'] * $item['quantity'], 2) }}</td>
                 </tr>
                 @endforeach
             </table>
