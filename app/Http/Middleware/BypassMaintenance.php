@@ -18,7 +18,8 @@ class BypassMaintenance
     {
         $allowedUsers = [
             'zigac.benko@gmail.com',
-            'hunterteammovies@gmail.com'
+            'hunterteammovies@gmail.com',
+            'neja@openpledge.io'
         ];
 
         if (Auth::check() && in_array(Auth::user()->email, $allowedUsers)) {
