@@ -58,7 +58,7 @@ const copyInvoice = (invoice) => {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="invoice in invoices.data" :key="invoice.id">
+                    <tr v-for="invoice in invoices.data" :key="invoice.id" class="hover:bg-gray-600">
                         <td class="border p-2">{{ invoice.number }}</td>
                         <td class="border p-2 max-w-28 text-wrap">{{ invoice.customer }}</td>
                         <td class="border p-2">${{ invoice.total }}</td>
@@ -83,7 +83,7 @@ const copyInvoice = (invoice) => {
                 <div class="bg-white p-6 rounded-lg w-full max-w-4xl">
                     <div class="flex justify-between items-center">
                         <h2 class="text-xl font-semibold text-black">Invoice PDF</h2>
-                        <button @click="closeModal" class="text-gray-500 hover:text-gray-700">&times;</button>
+                        <button @click="closeModal" class="text-gray-500 hover:text-gray-700 text-3xl">&times;</button>
                     </div>
                     <a :href="pdfUrl" :download="`invoice-${previewNumber}.pdf`" class="text-blue-500 hover:underline">Download PDF</a>
                     <div class="mt-4">
