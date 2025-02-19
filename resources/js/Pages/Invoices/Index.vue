@@ -9,10 +9,12 @@ defineProps({ invoices: Object });
 // Modal state
 const showModal = ref(false);
 const pdfUrl = ref(null);
+const previewNumber = ref('');
 
 // Open modal to view PDF
 const openPdfModal = (number) => {
     pdfUrl.value = route('invoices.pdf', number);
+    previewNumber.value = number;
     showModal.value = true;
 };
 
@@ -83,6 +85,7 @@ const copyInvoice = (invoice) => {
                         <h2 class="text-xl font-semibold text-black">Invoice PDF</h2>
                         <button @click="closeModal" class="text-gray-500 hover:text-gray-700">&times;</button>
                     </div>
+                    <a :href="pdfUrl" :download="`invoice-${previewNumber}.pdf`" class="text-blue-500 hover:underline">Download PDF</a>
                     <div class="mt-4">
                         <iframe :src="pdfUrl" class="w-full h-[80vh]" frameborder="0"></iframe>
                     </div>
