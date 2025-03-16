@@ -31,10 +31,16 @@
     <button
       :class="[classes['button-block'], { [classes['button-block-hover']]: pledgeMethod === PAYMENT_FORM_METHODS.EXPIRE_DATE }]"
       @click="emit('onChange', PAYMENT_FORM_METHODS.EXPIRE_DATE)"
+      :disabled="true"
+      class="relative"
+      title="Coming soon"
     >
-      <Icon name="clock" class="dark:fill-green fill-dark-green" />
-      <h4 class="mb-2.5 mt-3 text-dark-green dark:text-green">Pledge with Expiry Date</h4>
-      <p class="text-dark-green dark:text-green">After selected period of time, if issue is not solved, you will get a refund.</p>
+      <span class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-1 text-white text-md">Coming soon</span>
+      <span class="opacity-30">
+        <Icon name="clock" class="dark:fill-green fill-dark-green" />
+        <h4 class="mb-2.5 mt-3 text-dark-green dark:text-green">Pledge with Expiry Date</h4>
+        <p class="text-dark-green dark:text-green">After selected period of time, if issue is not solved, you will get a refund.</p>
+      </span>
     </button>
   </div>
 </template>
