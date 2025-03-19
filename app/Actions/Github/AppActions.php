@@ -2,6 +2,7 @@
 
 namespace App\Actions\Github;
 
+use App\Actions\WalletTransaction\CreateNewWalletTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{
     Auth,
@@ -282,7 +283,8 @@ class AppActions
                 $dbUser = User::where('github_id', $resolverGithubId)->first();
 
                 if ($dbUser) {
-                    ProcessPayment::processDonations($issue, $dbUser);
+                    CreateNewWalletTransaction::create($issue, $dbUser);
+                    // ProcessPayment::processDonations($issue, $dbUser);
                 } else {
                     logger('[WARNING] No user with the following GitHub id is connected to our app', ['id' => $resolverGithubId]);
                     // TODO: What to do here? We can't send email to the user to register to OpenPledge & connect with Stripe to claim the reward because the email is not publicly available

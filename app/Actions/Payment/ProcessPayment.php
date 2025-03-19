@@ -11,6 +11,7 @@ use Stripe\StripeClient;
 use Illuminate\Support\Facades\Auth;
 use App\Actions\Issue\GetIssueById;
 use App\Actions\Comment\ConstructComment;
+use App\Actions\Donation\GetAvailableDonationsForIssue;
 use App\Actions\Email\SendNewPledgeMail;
 use Stripe\Exception\ApiErrorException;
 use App\Services\GithubService;
@@ -77,15 +78,7 @@ class ProcessPayment
 
     public static function processDonations(Issue $issue, User $dbUser)
     {
-        $today = Carbon::now()->toDateString();
-        $donations = Donation::where('donatable_id', $issue->id)
-            ->where(function ($query) use ($today) {
-                $query->whereNull('expire_date')
-                    ->orWhere('expire_date', '>', $today);
-            })
-            ->where('paid', false)
-            ->with('user')
-            ->get();
+        $donations = GetAvailableDonationsForIssue::get($issue);
 
         if ($donations->isEmpty()) {
             logger('[INFO] No unpaid donations found for issue', ['issue_id' => $issue->id]);
