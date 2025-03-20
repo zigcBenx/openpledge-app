@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -75,5 +76,16 @@ class Issue extends Model
     public function resolvedBy()
     {
         return $this->belongsTo(User::class, 'resolver_github_id', 'github_id');
+    }
+
+    public function getUnpaidDonations()
+    {
+        return $this->donations()
+            ->where(function ($query) {
+                $query->whereNull('expire_date')
+                    ->orWhere('expire_date', '>', Carbon::now());
+            })
+            ->where('paid', false)
+            ->get();
     }
 }

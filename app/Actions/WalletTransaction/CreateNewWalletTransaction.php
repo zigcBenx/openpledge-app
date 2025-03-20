@@ -2,14 +2,10 @@
 
 namespace App\Actions\WalletTransaction;
 
-use App\Actions\Donation\GetAvailableDonationsForIssue;
-
 class CreateNewWalletTransaction
 {
-    public static function create($issue, $user)
+    public static function create($user, $donations)
     {
-        $donations = GetAvailableDonationsForIssue::get($issue);
-
         foreach ($donations as $donation) {
             $donation->walletTransactions()->create([
                 'amount' => $donation->amount,

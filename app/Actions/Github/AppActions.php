@@ -158,9 +158,9 @@ class AppActions
             $action = $payload['action'] ?? null;
 
             if (isset($payload['issue'])) {
-                self::handleWebhookIssue($payload, $action);
+                WebhookActions::handleWebhookIssue($payload, $action);
             } elseif (isset($payload['repository'])) {
-                self::handleWebhookRepository($payload);
+                WebhookActions::handleWebhookRepository($payload);
             }
 
             DB::commit();
@@ -173,123 +173,5 @@ class AppActions
             return response()->json(['status' => 'error', 'message' => 'Transaction failed'], 500);
         }
         return response()->json(['status' => 'success'], 200);
-    }
-
-    private static function handleWebhookRepository($payload)
-    {
-        $repositoryId = $payload['repository']['id'];
-        $repository = Repository::where('github_id', $repositoryId)->first();
-
-        if (!$repository) {
-            return;
-        }
-
-        $repositoryIssues = Issue::where('repository_id', $repository->id)->get();
-        foreach ($repositoryIssues as $issue) {
-            $issueGithubUrl = $issue->github_url;
-            $issueGithubUrl = str_replace($repository->title, $payload['repository']['full_name'], $issueGithubUrl);
-            $issue->github_url = $issueGithubUrl;
-            $issue->save();
-        }
-
-        $repository->title = $payload['repository']['full_name'];
-        $repository->github_url = $payload['repository']['html_url'];
-
-        $githubInstallation = $repository->githubInstallation;
-
-        $programmingLanguages = array_keys(GithubService::getRepositoryProgrammingLanguages($repository->title, $githubInstallation->access_token));
-
-        $languageIds = [];
-        foreach ($programmingLanguages as $programmingLanguage) {
-            $language = ProgrammingLanguage::updateOrCreate(
-                ['name' => $programmingLanguage],
-                ['name' => $programmingLanguage]
-            );
-            $languageIds[] = $language->id;
-        }
-
-        $repository->programmingLanguages()->sync($languageIds);
-        $repository->save();
-    }
-
-    private static function handleWebhookIssue($payload, $action)
-    {
-        $githubIssue = $payload['issue'];
-        $issueGithubId = $githubIssue['id'];
-        $issue = Issue::where('github_id', $issueGithubId)->first();
-        if (!$issue) {
-            return;
-        }
-        $issue->state = $action === "closed" ? "closed" : "open";
-        $issue->title = $githubIssue['title'];
-        $issue->description = $githubIssue['body'];
-        $issue->labels()->delete();
-
-        $allowedLabels = Label::$allowedLabels;
-        $labels = $githubIssue['labels'];
-
-        foreach ($labels as $label) {
-            if (in_array(strtolower($label['name']), $allowedLabels)) {
-                $issue->labels()->create([
-                    'name' => strtolower($label['name'])
-                ]);
-            }
-        }
-
-        $issue->save();
-
-        $isIssueWithDonations = $issue->donations->isNotEmpty();
-
-        if ($action === "closed" && $isIssueWithDonations) {
-            self::handleWebhookIssueClosed($payload, $issue, $githubIssue['number']);
-        }
-    }
-
-    private static function handleWebhookIssueClosed($payload, $issue, $githubIssueNumber)
-    {
-        $repository = $payload['repository'];
-        $repositoryOwner = $repository['owner']['login'];
-        $repositoryName = $repository['name'];
-        $mergedState = 'MERGED';
-
-        $connectedPullRequestsResponse = GithubService::getConnectedPullRequests($repositoryOwner, $repositoryName, $githubIssueNumber);
-
-        if ($connectedPullRequestsResponse) {
-            $mergedPullRequest = collect($connectedPullRequestsResponse['data']['repository']['issue']['timelineItems']['nodes'])
-                ->first(function ($item) {
-                    // For ConnectedEvent
-                    if (isset($item['subject'])) {
-                        return $item['subject']['state'] === 'MERGED';
-                    }
-                    // For CrossReferencedEvent
-                    if (isset($item['source'])) {
-                        return $item['source']['state'] === 'MERGED';
-                    }
-                    return false;
-                });
-
-            if ($mergedPullRequest) {
-                $prData = $mergedPullRequest['subject'] ?? $mergedPullRequest['source'];
-                $mergedPullRequestNumber = $prData['number'];
-                $mergedPullRequestData = GithubService::getPullRequestData($repositoryOwner, $repositoryName, $mergedPullRequestNumber);
-
-                $resolverGithubId = $mergedPullRequestData['user']['id'];
-
-                $issue->resolver_github_id = $resolverGithubId;
-                $issue->resolved_at = Carbon::parse($mergedPullRequestData['merged_at'])
-                    ->setTimezone(config('app.timezone'));
-                $issue->save();
-
-                $dbUser = User::where('github_id', $resolverGithubId)->first();
-
-                if ($dbUser) {
-                    CreateNewWalletTransaction::create($issue, $dbUser);
-                    // ProcessPayment::processDonations($issue, $dbUser);
-                } else {
-                    logger('[WARNING] No user with the following GitHub id is connected to our app', ['id' => $resolverGithubId]);
-                    // TODO: What to do here? We can't send email to the user to register to OpenPledge & connect with Stripe to claim the reward because the email is not publicly available
-                }
-            }
-        }
     }
 }

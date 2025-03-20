@@ -1,0 +1,174 @@
+<?php
+
+namespace App\Actions\Github;
+
+use App\Actions\WalletTransaction\CreateNewWalletTransaction;
+use App\Models\Issue;
+use App\Models\Label;
+use App\Models\ProgrammingLanguage;
+use App\Models\Repository;
+use App\Models\User;
+use App\Services\GithubService;
+use Carbon\Carbon;
+
+class WebhookActions
+{
+    public static function handleWebhookRepository($payload): void
+    {
+        $repositoryId = $payload['repository']['id'];
+        $repository = Repository::where('github_id', $repositoryId)->first();
+
+        if (!$repository) {
+            return;
+        }
+
+        $repositoryIssues = Issue::where('repository_id', $repository->id)->get();
+        foreach ($repositoryIssues as $issue) {
+            $issueGithubUrl = $issue->github_url;
+            $issueGithubUrl = str_replace($repository->title, $payload['repository']['full_name'], $issueGithubUrl);
+            $issue->github_url = $issueGithubUrl;
+            $issue->save();
+        }
+
+        $repository->title = $payload['repository']['full_name'];
+        $repository->github_url = $payload['repository']['html_url'];
+
+        $githubInstallation = $repository->githubInstallation;
+
+        $programmingLanguages = array_keys(GithubService::getRepositoryProgrammingLanguages($repository->title, $githubInstallation->access_token));
+
+        $languageIds = [];
+        foreach ($programmingLanguages as $programmingLanguage) {
+            $language = ProgrammingLanguage::updateOrCreate(
+                ['name' => $programmingLanguage],
+                ['name' => $programmingLanguage]
+            );
+            $languageIds[] = $language->id;
+        }
+
+        $repository->programmingLanguages()->sync($languageIds);
+        $repository->save();
+    }
+
+    /**
+     * This webhook is triggered when change occurs on GitHub. It could be
+     * just update of it's content, or closing issue by pull request.
+     * If closed, then we proceed to pay out donations to contributors.
+     *
+     * @param $payload
+     * @param $action
+     * @return void
+     */
+    public static function handleWebhookIssue($payload, $action): void
+    {
+        $githubIssue = $payload['issue'];
+        $issueGithubId = $githubIssue['id'];
+        $issue = Issue::where('github_id', $issueGithubId)->first();
+        if (!$issue) {
+            // If issue is not in our database, we don't have any donations,
+            // and no need to update it's existing data in our DB,
+            // therefore we don't need to check anything else
+            return;
+        }
+
+        self::syncIssueWithGithub($issue, $githubIssue, $action);
+
+        $issueDonations = $issue->getUnpaidDonations();
+        if ($issueDonations->isNotEmpty() && $action === "closed") {
+            $mergedPullRequest = self::findMergedPullRequest($payload, $githubIssue['number']);
+            if (!$mergedPullRequest) {
+                return;
+            }
+
+            $resolverData = self::getResolverData($payload, $mergedPullRequest);
+            self::updateIssueResolver($issue, $resolverData);
+            self::payoutToResolver($issue, $resolverData['github_id'], $issueDonations);
+        }
+    }
+
+    /**
+     * We update issue in DB with data from GitHub.
+     */
+    private static function syncIssueWithGithub($issue, $githubIssue, $action): void
+    {
+        $issue->state = $action === "closed" ? "closed" : "open";
+        $issue->title = $githubIssue['title'];
+        $issue->description = $githubIssue['body'];
+        $issue->labels()->delete();
+
+        $allowedLabels = Label::$allowedLabels;
+        $labels = $githubIssue['labels'];
+
+        foreach ($labels as $label) {
+            if (in_array(strtolower($label['name']), $allowedLabels)) {
+                $issue->labels()->create([
+                    'name' => strtolower($label['name'])
+                ]);
+            }
+        }
+
+        $issue->save();
+    }
+
+    private static function findMergedPullRequest(array $payload, int $issueNumber): ?array
+    {
+        $repository = $payload['repository'];
+        $repoOwner = $repository['owner']['login'];
+        $repoName = $repository['name'];
+
+        $pullRequestsResponse = GithubService::getConnectedPullRequests($repoOwner, $repoName, $issueNumber);
+        if (!$pullRequestsResponse) {
+            return null;
+        }
+
+        $mergedPullRequest = collect($pullRequestsResponse['data']['repository']['issue']['timelineItems']['nodes'])
+            ->first(function ($item) {
+                return (isset($item['subject']) && $item['subject']['state'] === 'MERGED')
+                    || (isset($item['source']) && $item['source']['state'] === 'MERGED');
+            });
+
+        if (!$mergedPullRequest) {
+            return null;
+        }
+
+        return $mergedPullRequest['subject'] ?? $mergedPullRequest['source'];
+    }
+
+    private static function getResolverData(array $payload, array $mergedPullRequest): array
+    {
+        $repository = $payload['repository'];
+        $pullRequestData = GithubService::getPullRequestData(
+            $repository['owner']['login'],
+            $repository['name'],
+            $mergedPullRequest['number']
+        );
+
+        return [
+            'github_id' => $pullRequestData['user']['id'],
+            'merged_at' => $pullRequestData['merged_at']
+        ];
+    }
+
+    private static function updateIssueResolver(Issue $issue, array $resolverData): void
+    {
+        $issue->resolver_github_id = $resolverData['github_id'];
+        $issue->resolved_at = Carbon::parse($resolverData['merged_at'])
+            ->setTimezone(config('app.timezone'));
+        $issue->save();
+    }
+
+    private static function payoutToResolver(Issue $issue, int $resolverGithubId, $donations): void
+    {
+        $resolver = User::where('github_id', $resolverGithubId)->first();
+        if (!$resolver) {
+            logger()->warning(
+                'Issue resolver not registered in OpenPledge',
+                ['github_id' => $resolverGithubId, 'issue_id' => $issue->id]
+            );
+            return;
+        }
+
+        CreateNewWalletTransaction::create($resolver, $donations);
+        // ProcessPayment::processDonations($issue, $resolver);
+    }
+}
