@@ -26,8 +26,9 @@
                             </div>
                         </div>
 
-                        <div class="hidden sm:flex sm:items-center gap-8">
-                            <div class="space-x-8 sm:-my-px sm:ms-10 content-center">
+                        <div class="hidden sm:flex sm:items-center gap-6">
+                            <Wallet />
+                            <div class="sm:-my-px sm:ms-10 content-center">
                                 <Dropdown align="right" width="44.375rem">
                                     <template #trigger>
                                         <Input
@@ -271,6 +272,7 @@
     import TextArea from '@/Components/TextArea.vue';
     import { useToast } from "vue-toastification";
     import { validateEmail } from '@/utils/validateEmail';
+    import Wallet from '@/Components/Custom/Wallet.vue';
 
     export default {
         props: {
@@ -290,7 +292,8 @@
             Input,
             DialogModal,
             Button,
-            TextArea
+            TextArea,
+            Wallet
         },
         setup() {
             const isDark = useDark();

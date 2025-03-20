@@ -12,6 +12,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RepositoryController;
 use App\Http\Controllers\StripeConnectController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WalletTransactionController;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -64,6 +65,7 @@ Route::middleware([
 
     Route::get('/home', [MainController::class, 'index'])->name('home');
     Route::get('/dashboard', [MainController::class, 'dashboard'])->name('dashboard');
+    Route::get('/wallet/transactions', [WalletTransactionController::class, 'index'])->name('wallet.transactions');
     Route::post('/save-redirect-path', [MainController::class, 'saveRedirectPath'])->name('save-redirect-path');
 
     // TODO: this route is for displaying request view -> which will be removed
