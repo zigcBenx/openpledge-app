@@ -8,7 +8,6 @@ class CreateNewWalletTransaction
 {
     public static function create($issue, $user)
     {
-        logger("Is creating wallet transactions for issue {$issue->id} and user {$user->id}");
         $donations = GetAvailableDonationsForIssue::get($issue);
 
         foreach ($donations as $donation) {

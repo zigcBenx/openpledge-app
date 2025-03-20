@@ -37,7 +37,7 @@ class IssueController extends Controller
                 }
             }
         }
-        
+
         return redirect()->route('issues.show', ['issue' => $issue]);
     }
 
