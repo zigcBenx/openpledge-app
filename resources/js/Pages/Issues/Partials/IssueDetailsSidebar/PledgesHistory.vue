@@ -27,13 +27,13 @@
           <p v-if="data.amountAfter" class="dark:text-spun-pearl text-tundora flex text-xs">AFTER THAT <span class="ml-auto text-purple-heart">{{ data.amountAfter }}</span></p>
       </div> -->
       <div v-if="issue.donations.length">
-        <button 
+        <button
           class="text-mondo dark:text-seashell text-sm font-medium flex gap-3 items-center"
           @click="showHistory = !showHistory"
         >
-          Pledge history 
-          <Icon 
-            name="chevron-down" 
+          Pledge history
+          <Icon
+            name="chevron-down"
             :class="['text-mondo dark:text-seashell transition-all', {
               'rotate-180': showHistory
             }]"
@@ -41,7 +41,7 @@
         </button>
         <ul v-if="showHistory" class="flex flex-col gap-3 mt-6">
           <li v-for="donation in issue.donations" :key="donation.id" class="rounded-md border dark:border-stylish-red border-thistle p-4">
-            <p class="font-medium dark:text-platinum mb-2">{{ donation.amount }} €</p>
+            <p class="font-medium dark:text-platinum mb-2">{{ donation.net_amount }} €</p>
             <p class="flex text-sm dark:text-lavender-mist mb-1.5">Donated by <span class="font-medium ml-1">{{ donation.user?.name || 'Anonymous Pledger' }}</span> <span class="ml-auto">on {{ dayjs(donation.created_at).format(DATE_FORMAT) }}</span></p>
             <p v-if="donation.expire_date" class="flex text-xs font-light dark:text-spun-pearl">Valid until <span class="ml-auto">{{ dayjs(donation.expire_date).format(DATE_FORMAT) }}</span></p>
           </li>

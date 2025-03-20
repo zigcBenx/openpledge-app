@@ -31,12 +31,12 @@ class Repository extends Model
 
     public function getDonationSumAttribute()
     {
-        return $this->donations()->sum('amount');
+        return $this->donations()->sum('net_amount');
     }
 
     public function getIssuesDonationSumAttribute()
     {
-        return $this->issues()->donations()->sum('amount');
+        return $this->issues()->donations()->sum('net_amount');
     }
 
     public function programmingLanguages()

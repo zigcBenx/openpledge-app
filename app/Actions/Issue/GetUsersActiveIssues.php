@@ -19,7 +19,7 @@ class GetUsersActiveIssues
                 $query->where('user_id', $userId);
             })
             ->where('state', 'open')
-            ->withSum('donations', 'amount')
+            ->withSum('donations', 'net_amount')
             ->take(5)
             ->get()
             ->each(function ($issue) {
@@ -44,7 +44,7 @@ class GetUsersActiveIssues
                 $query->where('user_id', $userId);
             })
             ->where('state', 'open')
-            ->withSum('donations', 'amount');
+            ->withSum('donations', 'net_amount');
 
         $issues = $query->paginate($perPage, $columns, $pageName, $page);
 

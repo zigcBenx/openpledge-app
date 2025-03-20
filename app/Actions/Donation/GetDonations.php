@@ -14,6 +14,6 @@ class GetDonations
     public static function getAnonymous()
     {
         return Donation::whereNull('donor_id')
-            ->sum('amount');
+            ->sum('gross_amount');
     }
 }

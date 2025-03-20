@@ -9,7 +9,9 @@ class GetIssues
 {
     public static function get()
     {
-        return Issue::withSum('donations', 'amount', 'programmingLanguages')->get();
+        return Issue::with('programmingLanguages')
+            ->withSum('donations', 'net_amount')
+            ->get();
     }
 
     public static function getWithActiveDonations($filters = null, $offset = 0, $limit = 10)
@@ -25,15 +27,15 @@ class GetIssues
                             ->orWhere('expire_date', '>', $today);
                     });
                 }
-            ], 'amount')
-            ->having('donations_sum_amount', '>', 0)
+            ], 'net_amount')
+            ->having('donations_sum_net_amount', '>', 0)
             ->having('state', 'open');
 
         if ($filters) {
             if (isset($filters['range'])) {
                 [$minRange, $maxRange] = explode('-', $filters['range']);
-                $query->having('donations_sum_amount', '>=', (int) $minRange)
-                    ->having('donations_sum_amount', '<=', (int) $maxRange);
+                $query->having('donations_sum_net_amount', '>=', (int) $minRange)
+                    ->having('donations_sum_net_amount', '<=', (int) $maxRange);
             }
 
             if (isset($filters['date'])) {
@@ -56,7 +58,7 @@ class GetIssues
             }
         }
 
-        $query = $query->orderByDesc('donations_sum_amount')
+        $query = $query->orderByDesc('donations_sum_net_amount')
             ->skip($offset)
             ->take($limit);
 

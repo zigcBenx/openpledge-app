@@ -20,7 +20,7 @@ class GetFavoriteIssues
             'resolvedBy',
             'labels'
         ])
-            ->withSum('donations', 'amount')
+            ->withSum('donations', 'net_amount')
             ->whereIn('id', $favoriteIssueIds)
             ->take(3)
             ->get()
@@ -46,7 +46,7 @@ class GetFavoriteIssues
             'resolvedBy',
             'labels'
         ])
-            ->withSum('donations', 'amount')
+            ->withSum('donations', 'net_amount')
             ->whereIn('id', $favoriteIssueIds);
 
         $issues = $query->paginate($perPage, $columns, $pageName, $page);

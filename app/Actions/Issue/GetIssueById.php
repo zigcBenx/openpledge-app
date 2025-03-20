@@ -32,6 +32,6 @@ class GetIssueById
                         ->orWhere('expire_date', '>', $today);
                 });
             }
-        ], 'amount')->find($id);
+        ], 'net_amount')->find($id);
     }
 }

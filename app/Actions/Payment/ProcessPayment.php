@@ -3,6 +3,7 @@
 namespace App\Actions\Payment;
 
 use App\Actions\Donation\CreateNewDonation;
+use App\Services\DonationFeeService;
 use App\Actions\Email\SendConnectStripeMail;
 use App\Models\Issue;
 use App\Models\User;
@@ -32,17 +33,19 @@ class ProcessPayment
         try {
             $stripe = new StripeClient(config('app.stripe_secret'));
             $paymentDetail = $stripe->paymentIntents->retrieve($paymentId);
-            CreateNewDonation::create(
+            $donationData = array_merge(
+                DonationFeeService::calculateAmounts($amount),
                 [
                     'donatable_type' => Issue::class,
                     'donatable_id' => $issueId,
-                    'amount' => $amount,
                     'transaction_id' => $paymentDetail->id,
                     'charge_id' => $paymentDetail->latest_charge,
                     'donor_id' => $isPledgingAnonymously ? null : Auth::id(),
                     'expire_date' => $expireDate,
                 ]
             );
+
+            CreateNewDonation::create($donationData);
         } catch (ApiErrorException $e) {
             return new JsonResponse(['success' => false, 'error' => $e->getMessage()]);
         }
@@ -56,8 +59,8 @@ class ProcessPayment
 
         $donorName = ($isAuthenticated && !$isPledgingAnonymously) ? Auth::user()->name : "Anonymous Pledger";
         $formattedExpireDate = $expireDate ? Carbon::parse($expireDate)->format('F j, Y') : null;
-        $totalBounty = $issue->donations_sum_amount;
-        $existingPledge = ($issue->donations_sum_amount - $amount) > 0;
+        $totalBounty = $issue->donations_sum_net_amount;
+        $existingPledge = ($issue->donations_sum_net_amount - $amount) > 0;
 
         if ($existingPledge) {
             $comment = ConstructComment::constructShortPledgeComment($amount, $donorName, $issueId, $totalBounty, $formattedExpireDate);
@@ -85,7 +88,7 @@ class ProcessPayment
             return;
         }
 
-        $donationsSumAmount = $donations->sum('amount');
+        $donationsSumAmount = $donations->sum('amount'); // TODO: rework this
         $feePercentage = config('app.platform_fee_percentage');
         $totalPayoutAmount = $donationsSumAmount - $donationsSumAmount * ($feePercentage / 100);
         $resolverMail = $dbUser->email;
@@ -94,7 +97,7 @@ class ProcessPayment
 
         if (isset($destinationStripeId)) {
             $transferIds = [];
-            
+
             foreach ($donations as $donation) {
                 if (!$donation->charge_id) {
                     logger('[WARNING] Donation missing charge_id', [
@@ -120,10 +123,10 @@ class ProcessPayment
                     continue;
                 }
             }
-            
+
             logger('[INFO] Funds transferred', [
-                'issue_id' => $issue->id, 
-                'amount' => $totalPayoutAmount, 
+                'issue_id' => $issue->id,
+                'amount' => $totalPayoutAmount,
                 'stripe_transfer_ids' => $transferIds,
                 'successful_transfers' => count($transferIds)
             ]);

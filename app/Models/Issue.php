@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\MoneyCast;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -26,6 +27,11 @@ class Issue extends Model
         'description'
     ];
 
+    protected $casts = [
+        'donations_sum_net_amount' => MoneyCast::class,
+        'donations_sum_gross_amount' => MoneyCast::class,
+    ];
+
     public function repository()
     {
         return $this->belongsTo(Repository::class);
@@ -48,7 +54,8 @@ class Issue extends Model
 
     public function getDonationSumAttribute()
     {
-        return $this->donations()->sum('amount');
+        $amount = $this->donations()->sum('net_amount');
+        return app(MoneyCast::class)->get($this, 'donation_sum', $amount, []);
     }
 
     public function userFavorite()

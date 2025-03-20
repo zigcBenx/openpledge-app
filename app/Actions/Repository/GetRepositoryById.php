@@ -9,7 +9,7 @@ class GetRepositoryById
     public static function get($id)
     {
         return Repository::with(['issues' => function ($query) {
-            $query->withSum('donations', 'amount');
+            $query->withSum('donations', 'net_amount');
         }])->find($id);
     }
 }

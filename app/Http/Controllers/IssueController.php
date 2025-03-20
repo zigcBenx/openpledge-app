@@ -74,7 +74,7 @@ class IssueController extends Controller
         ->with('donations', 'repository:id,title')
         ->get()
         ->map(function($issue) {
-            $issue->today_donations_sum = $issue->donations->sum('amount');
+            $issue->today_donations_sum = $issue->donations->sum('net_amount');
             return $issue;
         })
         ->sortByDesc('today_donations_sum')

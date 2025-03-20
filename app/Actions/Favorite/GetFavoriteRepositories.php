@@ -18,7 +18,7 @@ class GetFavoriteRepositories
             'userFavorite',
             'githubInstallation',
         ])
-            ->withSum('donations', 'amount')
+            ->withSum('donations', 'net_amount')
             ->withCount(['issues as pledged_issues_count' => function ($query) {
                 $query->whereHas('donations');
             }])
@@ -44,7 +44,7 @@ class GetFavoriteRepositories
             'userFavorite',
             'githubInstallation',
         ])
-            ->withSum('donations', 'amount')
+            ->withSum('donations', 'net_amount')
             ->withCount(['issues as pledged_issues_count' => function ($query) {
                 $query->whereHas('donations');
             }])

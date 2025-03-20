@@ -16,7 +16,7 @@ class GetInstalledRepositories
     {
         $user = Auth::user();
         return Repository::with(['issues' => function ($query) {
-            $query->withSum('donations', 'amount');
+            $query->withSum('donations', 'net_amount');
         }])->where('user_id', $user->id)->get();
     }
 }
