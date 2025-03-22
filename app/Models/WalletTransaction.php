@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\MoneyCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,6 +16,10 @@ class WalletTransaction extends Model
         'is_withdrawn',
         'contributor_id',
         'donation_id',
+    ];
+
+    protected $casts = [
+        'amount' => MoneyCast::class
     ];
 
     public function donation(): BelongsTo

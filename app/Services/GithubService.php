@@ -66,8 +66,11 @@ class GithubService
         return RepositoryActions::getBySearchQuery($searchQuery, $resultsToFetch, $localResults);
     }
 
-    public static function commentOnIssue($installationId, $owner, $repo, $issueNumber, $comment)
+    public static function commentOnIssue($issue, $comment)
     {
+        [$owner, $repo] = explode('/', $issue['repository']['title']);
+        $issueNumber = basename(parse_url($issue['github_url'], PHP_URL_PATH));
+        $installationId = $issue['repository']['githubInstallation']['installation_id'];
         return IssueActions::comment($installationId, $owner, $repo, $issueNumber, $comment);
     }
 

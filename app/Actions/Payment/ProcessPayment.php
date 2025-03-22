@@ -30,55 +30,60 @@ class ProcessPayment
             $expireDate = date('Y-m-d', strtotime($pledgeExpirationDate));
         }
 
-        try {
-            $stripe = new StripeClient(config('app.stripe_secret'));
-            $paymentDetail = $stripe->paymentIntents->retrieve($paymentId);
-            $donationData = array_merge(
-                DonationFeeService::calculateAmounts($amount),
-                [
-                    'donatable_type' => Issue::class,
-                    'donatable_id' => $issueId,
-                    'transaction_id' => $paymentDetail->id,
-                    'charge_id' => $paymentDetail->latest_charge,
-                    'donor_id' => $isPledgingAnonymously ? null : Auth::id(),
-                    'expire_date' => $expireDate,
-                ]
-            );
+        $afterFeeAmounts = DonationFeeService::calculateAmounts($amount);
 
-            CreateNewDonation::create($donationData);
-        } catch (ApiErrorException $e) {
-            return new JsonResponse(['success' => false, 'error' => $e->getMessage()]);
-        }
+        $donationData = self::prepareDonationDate($afterFeeAmounts, $issueId, $expireDate, $isPledgingAnonymously);
+
+        self::createDonation($paymentId, $donationData);
 
         $issue = GetIssueById::getWithActiveDonations($issueId);
+        $comment = self::prepareGithubComment($issue, $afterFeeAmounts['net_amount'], $isAuthenticated, $isPledgingAnonymously, $expireDate);
 
-        [$owner, $repo] = explode('/', $issue['repository']['title']);
-        $issueNumber = basename(parse_url($issue['github_url'], PHP_URL_PATH));
+        GithubService::commentOnIssue($issue, $comment);
+        SendNewPledgeMail::send($donorEmail, Auth::user()->name ?? "Anonymous Pledger", $issueId, $afterFeeAmounts['net_amount']);
 
-        $installationId = $issue['repository']['githubInstallation']['installation_id'];
+        return new JsonResponse(['success' => true]);
+    }
 
+    private static function prepareDonationDate($afterFeeAmounts, $issueId, $expireDate, $isPledgingAnonymously): array
+    {
+        return array_merge(
+            $afterFeeAmounts,
+            [
+                'donatable_type' => Issue::class,
+                'donatable_id' => $issueId,
+                'expire_date' => $expireDate,
+                'donor_id' => $isPledgingAnonymously ? null : Auth::id(),
+            ]
+        );
+    }
+
+    private static function createDonation(string $paymentId, array $donationData): void
+    {
+        $stripe = new StripeClient(config('app.stripe_secret'));
+        $paymentDetail = $stripe->paymentIntents->retrieve($paymentId);
+
+        $donationData['transaction_id'] = $paymentDetail->id;
+        $donationData['charge_id'] = $paymentDetail->latest_charge;
+
+        CreateNewDonation::create($donationData);
+    }
+
+    private static function prepareGithubComment($issue, int $amount, bool $isAuthenticated, bool $isPledgingAnonymously, ?string $expireDate): string
+    {
         $donorName = ($isAuthenticated && !$isPledgingAnonymously) ? Auth::user()->name : "Anonymous Pledger";
         $formattedExpireDate = $expireDate ? Carbon::parse($expireDate)->format('F j, Y') : null;
         $totalBounty = $issue->donations_sum_net_amount;
         $existingPledge = ($issue->donations_sum_net_amount - $amount) > 0;
 
         if ($existingPledge) {
-            $comment = ConstructComment::constructShortPledgeComment($amount, $donorName, $issueId, $totalBounty, $formattedExpireDate);
-        } else {
-            $comment = ConstructComment::constructPledgeComment($amount, $donorName, $issueId, $formattedExpireDate);
+            return ConstructComment::constructShortPledgeComment($amount, $donorName, $issue->id, $totalBounty, $formattedExpireDate);
         }
 
-        // Query users who have this issue as an active issue (resolvers)
-        $usersWithActiveIssue = User::whereHas('active_issues', function ($query) use ($issueId) {
-            $query->where('issue_id', $issueId);
-        })->get();
-
-        GithubService::commentOnIssue($installationId, $owner, $repo, $issueNumber, $comment);
-        SendNewPledgeMail::send($donorEmail, Auth::user()->name ?? "Anonymous Pledger", $issueId, $amount, $usersWithActiveIssue);
-
-        return new JsonResponse(['success' => true]);
+        return ConstructComment::constructPledgeComment($amount, $donorName, $issue->id, $formattedExpireDate);
     }
 
+    // TODO: Move this to separate action
     public static function processDonations(Issue $issue, User $dbUser)
     {
         $donations = GetAvailableDonationsForIssue::get($issue);

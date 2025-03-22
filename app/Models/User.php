@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\MoneyCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -125,6 +126,8 @@ class User extends Authenticatable
 
     public function getWalletAmountAttribute(): float
     {
-        return $this->walletTransactions()->sum('amount');
+        $amount = $this->walletTransactions()->sum('amount');
+        return app(MoneyCast::class)->get($this, 'wallet_sum', $amount, []);
+
     }
 }

@@ -25,10 +25,9 @@ const getActivityComponent = (activity) => {
     return { component: PullRequestActivity, prop: 'pullRequestActivity' };
   } else if (activity.body && typeof activity.body === 'string' && activity.user.type !== 'Bot') {
     return { component: CommentActivity, prop: 'commentActivity' };
-  } else if (activity.amount) {
-    return { component: PledgeActivity, prop: 'pledgeActivity' }; 
+  } else if (activity.net_amount) {
+    return { component: PledgeActivity, prop: 'pledgeActivity' };
   }
-
   return null;
 };
 

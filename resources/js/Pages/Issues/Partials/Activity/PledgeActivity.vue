@@ -17,15 +17,15 @@ const timeLeft = ref('');
 
 const calculateTimeLeft = () => {
   if (!props.pledgeActivity.expire_date) return;
-  
+
   const now = dayjs();
   const expiry = dayjs(props.pledgeActivity.expire_date);
   const diff = expiry.diff(now);
-  
+
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
   const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  
+
   if (days > 0) {
     timeLeft.value = `Expires in ${days}d ${hours}h`;
   } else if (hours > 0) {
@@ -55,25 +55,25 @@ onUnmounted(() => {
       <p class="flex gap-1.5 mb-4 text-sm text-tundora dark:text-spun-pearl">
         <span class="font-medium text-mondo dark:text-seashell">{{ pledgeActivity.user?.name || 'Anonymous Pledger'}}</span>
         pledged
-        <span class="font-medium text-purple-heart">€{{ pledgeActivity.amount }}</span>
+        <span class="font-medium text-purple-heart">€{{ pledgeActivity.net_amount }}</span>
       </p>
-      <p 
-        v-if="pledgeActivity.expire_date" 
+      <p
+        v-if="pledgeActivity.expire_date"
         class="text-xs flex items-center gap-2 text-red-500 dark:text-red-400"
       >
-        <span 
+        <span
           class="inline-flex items-center animate-pulse"
         >
           <svg
-            class="w-4 h-4 mr-1" 
-            fill="none" 
-            stroke="currentColor" 
+            class="w-4 h-4 mr-1"
+            fill="none"
+            stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            <path 
-              stroke-linecap="round" 
-              stroke-linejoin="round" 
-              stroke-width="2" 
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
               d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>

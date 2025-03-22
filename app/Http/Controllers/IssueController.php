@@ -45,8 +45,13 @@ class IssueController extends Controller
     {
         $issue = GetIssueById::get($id);
         $issue->issueResolver = GithubService::getUserByGithubId($issue->resolver_github_id);
-        $issue->issueActivity = GithubService::getIssueActivityTimeline($issue->github_url, $issue->repository->githubInstallation->access_token, $issue->donations, $issue->issueResolver, $issue->resolved_at);
-        $user = Auth::user();
+        $issue->issueActivity = GithubService::getIssueActivityTimeline(
+            $issue->github_url,
+            $issue->repository->githubInstallation->access_token,
+            $issue->donations,
+            $issue->issueResolver,
+            $issue->resolved_at
+        );
 
         return Inertia::render('Issues/Show', [
             'issue' => $issue,

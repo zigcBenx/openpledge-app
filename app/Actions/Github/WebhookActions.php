@@ -66,7 +66,7 @@ class WebhookActions
         $issue = Issue::where('github_id', $issueGithubId)->first();
         if (!$issue) {
             // If issue is not in our database, we don't have any donations,
-            // and no need to update it's existing data in our DB,
+            // and no need to update its existing data in our DB,
             // therefore we don't need to check anything else
             return;
         }
@@ -161,6 +161,8 @@ class WebhookActions
     {
         $resolver = User::where('github_id', $resolverGithubId)->first();
         if (!$resolver) {
+            // TODO: Add comment with bot and tag this user that he needs to register
+            // on OpenPledge and connect his GitHub account to receive the funds.
             logger()->warning(
                 'Issue resolver not registered in OpenPledge',
                 ['github_id' => $resolverGithubId, 'issue_id' => $issue->id]

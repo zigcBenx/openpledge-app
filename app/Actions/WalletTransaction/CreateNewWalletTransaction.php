@@ -8,7 +8,7 @@ class CreateNewWalletTransaction
     {
         foreach ($donations as $donation) {
             $donation->walletTransactions()->create([
-                'amount' => $donation->net_amount,
+                'amount' => $donation->getRawOriginal('net_amount'),
                 'is_withdrawn' => false,
                 'contributor_id' => $user->id,
             ]);
