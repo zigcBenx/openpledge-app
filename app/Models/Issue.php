@@ -28,7 +28,7 @@ class Issue extends Model
     ];
 
     protected $casts = [
-        'donations_sum_net_amount' => MoneyCast::class,
+        'donations_sum_net_amount'   => MoneyCast::class,
         'donations_sum_gross_amount' => MoneyCast::class,
     ];
 

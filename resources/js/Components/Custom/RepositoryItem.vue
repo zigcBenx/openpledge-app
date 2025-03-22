@@ -27,7 +27,7 @@
     </td>
     <td class="py-6 align-middle">
         <span class="text-purple-heart font-medium text-base">
-            ${{ repository.issues_donations_sum_net_amount ?? 0 }}
+            ${{ repository.total_donations ?? 0 }}
         </span>
     </td>
     <td class="py-6 pr-6 align-middle">
@@ -71,11 +71,11 @@ const addFavorites = (repository) => {
         favorable_type: 'Repository',
     })
         .then(response => {
-            const toastOptions = response.data.message.includes('added') 
+            const toastOptions = response.data.message.includes('added')
                 ? {
                     onClick: () => router.visit(route('profile.favorites-show')),
                     toastClassName: 'cursor-pointer hover:opacity-90'
-                } 
+                }
                 : {};
             toast.success(response.data.message, toastOptions);
             repository.favorite = !repository.favorite;
