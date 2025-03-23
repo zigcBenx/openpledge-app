@@ -111,7 +111,7 @@ Route::middleware([
     Route::get('/user/profile/finished', [ProfileController::class, 'showAuthUsersFinishedIssues'])->name('profile.finished-show');
 
     Route::post('/user/new-user-quiz-submission', [UserController::class, 'handleNewUserQuizSubmission'])->name('user.new-user-quiz');
-    
+
     // Stripe Connect routes
     Route::get('/stripe/connect', [StripeConnectController::class, 'stripeConnect'])->name('stripe.connect');
     Route::post('/stripe/create-account-link', [StripeConnectController::class, 'createAccountLink'])->name('stripe.create.account.link');
@@ -119,6 +119,7 @@ Route::middleware([
     Route::get('/stripe/onboarding/return', [StripeConnectController::class, 'onboardingReturn'])->name('stripe.onboarding.return');
     Route::get('/stripe/dashboard/link', [StripeConnectController::class, 'getDashboardLink'])->name('stripe.dashboard.link');
 
+    Route::post('/payment/payout', [PaymentController::class, 'payout'])->name('payment.payout');
     // GitHub App integration route
     Route::get('/github/installation/callback', [GithubController::class, 'handleGithubAppCallback'])->name('github.installation.callback');
 });

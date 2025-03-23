@@ -6,6 +6,8 @@ use App\Casts\MoneyCast;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\Auth;
 
 class Issue extends Model
@@ -83,6 +85,11 @@ class Issue extends Model
     public function resolvedBy()
     {
         return $this->belongsTo(User::class, 'resolver_github_id', 'github_id');
+    }
+
+    public function unpaidDonations(): MorphMany
+    {
+        return $this->donations()->where('paid', false);
     }
 
     public function getUnpaidDonations()

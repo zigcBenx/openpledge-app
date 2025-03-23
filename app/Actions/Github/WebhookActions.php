@@ -2,6 +2,7 @@
 
 namespace App\Actions\Github;
 
+use App\Actions\Email\SendNotifyPledgersMail;
 use App\Actions\WalletTransaction\CreateNewWalletTransaction;
 use App\Models\Issue;
 use App\Models\Label;
@@ -83,6 +84,9 @@ class WebhookActions
             $resolverData = self::getResolverData($payload, $mergedPullRequest);
             self::updateIssueResolver($issue, $resolverData);
             self::payoutToResolver($issue, $resolverData['github_id'], $issueDonations);
+
+            self::notifyPledgers();
+            self::notifyOtherContributorsWorkingOnThisIssue();
         }
     }
 
@@ -169,8 +173,26 @@ class WebhookActions
             );
             return;
         }
-
         CreateNewWalletTransaction::create($resolver, $donations);
-        // ProcessPayment::processDonations($issue, $resolver);
+    }
+
+    private static function notifyPledgers(): void
+    {
+        // TODO: This should be moved to where transfer to wallet is made
+        // because that is actual time when issue was solved
+        // Send emails to users that pledged to this issue notifying them that the issue has been resolved
+//        $pledgers = $donations->pluck('user')->filter()->values()->toArray();
+//        SendNotifyPledgersMail::send($pledgers, $issue->id);
+    }
+
+    private static function notifyOtherContributorsWorkingOnThisIssue(): void
+    {
+        // TODO:
+        // Query users who have this issue as an active issue but exclude the current resolver
+//        $usersWithActiveIssue = User::whereHas('active_issues', function ($query) use ($issueId) {
+//            $query->where('issue_id', $issueId);
+//        })->where('email', '!=', $resolverMail)->get();
+//
+//        SendIssueResolverMail::send($resolverMail, $dbUser->name, $issue->id, $usersWithActiveIssue); // Send emails to all resolvers during beta, regardless of Stripe connection
     }
 }

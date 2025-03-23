@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Casts\MoneyCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -124,10 +126,32 @@ class User extends Authenticatable
         return $this->hasMany(WalletTransaction::class, 'contributor_id');
     }
 
+    public function pendingWalletTransactions(): HasMany
+    {
+        return $this->walletTransactions()->where('is_withdrawn', false);
+    }
+
+    public function resolvedIssues(): HasMany
+    {
+        return $this->hasMany(Issue::class, 'resolver_github_id', 'github_id');
+    }
+
     public function getWalletAmountAttribute(): float
     {
         $amount = $this->walletTransactions()->sum('amount');
         return app(MoneyCast::class)->get($this, 'wallet_sum', $amount, []);
+    }
 
+    public function getWalletAmountAvailableAttribute(): float
+    {
+        $amount = $this->walletTransactions()
+            ->where('is_withdrawn', false)
+            ->sum('amount');
+        return app(MoneyCast::class)->get($this, 'wallet_available_sum', $amount, []);
+    }
+
+    public function isEligibleForPayout(): bool
+    {
+        return $this->stripe_id !== null;
     }
 }

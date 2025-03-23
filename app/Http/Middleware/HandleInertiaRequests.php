@@ -40,6 +40,7 @@ class HandleInertiaRequests extends Middleware
             'user.roles'       => $request->user() ? $request->user()->roles->pluck('name') : [],
             'user.permissions' => $request->user() ? $request->user()->getPermissionsViaRoles()->pluck('name') : [],
             'user.wallet_amount' => $request->user() ? $request->user()->walletAmount : 0,
+            'user.wallet_amount_available' => $request->user() ? $request->user()->walletAmountAvailable : 0,
             'flash' => [
                 'message' => fn () => $request->session()->get('message')
             ],

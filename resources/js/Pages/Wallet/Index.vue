@@ -17,14 +17,19 @@
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <h3 class="text-xl font-semibold text-gray-200 mb-2">Current Balance</h3>
-                                        <p class="text-3xl font-bold text-teal-400">${{ $page.props.user?.wallet_amount }}</p>
+                                        <p class="text-3xl font-bold text-teal-400">${{ $page.props.user?.wallet_amount_available }}</p>
                                     </div>
                                     <div class="w-12 h-12 rounded-full bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center">
                                         <i class="fas fa-wallet text-2xl text-white" />
                                     </div>
                                 </div>
                                 <div class="mt-4">
-                                    <button class="bg-green/10 text-green px-4 py-2 rounded-lg">Payout to Stripe</button>
+                                    <button
+                                        class="bg-green/10 text-green px-4 py-2 rounded-lg"
+                                        @click="makePayout"
+                                    >
+                                        Payout to Stripe
+                                    </button>
                                 </div>
                             </div>
 
@@ -46,7 +51,7 @@
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <h3 class="text-xl font-semibold text-gray-200 mb-2">Total Paid Out</h3>
-                                        <p class="text-3xl font-bold text-teal-400">${{ $page.props.user?.wallet_amount }}</p>
+                                        <p class="text-3xl font-bold text-teal-400">${{ $page.props.user?.wallet_amount - $page.props.user?.wallet_amount_available }}</p>
                                     </div>
                                     <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center">
                                         <i class="fas fa-money-bill-transfer text-2xl text-white" />
@@ -98,6 +103,7 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
+import {useToast} from "vue-toastification";
 
 defineProps({
     transactions: {
@@ -105,4 +111,16 @@ defineProps({
         required: true
     }
 });
+
+const toast = useToast()
+
+const makePayout = () => {
+    axios.post(route('payment.payout'))
+    .then(response => {
+        console.log(response)
+    })
+    .catch(error => {
+        toast.error('You are not eligible for payout')
+    });
+}
 </script>
