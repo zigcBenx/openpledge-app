@@ -7,7 +7,9 @@ use App\Models\User;
 use App\Actions\Email\SendIssueResolverMail;
 use App\Actions\Email\SendNotifyPledgersMail;
 use App\Models\Donation;
+use App\Models\WalletTransaction;
 use App\Services\PayoutFeeService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class ProcessPayout
@@ -16,17 +18,15 @@ class ProcessPayout
     {
         $user = Auth::user();
 
-        if (!$user->isEligibleForPayout()) {
-            // show alert that and why he is not eligible
+        if (! $user->isEligibleForPayout()) {
             return response()->json(['error' => 'You are not eligible for payout'], 400);
+        }
 
-            // TODO: Is this useful anywhere?
-//            SendConnectStripeMail::send($resolverMail, $dbUser->name, $totalPayoutAmount, "Payout");
-//            logger('[WARNING] Cannot transfer funds: User does not have a connected Stripe account.', ['user_id' => $dbUser->id]);
+        if ($user->hasPayoutThisMonth()) {
+            return response()->json(['error' => 'You\'ve already made payout this month.'], 400);
         }
 
         $user->loadMissing('pendingWalletTransactions.donation');
-
         $payoutAmount = self::calculateAmountForPayout($user->pendingWalletTransactions);
 
         if (! self::hasEnoughFunds($payoutAmount)) {
@@ -39,17 +39,10 @@ class ProcessPayout
         $chargeId = self::getChargeId($donations);
 
         $transferId = self::makeTransfer($finalPayoutAmount, $user, $chargeId);
-        // todo: add this transfer id to all donations payout_transaction_id that were paid out
 
+        self::markWalletTransactionsAsWithdrawn($user->pendingWalletTransactions);
 
-
-        // Should we store those transfers in out database also?
-            // if you check donations payout_transaction_id you actually already have this info
-
-        // Flag wallet transactions that they were paid out
-        $user->pendingWalletTransactions->update(['is_withdrawn' => true]);
-        // Flag donations that they were paid out
-        $donations->update(['paid' => true]);
+        self::markDonationsAsPaidOut($donations, $transferId);
     }
 
     private static function calculateAmountForPayout($walletTransactions): float
@@ -60,7 +53,7 @@ class ProcessPayout
     private static function hasEnoughFunds($payoutAmount): bool
     {
         // TODO: Add condition for minimum payout amount
-        return PayoutFeeService::hasEnoughFunds($payoutAmount) > 0.0;
+        return PayoutFeeService::hasEnoughFunds($payoutAmount);
     }
 
     /**
@@ -79,5 +72,20 @@ class ProcessPayout
     private static function makeTransfer($amount, $user, $charge_id = null)
     {
         return TransferFunds::transfer($user->stripe_id, $amount, $charge_id);
+    }
+
+    private static function markWalletTransactionsAsWithdrawn($pendingWalletTransactions): void
+    {
+        WalletTransaction::whereIn('id', $pendingWalletTransactions->pluck('id'))
+            ->update(['is_withdrawn' => true, 'withdrawn_at' => Carbon::now()]);
+    }
+
+    private static function markDonationsAsPaidOut($donations, $transferId): void
+    {
+        Donation::whereIn('id', $donations->pluck('id'))
+            ->update([
+                'paid' => true,
+                'payout_transaction_id' => $transferId
+            ]);
     }
 }
