@@ -28,10 +28,10 @@
         </div>
         <label class="dark:text-lavender-mist text-oil text-sm">
           Pledge amount
-          <MoneyInput 
-            v-model:input="form.amount" 
-            inputClass="!bg-transparent" 
-            wrapperClass="w-full !bg-transparent mt-2.5 !pl-0 !border-none" 
+          <MoneyInput
+            v-model:input="form.amount"
+            inputClass="!bg-transparent"
+            wrapperClass="w-full !bg-transparent mt-2.5 !pl-0 !border-none"
             icon="euro"
             currency="EUR"
             required
@@ -42,13 +42,24 @@
           <small v-if="form.errors?.amount" :class="classes.error">{{form.errors?.amount[0]}}</small>
         </label>
 
+          <div v-if="netAmount" class="dark:bg-rich-black bg-light-sea-shade rounded-md p-6 text-white">
+              <div class="border-0 border-b border-gray-200 mb-4 pb-4 flex justify-between">
+                  <p>Service fee</p>
+                  <p>10%</p>
+              </div>
+              <div class="flex justify-between">
+                  <p>Amount to issue:</p>
+                  <p>{{ netAmount }}€</p>
+              </div>
+          </div>
+
         <label class="dark:text-lavender-mist text-oil text-sm" v-if="!isAuthenticated">
           <p class="mb-2.5">Contact details</p>
-          <Input 
+          <Input
             v-model:input="form.email"
-            inputClass="w-full !bg-transparent" 
-            type="email" 
-            placeholder="Email" 
+            inputClass="w-full !bg-transparent"
+            type="email"
+            placeholder="Email"
             icon="letter"
             required
             iconClass="dark:text-spun-pearl text-tundora"
@@ -64,13 +75,13 @@
             <div id="payment-element">
                 <!-- Stripe will create form elements here -->
             </div>
-            <Button 
-              :loading="loading" 
-              :disabled="!isPledgeAmountValid || !isStripePaymentFormValid" 
-              class="mt-8" 
-              :plain="true" 
-              size="lg" 
-              color="primary" 
+            <Button
+              :loading="loading"
+              :disabled="!isPledgeAmountValid || !isStripePaymentFormValid"
+              class="mt-8"
+              :plain="true"
+              size="lg"
+              color="primary"
               @click="handleFormSubmit()"
             >
               Pledge This Issue
@@ -137,6 +148,14 @@ const form = reactive({
   paymentId: '',
   errors: {}
 });
+
+const fee = computed(() => {
+    return 10
+})
+const netAmount = computed (() => {
+    if (!form.amount) return null
+    return form.amount - form.amount * fee.value * 0.01
+})
 
 const debouncedPaymentIntent = useDebounceFn(() => {
   paymentIntent();
@@ -269,10 +288,10 @@ const handleFormSubmit = async () => {
             form.pledgeExpirationYear = '';
 
             const animationEnd = Date.now() + 4000;
-            
+
             const interval = setInterval(function() {
               const timeLeft = animationEnd - Date.now();
-              
+
               if (timeLeft <= 0) {
                 return clearInterval(interval);
               }
