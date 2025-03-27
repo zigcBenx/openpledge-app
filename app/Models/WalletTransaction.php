@@ -16,6 +16,7 @@ class WalletTransaction extends Model
         'is_withdrawn',
         'contributor_id',
         'donation_id',
+        'withdrawn_at'
     ];
 
     protected $casts = [

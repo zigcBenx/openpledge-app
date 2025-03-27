@@ -102,8 +102,8 @@
 
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Head } from '@inertiajs/vue3';
-import {useToast} from "vue-toastification";
+import { router } from '@inertiajs/vue3';
+import { useToast } from "vue-toastification";
 
 defineProps({
     transactions: {
@@ -117,10 +117,14 @@ const toast = useToast()
 const makePayout = () => {
     axios.post(route('payment.payout'))
     .then(response => {
-        console.log(response)
+        toast.success('Pay out to Stripe successfully')
+        router.reload({
+            only: ['transactions', 'user.wallet_amount_available', 'user.wallet_amount'],
+        })
     })
     .catch(error => {
-        toast.error('You are not eligible for payout')
+        const errorMessage = error.response?.data?.error || 'An unexpected error occurred';
+        toast.error(errorMessage);
     });
 }
 </script>

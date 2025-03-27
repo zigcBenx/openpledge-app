@@ -4,8 +4,6 @@ namespace App\Models;
 
 use App\Casts\MoneyCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -14,6 +12,7 @@ use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Laravel\Cashier\Billable;
+use Carbon\Carbon;
 
 class User extends Authenticatable
 {
@@ -153,5 +152,21 @@ class User extends Authenticatable
     public function isEligibleForPayout(): bool
     {
         return $this->stripe_id !== null;
+    }
+
+    public function latestPayoutTransaction()
+    {
+        return $this->walletTransactions()
+            ->where('is_withdrawn', true)
+            ->orderBy('withdrawn_at', 'desc')
+            ->first();
+    }
+
+    public function hasPayoutThisMonth(): bool
+    {
+        $latestPayout = $this->latestPayoutTransaction();
+
+        return $latestPayout &&
+               Carbon::parse($latestPayout->withdrawn_at)->isCurrentMonth();
     }
 }

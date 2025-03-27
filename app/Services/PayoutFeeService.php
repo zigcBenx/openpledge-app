@@ -10,11 +10,16 @@ class PayoutFeeService
      * @param float $payoutAmount
      * @return float
      */
+
+    /**
+     * We subtract 2€ because we allow only one payout per month.
+     * Therefore, we need to pay stripe commission for
+     * active user that month that payout occurred.
+     * @param float $payoutAmount
+     * @return float
+     */
     public static function calculate(float $payoutAmount): float
     {
-        // TODO: 2€ is price per month, so you need to check
-        // if this user has already made payout this month.
-        // In that case you don't subtract 2€.
         return $payoutAmount - 2 - 0.1 - ($payoutAmount * 0.0025);
     }
 
