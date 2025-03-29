@@ -25,11 +25,14 @@
                                 </div>
                                 <div class="mt-4">
                                     <button
+                                        :disabled="!canPayout"
+                                        :class="{'cursor-not-allowed opacity-50': !canPayout}"
                                         class="bg-green/10 text-green px-4 py-2 rounded-lg"
                                         @click="makePayout"
                                     >
                                         Payout to Stripe
                                     </button>
+                                    <i v-if="!canPayout" class="block text-orange-500">You can make only one payout per month.</i>
                                 </div>
                             </div>
 
@@ -65,9 +68,10 @@
                             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                 <thead>
                                     <tr>
-                                        <th class="px-6 py-3 bg-gray-50 dark:bg-charcoal-gray text-left text-xs leading-4 font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
+                                        <th class="px-6 py-3 bg-gray-50 dark:bg-charcoal-gray text-left text-xs leading-4 font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Rewarded at</th>
                                         <th class="px-6 py-3 bg-gray-50 dark:bg-charcoal-gray text-left text-xs leading-4 font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Amount</th>
                                         <th class="px-6 py-3 bg-gray-50 dark:bg-charcoal-gray text-left text-xs leading-4 font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-3 bg-gray-50 dark:bg-charcoal-gray text-left text-xs leading-4 font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Paid out at</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white dark:bg-gunmetal divide-y divide-gray-200 dark:divide-gray-700">
@@ -89,6 +93,9 @@
                                                 In wallet
                                             </span>
                                         </td>
+                                        <td>
+                                            <div v-if="transaction.is_withdrawn" class="text-white text-sm">{{ transaction.withdrawn_at }}</div>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -108,6 +115,10 @@ import { useToast } from "vue-toastification";
 defineProps({
     transactions: {
         type: Array,
+        required: true
+    },
+    canPayout: {
+        type: Boolean,
         required: true
     }
 });
