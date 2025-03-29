@@ -17,7 +17,7 @@
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <h3 class="text-xl font-semibold text-gray-200 mb-2">Current Balance</h3>
-                                        <p class="text-3xl font-bold text-teal-400">${{ $page.props.user?.wallet_amount_available }}</p>
+                                        <p class="text-3xl font-bold text-teal-400">${{ $page.props.user?.wallet_amount_available.toFixed(2) }}</p>
                                     </div>
                                     <div class="w-12 h-12 rounded-full bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center">
                                         <i class="fas fa-wallet text-2xl text-white" />
@@ -41,7 +41,7 @@
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <h3 class="text-xl font-semibold text-gray-200 mb-2">Total Earned</h3>
-                                        <p class="text-3xl font-bold text-teal-400">${{ $page.props.user?.wallet_amount }}</p>
+                                        <p class="text-3xl font-bold text-teal-400">${{ $page.props.user?.wallet_amount.toFixed(2) }}</p>
                                     </div>
                                     <div class="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
                                         <i class="fas fa-arrow-trend-up text-2xl text-white" />
@@ -54,7 +54,7 @@
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <h3 class="text-xl font-semibold text-gray-200 mb-2">Total Paid Out</h3>
-                                        <p class="text-3xl font-bold text-teal-400">${{ $page.props.user?.wallet_amount - $page.props.user?.wallet_amount_available }}</p>
+                                        <p class="text-3xl font-bold text-teal-400">${{ ($page.props.user?.wallet_amount - $page.props.user?.wallet_amount_available).toFixed(2) }}</p>
                                     </div>
                                     <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center">
                                         <i class="fas fa-money-bill-transfer text-2xl text-white" />
@@ -81,7 +81,7 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium"
                                             :class="transaction.amount >= 0 ? 'text-green dark:text-green' : 'text-red-600 dark:text-red-400'">
-                                            ${{ transaction.amount }}
+                                            ${{ Number(transaction.amount).toFixed(2) }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm">
                                             <span v-if="transaction.is_withdrawn"

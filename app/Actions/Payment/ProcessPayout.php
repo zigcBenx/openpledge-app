@@ -52,7 +52,6 @@ class ProcessPayout
 
     private static function hasEnoughFunds($payoutAmount): bool
     {
-        // TODO: Add condition for minimum payout amount
         return PayoutFeeService::hasEnoughFunds($payoutAmount);
     }
 
