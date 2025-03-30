@@ -26,65 +26,37 @@ class ProcessPayout
             return response()->json(['error' => 'You\'ve already made payout this month.'], 400);
         }
 
-        $user->loadMissing('pendingWalletTransactions.donation');
-        $payoutAmount = self::calculateAmountForPayout($user->pendingWalletTransactions);
+        $user->load('pendingWalletTransactions.donation');
 
-        if (! self::hasEnoughFunds($payoutAmount)) {
-            return response()->json(['error' => 'You do not have enough funds to payout'], 400);
-        }
-
-        $finalPayoutAmount = PayoutFeeService::calculate($payoutAmount);
-
-        $donations = $user->pendingWalletTransactions->pluck('donation');
-        $chargeId = self::getChargeId($donations);
-
-        $transferId = self::makeTransfer($finalPayoutAmount, $user, $chargeId);
+        self::makeTransfers($user);
 
         self::markWalletTransactionsAsWithdrawn($user->pendingWalletTransactions);
 
-        self::markDonationsAsPaidOut($donations, $transferId);
+        return response()->json(['message' => "Pay out to Stripe successfully"]);
     }
 
-    private static function calculateAmountForPayout($walletTransactions): float
+    private static function makeTransfers($user): void
     {
-        return $walletTransactions->sum('amount');
+        $donationsToPayout = $user->pendingWalletTransactions->pluck('donation');
+
+        foreach ($donationsToPayout as $idx => $donation) {
+            $subtractMonthlyFee = false;
+            if ($idx === 0) $subtractMonthlyFee = true;
+
+            $amountToPay = PayoutFeeService::calculate($donation->net_amount, $subtractMonthlyFee);
+
+            $transferId = TransferFunds::transfer($user->stripe_id, $amountToPay, $donation->charge_id);
+
+            $donation->payout_transaction_id = $transferId;
+            $donation->paid = true;
+            $donation->save();
+        }
     }
 
-    private static function hasEnoughFunds($payoutAmount): bool
-    {
-        return PayoutFeeService::hasEnoughFunds($payoutAmount);
-    }
-
-    /**
-     * We return the charge ID when there is a single donation for payment.
-     * If there are multiple donations, we group them to reduce fees.
-     * In such cases, the transfer is done without the charge ID as the source.
-     *
-     * @param $donations
-     * @return mixed|null
-     */
-    private static function getChargeId($donations): mixed
-    {
-        if ($donations->count() > 1) return null;
-        return $donations->first()->charge_id;
-    }
-    private static function makeTransfer($amount, $user, $charge_id = null)
-    {
-        return TransferFunds::transfer($user->stripe_id, $amount, $charge_id);
-    }
 
     private static function markWalletTransactionsAsWithdrawn($pendingWalletTransactions): void
     {
         WalletTransaction::whereIn('id', $pendingWalletTransactions->pluck('id'))
             ->update(['is_withdrawn' => true, 'withdrawn_at' => Carbon::now()]);
-    }
-
-    private static function markDonationsAsPaidOut($donations, $transferId): void
-    {
-        Donation::whereIn('id', $donations->pluck('id'))
-            ->update([
-                'paid' => true,
-                'payout_transaction_id' => $transferId
-            ]);
     }
 }

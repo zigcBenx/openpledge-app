@@ -128,9 +128,9 @@ const toast = useToast()
 const makePayout = () => {
     axios.post(route('payment.payout'))
     .then(response => {
-        toast.success('Pay out to Stripe successfully')
+        toast.success(response.data.message)
         router.reload({
-            only: ['transactions', 'user.wallet_amount_available', 'user.wallet_amount'],
+            only: ['transactions', 'user.wallet_amount_available', 'user.wallet_amount', 'canPayout'],
         })
     })
     .catch(error => {

@@ -35,8 +35,8 @@
                                             id="search-input"
                                             v-model="searchQuery"
                                             inputClass="focus:w-[44.375rem]"
-                                            placeholder="Search" 
-                                            type="search" 
+                                            placeholder="Search"
+                                            type="search"
                                             icon="search"
                                             :closeOnOutside="true"
                                             @onInput="searchQuery = $event.target.value"
@@ -44,10 +44,10 @@
                                     </template>
 
                                     <template #content>
-                                        <SearchCard 
+                                        <SearchCard
                                             :isDark="isDark"
-                                            class="w-[44.375rem]" 
-                                            :data="filteredData" 
+                                            class="w-[44.375rem]"
+                                            :data="filteredData"
                                             checkboxLabel="Show GitHub results"
                                             :isCheckboxDisabled="!isAuthenticated"
                                             :getSearchItemHref="generateSearchItemHref"
@@ -55,17 +55,17 @@
                                             :tooltipText="!isAuthenticated ? 'Log In to show GitHub results' : ''"
                                         />
                                     </template>
-                                </Dropdown>                                
+                                </Dropdown>
                             </div>
                             <div>
-                                <Icon name="bell" 
-                                    class="dark:stroke-spun-pearl hover:fill-green stroke-tundora"  
+                                <Icon name="bell"
+                                    class="dark:stroke-spun-pearl hover:fill-green stroke-tundora"
                                 />
                             </div>
                             <div class="relative">
                                 <Dropdown align="right" width="400px">
                                     <template #trigger>
-                                        <Icon name="user" 
+                                        <Icon name="user"
                                             class="dark:stroke-spun-pearl hover:fill-green stroke-tundora"
                                         />
                                     </template>
@@ -76,10 +76,10 @@
                                 </Dropdown>
                             </div>
                             <div>
-                                <Icon name="moon" 
+                                <Icon name="moon"
                                     v-if="isDark"
                                     class="dark:stroke-spun-pearl hover:fill-green"
-                                    @click="toggleDark()" 
+                                    @click="toggleDark()"
                                 />
                                 <Icon name="sun"
                                     v-else
@@ -92,8 +92,8 @@
                         <!-- Hamburger -->
                         <div class="-me-2 flex items-center sm:hidden">
                             <div class="pr-2">
-                                <Icon name="bell" 
-                                    class="dark:stroke-spun-pearl hover:fill-green stroke-tundora"  
+                                <Icon name="bell"
+                                    class="dark:stroke-spun-pearl hover:fill-green stroke-tundora"
                                 />
                             </div>
                             <button class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out" @click="showingNavigationDropdown = ! showingNavigationDropdown">
@@ -139,7 +139,7 @@
                         <div class="flex items-center px-4">
                             <div v-if="$page.props.jetstream.managesProfilePhotos" class="shrink-0 me-3">
                                 <img
-                                    class="h-10 w-10 rounded-full object-cover" 
+                                    class="h-10 w-10 rounded-full object-cover"
                                     :src="$page.props.auth?.user?.profile_photo_url || '/images/anonymous_pledger.png'"
                                     :alt="$page.props.auth?.user?.name || 'Anonymous Pledger'">
                             </div>
@@ -231,9 +231,9 @@
                     </label>
                     <TextArea
                         maxlength="500"
-                        v-model="feedbackData.content" 
+                        v-model="feedbackData.content"
                         placeholder="Let us know what you think..."
-                        textAreaClass="w-full h-32" 
+                        textAreaClass="w-full h-32"
                     />
                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Your thoughts help us improve!</p>
                 </div>
@@ -241,7 +241,7 @@
         </template>
         <template #footer>
             <div class="flex gap-2">
-                <Button 
+                <Button
                     @click="feedbackModalMessage ? displayFeedbackModal = false : submitFeedback()"
                     :disabled="!feedbackModalMessage && (!feedbackData.email || !feedbackData.content)"
                 >
@@ -415,6 +415,27 @@
                     console.error(error);
                 });
             };
+
+            console.log(`
+              ___                   ____  _          _
+             / _ \\ _ __   ___ _ __ |  _ \\| | ___  __| | __ _  ___
+            | | | | '_ \\ / _ \\ '_ \\| |_) | |/ _ \\/ _\` |/ _\` |/ _ \\
+            | |_| | |_) |  __/ | | |  __/| |  __/ (_| | (_| |  __/
+             \\___/| .__/ \\___|_| |_|_|   |_|\\___|\\__,_|\\__, |\\___|
+                  |_|                                  |___/
+
+              Hey there, curious dev! 👀
+
+              It seems you've stumbled into the developer tools. 🕵️‍♂️
+              While you're here, take a look around and see if you find anything
+              *interesting*... 🤔
+
+              If you do, we kindly ask you to report it to us! 🎤📢
+              Your input helps us make things even better, and we promise to
+              appreciate it with all the ❤️!
+
+              Thanks for being awesome! 💻👾
+            `);
 
             return {
                 showingNavigationDropdown,
