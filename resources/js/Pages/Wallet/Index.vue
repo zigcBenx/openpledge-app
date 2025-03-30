@@ -69,6 +69,7 @@
                                 <thead>
                                     <tr>
                                         <th class="px-6 py-3 bg-gray-50 dark:bg-charcoal-gray text-left text-xs leading-4 font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Rewarded at</th>
+                                        <th class="px-6 py-3 bg-gray-50 dark:bg-charcoal-gray text-left text-xs leading-4 font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Source</th>
                                         <th class="px-6 py-3 bg-gray-50 dark:bg-charcoal-gray text-left text-xs leading-4 font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Amount</th>
                                         <th class="px-6 py-3 bg-gray-50 dark:bg-charcoal-gray text-left text-xs leading-4 font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
                                         <th class="px-6 py-3 bg-gray-50 dark:bg-charcoal-gray text-left text-xs leading-4 font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Paid out at</th>
@@ -79,8 +80,12 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
                                             {{ transaction.created_at }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium"
-                                            :class="transaction.amount >= 0 ? 'text-green dark:text-green' : 'text-red-600 dark:text-red-400'">
+                                        <td class="hover:bg-gray-50 dark:hover:bg-charcoal-gray transition-colors duration-150 text-white underline">
+                                            <Link :href="route('issues.show', {issue: transaction.donatable.id})">
+                                                Issue #{{ transaction.donatable.id }}
+                                            </Link>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green">
                                             ${{ Number(transaction.amount).toFixed(2) }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm">
@@ -109,7 +114,7 @@
 
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { router } from '@inertiajs/vue3';
+import {Link, router} from '@inertiajs/vue3';
 import { useToast } from "vue-toastification";
 
 defineProps({

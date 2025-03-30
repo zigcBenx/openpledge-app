@@ -8,7 +8,7 @@ class GetWalletTransactionsForAuthUser
 {
     public static function get()
     {
-        return auth()->user()->walletTransactions()
+        return auth()->user()->walletTransactions()->with('donation.donatable')
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($transaction) {
@@ -17,7 +17,8 @@ class GetWalletTransactionsForAuthUser
                     'amount'       => $transaction->amount,
                     'is_withdrawn' => $transaction->is_withdrawn,
                     'created_at'   => $transaction->created_at->format('Y-m-d H:i'),
-                    'withdrawn_at' => Carbon::parse($transaction->withdrawn_at)->format('Y-m-d H:i')
+                    'withdrawn_at' => Carbon::parse($transaction->withdrawn_at)->format('Y-m-d H:i'),
+                    'donatable'    => $transaction->donation->donatable
                 ];
             });
     }
