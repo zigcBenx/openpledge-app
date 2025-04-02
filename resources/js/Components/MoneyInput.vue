@@ -24,7 +24,7 @@
 import { computed, defineProps, defineEmits, ref, watch } from 'vue';
 
 const props = defineProps({
-  modelValue: Number,
+  modelValue: Number|String,
   minDonation: { type: Number, required: true },
   maxDonation: { type: Number, required: true },
   currency: { type: String, required: true },
@@ -47,20 +47,18 @@ const isValidInput = computed(() => {
 });
 
 const handleInput = (event) => {
-  let value = event.target.value.replace(/[^0-9.]/g, ''); // Remove non-numeric and non-dot characters
+  let value = event.target.value.replace(/[^0-9.]/g, '');
   const parts = value.split('.');
   
   // Handle extra decimal points
   if (parts.length > 2) {
-    value = parts[0] + '.' + parts.slice(1).join('').replace(/\./g, ''); // Remove extra dots
+    value = parts[0] + '.' + parts.slice(1).join('').replace(/\./g, '');
   }
 
-  // Limit decimal places to 2
   if (parts[1]?.length > 2) {
-    value = parts[0] + '.' + parts[1].slice(0, 2); // Limit to 2 decimal places
+    value = parts[0] + '.' + parts[1].slice(0, 2);
   }
 
-  // If the value is empty (e.g., "0" or "00"), reset it to empty string
   if (value === '0' || value === '00') {
     value = '';
   }
