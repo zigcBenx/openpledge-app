@@ -11,6 +11,7 @@ use App\Models\Repository;
 use App\Models\User;
 use App\Services\GithubService;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 
 class WebhookActions
 {
@@ -75,19 +76,32 @@ class WebhookActions
         self::syncIssueWithGithub($issue, $githubIssue, $action);
 
         $issueDonations = $issue->getUnpaidDonations();
-        if ($issueDonations->isNotEmpty() && $action === "closed") {
-            $mergedPullRequest = self::findMergedPullRequest($payload, $githubIssue['number']);
-            if (!$mergedPullRequest) {
-                return;
-            }
-
-            $resolverData = self::getResolverData($payload, $mergedPullRequest);
-            self::updateIssueResolver($issue, $resolverData);
-            self::payoutToResolver($issue, $resolverData['github_id'], $issueDonations);
-
-            self::notifyPledgers();
-            self::notifyOtherContributorsWorkingOnThisIssue();
+        if ($issueDonations->isEmpty() || $action !== "closed") {
+            return;
         }
+
+        $mergedPullRequest = self::findMergedPullRequest($payload, $githubIssue['number']);
+        if (!$mergedPullRequest) {
+            return;
+        }
+
+        $resolverData = self::getResolverData($payload, $mergedPullRequest);
+        self::updateIssueResolver($issue, $resolverData);
+        $resolverUser = self::getMatchingUser($resolverData);
+
+        if ($resolverUser) {
+            self::payoutToResolver($resolverUser, $issueDonations);
+        } else {
+            // user not exist in openpledge database
+            logger()->warning(
+                'Issue resolver not registered in OpenPledge',
+                ['github_id' => $resolverData['github:id'], 'issue_id' => $issue->id]
+            );
+        }
+
+
+        self::notifyPledgers($issue, $issueDonations);
+        self::notifyOtherContributorsWorkingOnThisIssue();
     }
 
     /**
@@ -161,28 +175,20 @@ class WebhookActions
         $issue->save();
     }
 
-    private static function payoutToResolver(Issue $issue, int $resolverGithubId, $donations): void
+    private static function getMatchingUser($resolverData): ?User
     {
-        $resolver = User::where('github_id', $resolverGithubId)->first();
-        if (!$resolver) {
-            // TODO: Add comment with bot and tag this user that he needs to register
-            // on OpenPledge and connect his GitHub account to receive the funds.
-            logger()->warning(
-                'Issue resolver not registered in OpenPledge',
-                ['github_id' => $resolverGithubId, 'issue_id' => $issue->id]
-            );
-            return;
-        }
-        CreateNewWalletTransaction::create($resolver, $donations);
+        return User::where('github_id', $resolverData['github_id'])->first();
     }
 
-    private static function notifyPledgers(): void
+    private static function payoutToResolver(User $resolverUser, $donations): void
     {
-        // TODO: This should be moved to where transfer to wallet is made
-        // because that is actual time when issue was solved
-        // Send emails to users that pledged to this issue notifying them that the issue has been resolved
-//        $pledgers = $donations->pluck('user')->filter()->values()->toArray();
-//        SendNotifyPledgersMail::send($pledgers, $issue->id);
+        CreateNewWalletTransaction::create($resolverUser, $donations);
+    }
+
+    private static function notifyPledgers($issue, $donations): void
+    {
+        $pledgers = $donations->pluck('user')->filter()->values()->toArray();
+        SendNotifyPledgersMail::send($pledgers, $issue->id);
     }
 
     private static function notifyOtherContributorsWorkingOnThisIssue(): void
