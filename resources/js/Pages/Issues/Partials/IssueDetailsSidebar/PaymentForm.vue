@@ -331,6 +331,7 @@ const handleFormSubmit = async () => {
         })
         .finally(() => {
           loading.value = false
+          coverTransactionCost.value = false
         });
       }
   });
