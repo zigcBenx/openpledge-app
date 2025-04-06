@@ -2,10 +2,13 @@
 
 namespace App\Actions\Github;
 
+use App\Actions\Comment\ConstructComment;
 use App\Actions\Email\SendNotifyPledgersMail;
+use App\Actions\PendingDonation\CreateNewPendingDonation;
 use App\Actions\WalletTransaction\CreateNewWalletTransaction;
 use App\Models\Issue;
 use App\Models\Label;
+use App\Models\PendingDonation;
 use App\Models\ProgrammingLanguage;
 use App\Models\Repository;
 use App\Models\User;
@@ -92,11 +95,10 @@ class WebhookActions
         if ($resolverUser) {
             self::payoutToResolver($resolverUser, $issueDonations);
         } else {
-            // user not exist in openpledge database
-            logger()->warning(
-                'Issue resolver not registered in OpenPledge',
-                ['github_id' => $resolverData['github:id'], 'issue_id' => $issue->id]
-            );
+            // user doesn't exist in OpenPledge database, we add donations to pending and wait
+            // until he/she creates account on OP.
+            CreateNewPendingDonation::create($issueDonations, $mergedPullRequest['author']['login']);
+            self::postCommentOnGithubForResolver($issue, $issueDonations, $resolverData);
         }
 
 
@@ -162,8 +164,9 @@ class WebhookActions
         );
 
         return [
-            'github_id' => $pullRequestData['user']['id'],
-            'merged_at' => $pullRequestData['merged_at']
+            'github_id'       => $pullRequestData['user']['id'],
+            'github_username' => $pullRequestData['user']['login'],
+            'merged_at'       => $pullRequestData['merged_at']
         ];
     }
 
@@ -200,5 +203,16 @@ class WebhookActions
 //        })->where('email', '!=', $resolverMail)->get();
 //
 //        SendIssueResolverMail::send($resolverMail, $dbUser->name, $issue->id, $usersWithActiveIssue); // Send emails to all resolvers during beta, regardless of Stripe connection
+    }
+
+    private static function postCommentOnGithubForResolver($issue, $issueDonations, $resolverData): void
+    {
+        $comment = ConstructComment::constructCreateAccountComment(
+            $issue->id,
+            $issueDonations->sum('net_amount'),
+            $resolverData['github_username']
+        );
+
+        GithubService::commentOnIssue($issue, $comment);
     }
 }

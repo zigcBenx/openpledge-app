@@ -52,4 +52,9 @@ class Donation extends Model
     {
         return $this->hasMany(WalletTransaction::class);
     }
+
+    public function pendingDonations(): HasMany
+    {
+        return $this->hasMany(PendingDonation::class);
+    }
 }

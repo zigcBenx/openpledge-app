@@ -50,7 +50,7 @@
               <div class="mt-4">
                   <Checkbox v-model:checked="coverTransactionCost" />
                   <span class="ml-2 text-xs">
-                    Cover the 10% transaction fee to ensure the full pledge amount reaches the contributor.
+                    Cover the 10% transaction fee, so all of my pledge goes to the contributors.
                   </span>
               </div>
           </div>
