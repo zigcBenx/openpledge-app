@@ -6,6 +6,7 @@ use App\Models\GitHubInstallation;
 use App\Models\Repository;
 use App\Services\GithubService;
 use Firebase\JWT\JWT;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Http;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -32,13 +33,13 @@ class AuthActions
         if (!isset($authenticatedUser)) {
             return AuthActions::getRandomInstallationAccessToken();
         }
-        
+
         $authenticatedUserToken = $authenticatedUser->getGitHubAccessToken();
 
         if ($authenticatedUserToken) {
             return $authenticatedUserToken;
-        } 
-        
+        }
+
         return AuthActions::getRandomInstallationAccessToken();
     }
 
@@ -110,7 +111,7 @@ class AuthActions
             }
             return redirect('/');
         }
-        
+
         $dbUser = User::where('github_id', $githubAccountData->id)->first();
 
         if ($dbUser) {
@@ -130,7 +131,7 @@ class AuthActions
                 Auth::login($userWithSameEmail);
                 return redirect('/');
             }
-            // For security reasons, if email is not verified, we should not do anything, since we can't verify if this user is the owner of the email 
+            // For security reasons, if email is not verified, we should not do anything, since we can't verify if this user is the owner of the email
             // TODO: Force users to verify their email if they sign up manually
             return Inertia::render('Error', [
                 'message' => 'Account with this email already exists.',
@@ -156,6 +157,7 @@ class AuthActions
                 'auth_type' => 'github',
                 'profile_photo_path' => 'profile-photos/' . $fileName
             ]);
+            event(new Registered($dbUser));
         } catch (\Exception $e) {
             logger('[ERROR] Failed to create user: ' . $e->getMessage(), [
                 'github_account_data' => $githubAccountData,

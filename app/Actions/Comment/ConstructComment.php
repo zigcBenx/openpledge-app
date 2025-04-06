@@ -2,6 +2,8 @@
 
 namespace App\Actions\Comment;
 
+use Illuminate\Support\Facades\Log;
+
 class ConstructComment
 {
     private const SHORT_PLEDGE_INTROS = [
@@ -27,14 +29,12 @@ class ConstructComment
         $appUrl = config('app.url');
         $issueLink = "{$appUrl}/issues/{$issueId}";
 
-        $comment = view('comments.new_pledge', [
+        return view('comments.new_pledge', [
             'amount' => $amount,
             'donorName' => $donorName,
             'issueLink' => $issueLink,
             'expireDate' => $expireDate
         ])->render();
-
-        return $comment;
     }
 
     public static function constructShortPledgeComment($amount, $donorName, $issueId, $totalBounty, $expireDate = null)
@@ -43,7 +43,7 @@ class ConstructComment
         $issueLink = "{$appUrl}/issues/{$issueId}";
         $intro = self::SHORT_PLEDGE_INTROS[array_rand(self::SHORT_PLEDGE_INTROS)];
 
-        $comment = view('comments.short_pledge', [
+        return view('comments.short_pledge', [
             'intro' => $intro,
             'amount' => $amount,
             'donorName' => $donorName,
@@ -51,7 +51,17 @@ class ConstructComment
             'expireDate' => $expireDate,
             'totalBounty' => $totalBounty
         ])->render();
+    }
 
-        return $comment;
+    public static function constructCreateAccountComment($issueId, $amount, $resolverUserName)
+    {
+        $appUrl = config('app.url');
+        $issueLink = "{$appUrl}/issues/{$issueId}";
+
+        return view('comments.create_op_account', [
+            'amount' => $amount,
+            'issueLink' => $issueLink,
+            'resolverUserName' => '@'.$resolverUserName
+        ])->render();
     }
 }
