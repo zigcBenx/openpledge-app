@@ -1,8 +1,8 @@
 <template>
     <TopList 
         containerClass="mt-6"
-        title="Top donors" 
-        subtitle="A list of top donors based on their pledges"
+        title="Top pledgers" 
+        subtitle="A list of top pledgers based on their pledges"
     >
         <li v-for="donor in donors" :key="donor.user?.id" class="flex justify-between overflow-hidden py-1.5">
             <UserListItem :userImageUrl="donor.user?.profile_photo_url" :userName="donor.user?.name" />
