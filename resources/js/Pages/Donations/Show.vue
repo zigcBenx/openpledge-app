@@ -2,7 +2,7 @@
     <AppLayout title="Donation Details">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Donation Details
+                Pledges Details
             </h2>
         </template>
 

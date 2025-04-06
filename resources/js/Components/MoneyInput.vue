@@ -14,7 +14,7 @@
       </span>
       <div v-if="inputValue !== ''" class="text-red-500 text-sm mt-1">
         <p v-if="!isValidInput">
-          Donation must be between {{ minDonation }} and {{ maxDonation }} {{ currency }}.
+          Pledge must be between {{ minDonation }} and {{ maxDonation }} {{ currency }}.
         </p>
       </div>
     </div>
