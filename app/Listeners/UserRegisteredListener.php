@@ -5,22 +5,13 @@ namespace App\Listeners;
 use App\Actions\WalletTransaction\CreateNewWalletTransaction;
 use App\Models\PendingDonation;
 use App\Services\GithubService;
+use Carbon\Carbon;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class UserRegisteredListener implements ShouldQueue
 {
-    /**
-     * Create the event listener.
-     */
-    public function __construct()
-    {
-        //
-    }
 
-    /**
-     * Handle the event.
-     */
     public function handle(Registered $event): void
     {
         $user = $event->user;
@@ -28,33 +19,38 @@ class UserRegisteredListener implements ShouldQueue
             // if user is not linked with GitHub, we can't make payout
             return;
         }
-        logger("Getting donations");
 
-        $githubUser = self::getGithubUserName($user);
-        logger($githubUser);
-        $donations = self::getPendingDonations($githubUser);
-        logger($donations);
-        self::payoutToResolver($user, $donations);
-        logger();
-        logger('Finished payout to resolver to wallet on registration');
+        $githubUser = $this->getGithubUserName($user);
+        $donations = $this->getPendingDonations($githubUser);
+        if ($donations->isEmpty()) {
+            return;
+        }
+        $this->payoutToResolver($user, $donations);
+        $this->markPendingDonationsAsClaimed($donations);
     }
 
-    private static function getPendingDonations($githubUser)
+    private function getPendingDonations($githubUser): \Illuminate\Support\Collection
     {
-        logger("Github user id" . $githubUser['id']);
         return PendingDonation::with('donation')
             ->where('user_github_name', $githubUser['login'])
+            ->where('is_claimed', false)
             ->get()
             ->pluck('donation');
     }
 
-    private static function getGithubUserName($user)
+    private function getGithubUserName($user)
     {
         return GithubService::getUserByGithubId($user->github_id);
     }
 
-    private static function payoutToResolver($resolver, $donations): void
+    private function payoutToResolver($resolver, $donations): void
     {
         CreateNewWalletTransaction::create($resolver, $donations);
+    }
+
+    private function markPendingDonationsAsClaimed($donations): void
+    {
+        PendingDonation::whereIn('donation_id', $donations->pluck('id'))
+            ->update(['is_claimed' => true, 'claimed_at' => Carbon::now()]);
     }
 }

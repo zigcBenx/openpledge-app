@@ -2,11 +2,6 @@
 
 namespace App\Actions\Payment;
 
-use App\Actions\Email\SendConnectStripeMail;
-use App\Models\User;
-use App\Actions\Email\SendIssueResolverMail;
-use App\Actions\Email\SendNotifyPledgersMail;
-use App\Models\Donation;
 use App\Models\WalletTransaction;
 use App\Services\PayoutFeeService;
 use Carbon\Carbon;
