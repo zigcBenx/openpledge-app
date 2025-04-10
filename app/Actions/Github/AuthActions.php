@@ -90,7 +90,9 @@ class AuthActions
 
     public static function handleAuthRedirect()
     {
-        return Socialite::driver('github')->redirect();
+        return Socialite::driver('github')
+            ->scopes(['read:user', 'repo', 'read:org'])
+            ->redirect();
     }
 
     public static function handleAuthCallback()
@@ -115,7 +117,11 @@ class AuthActions
         $dbUser = User::where('github_id', $githubAccountData->id)->first();
 
         if ($dbUser) {
-            // User is already connected with github
+            if (! $dbUser->github_token) {
+                $dbUser->github_token = $githubAccountData->token;
+                $dbUser->save();
+            }
+            // User is already connected with GitHub
             Auth::login($dbUser);
             return redirect('/');
         }
@@ -147,14 +153,15 @@ class AuthActions
         $fileName = 'profile-' . $githubAccountData->id . '.jpg';
         Storage::put('profile-photos/' . $fileName, $avatar);
 
-        $name = $githubAccountData->name ? $githubAccountData->name : explode('@', $githubAccountData->email)[0];
+        $name = $githubAccountData->name ?: explode('@', $githubAccountData->email)[0];
 
         try {
             $dbUser = User::create([
-                'name' => $name,
-                'email' => $githubAccountData->email,
-                'github_id' => $githubAccountData->id,
-                'auth_type' => 'github',
+                'name'               => $name,
+                'email'              => $githubAccountData->email,
+                'github_id'          => $githubAccountData->id,
+                'github_token'       => $githubAccountData->token,
+                'auth_type'          => 'github',
                 'profile_photo_path' => 'profile-photos/' . $fileName
             ]);
             event(new Registered($dbUser));
