@@ -41,7 +41,8 @@ class User extends Authenticatable
         'is_contributor',
         'job_title',
         'company_id',
-        'is_pledging_anonymously'
+        'is_pledging_anonymously',
+        'github_token'
     ];
 
     /**
