@@ -70,9 +70,11 @@ class AppActions
             $user = Auth::user();
 
             GitHubInstallation::updateOrCreate(
-                ['user_id' => $user->id],
                 [
-                    'installation_id' => $installationId,
+                    'user_id' => $user->id,
+                    'installation_id' => $installationId
+                ],
+                [
                     'setup_action' => $setupAction,
                     'access_token' => $accessToken,
                 ]
