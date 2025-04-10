@@ -12,11 +12,12 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Laravel\Socialite\Facades\Socialite;
 
 class RepositoryController extends Controller
 {
     public function getRequestNew(Request $request)
-    {                
+    {
         return Inertia::render('Repositories/Create');
     }
 
@@ -55,21 +56,23 @@ class RepositoryController extends Controller
                     'actionUrl' => $isAuthenticated ? route('save-redirect-path') : null,
                     'actionData' => $isAuthenticated ? [
                         'redirect_path' => route(
-                            'repositories.show', 
-                            ['githubUser' => $githubUser, 'repository' => $repositoryName], 
+                            'repositories.show',
+                            ['githubUser' => $githubUser, 'repository' => $repositoryName],
                             false
                         ),
                         'redirect_path_key' => 'github_redirect_path'
                     ] : null
                 ]);
             }
+
             $repository = [
                 'title'              => $githubRepo['full_name'],
                 'github_url'         => $githubRepo['html_url'],
                 'github_id'          => $githubRepo['id'],
                 'user_avatar'        => $githubRepo['owner']['avatar_url'],
                 'direct_from_github' => true,
-                'owner_id' => (int) $githubRepo['owner']['id']
+                'owner_type'         => $githubRepo['owner']['type'],
+                'owner_id'           => (int) $githubRepo['owner']['id']
             ];
 
             $issues = GetIssuesByName::get($githubUser, $repositoryName, null);
@@ -79,7 +82,7 @@ class RepositoryController extends Controller
 
         $authenticatedUser = Auth::user();
         $isGithubAppConnected = $authenticatedUser?->hasGitHubAppInstalled() ?? false;
-        $isRepositoryOwner = isset($authenticatedUser, $repository['owner_id']) && $repository['owner_id'] === (int) $authenticatedUser->github_id;
+        $isRepositoryOwner = self::hasPermissionsForRepository($repository, $authenticatedUser);
 
         return Inertia::render('Repositories/Show', [
             'repository' => $repository,
@@ -89,5 +92,17 @@ class RepositoryController extends Controller
             'isRepositoryOwner' => $isRepositoryOwner,
             'isGithubAppConnected' => $isGithubAppConnected
         ]);
+    }
+
+    private static function hasPermissionsForRepository($repository, $user): bool
+    {
+        if ($repository['owner_type'] === 'Organization') {
+            $token = Auth::user()->github_token;
+            $hasAccessToOrganization = GithubService::hasAccessToRepositoryOrganization($repository['title'], $token);
+            if ($hasAccessToOrganization) {
+                return true;
+            }
+        }
+        return isset($user, $repository['owner_id']) && $repository['owner_id'] === (int) $user->github_id;
     }
 }
