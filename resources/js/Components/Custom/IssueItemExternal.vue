@@ -1,6 +1,6 @@
 <template>
   <td class="rounded-bl-md font-medium overflow-hidden border-l-[6px] border-ocean-green dark:border-green pl-3.5 py-6 rounded-tl-md !border-tundora">
-      <div 
+      <div
           class="text-ocean-green dark:text-green !text-spun-pearl"
       >
           {{ issue.state }}
@@ -15,7 +15,7 @@
           {{ issue.title }}
       </a>
       <a :href="issue.github_url" target="_blank"><i class="fa-brands fa-github"/></a>
-  
+
       <div class="flex gap-1 mt-3">
           <Avatar :url="issue.user_avatar" size="sm" />
           <span class="dark:text-spun-pearl text-tundora text-xs font-medium">{{ issue.github_username }}</span>
@@ -45,22 +45,22 @@
   </td>
   <td class="py-6 pr-4 align-middle">
       <div class="flex flex-wrap gap-1">
-          <Pill 
+          <Pill
               v-if="issue.programming_languages"
-              v-for="issue_lang in issue.programming_languages" 
+              v-for="issue_lang in issue.programming_languages"
               :key="issue_lang"
-              color="present" 
-              size="sm" 
+              color="present"
+              size="sm"
               disabled
           >
               {{ issue_lang.name }}
           </Pill>
-          <Pill 
+          <Pill
               v-else-if="repository"
-              v-for="lang in repository.programming_languages" 
+              v-for="lang in repository.programming_languages"
               :key="lang"
-              color="present" 
-              size="sm" 
+              color="present"
+              size="sm"
               disabled
           >
               {{ lang.name }}
@@ -71,14 +71,14 @@
   </td>
   <td class="rounded-br-md rounded-tr-md pr-6">
     <div class="flex justify-end">
-      <Icon 
+      <Icon
         name="star"
         width="1.375rem"
         :class="getIconStrokeColor(issue.favorite, true)"
         disabled
         @click="addFavorites(issue)"
       />
-      <Pill 
+      <Pill
         color="secondary"
         class="ml-4"
         @click="pledgeExternalIssue(issue)"
@@ -123,7 +123,7 @@
     const addFavorites = (issue) => {
         issue.favorite = !issue.favorite;
     }
-    
+
     const pledgeExternalIssue = (issue) => {
       router.post(route('issues.pledge-external-issue'), {
         title: issue.title,
