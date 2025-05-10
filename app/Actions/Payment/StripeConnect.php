@@ -113,11 +113,11 @@ class StripeConnect
             })
             ->where('paid', false)
             ->get();
-        
-        $unpaidRewardsSumAmount = $unpaidRewards->sum('amount');
+
+        $unpaidRewardsSumAmount = $unpaidRewards->sum('net_amount');
         $feePercentage = config('app.platform_fee_percentage');
         $totalPayoutAmount = $unpaidRewardsSumAmount - $unpaidRewardsSumAmount * ($feePercentage / 100);
-            
+
         foreach ($unpaidRewards as $unpaidReward) {
             if (!$unpaidReward->charge_id) {
                 logger('[WARNING] Donation missing charge_id', [
@@ -126,7 +126,7 @@ class StripeConnect
                 continue;
             }
 
-            try {
+            try { // TODO:
                 $transferAmount = $unpaidReward->amount - $unpaidReward->amount * ($feePercentage / 100);
                 $transferId = TransferFunds::transfer($stripeId, $transferAmount, $unpaidReward->charge_id);
                 $transferIds[] = $transferId;
@@ -146,7 +146,7 @@ class StripeConnect
 
         if (isset($transferIds) && count($transferIds) > 0) {
             logger('[INFO] Funds transferred', [
-                'amount' => $totalPayoutAmount, 
+                'amount' => $totalPayoutAmount,
                 'stripe_transfer_ids' => $transferIds,
                 'successful_transfers' => count($transferIds)
             ]);
