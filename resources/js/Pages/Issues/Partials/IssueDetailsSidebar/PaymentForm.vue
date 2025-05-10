@@ -33,7 +33,7 @@
             class="w-full !bg-transparent mt-2.5 !pl-0 !border-none"
             currency="EUR"
             required
-            :min-donation="10"
+            :min-donation="5"
             :max-donation="100000"
           />
         </label>
