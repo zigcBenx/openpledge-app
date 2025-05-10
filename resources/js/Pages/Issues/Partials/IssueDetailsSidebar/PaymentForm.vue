@@ -142,7 +142,7 @@ watch(coverTransactionCost, (newValue) => {
         if (originalAmount.value === null) {
             originalAmount.value = form.amount
         }
-        form.amount = (originalAmount.value / 0.9).toFixed(2)
+        form.amount = (originalAmount.value / 0.85).toFixed(2)
     } else {
         form.amount = originalAmount.value
     }
@@ -164,7 +164,7 @@ const form = reactive({
 });
 
 const fee = computed(() => {
-    return 10
+    return 15
 })
 const netAmount = computed (() => {
     if (!form.amount) return null
