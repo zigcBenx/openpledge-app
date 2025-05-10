@@ -41,7 +41,7 @@
           <div v-if="netAmount" class="dark:bg-rich-black bg-light-sea-shade rounded-md p-6 text-white">
               <div class="border-0 border-b border-gray-200 mb-4 pb-4 flex justify-between">
                   <p>Service fee</p>
-                  <p>10%</p>
+                  <p>15%</p>
               </div>
               <div class="flex justify-between">
                   <p>Pledged amount:</p>
@@ -50,7 +50,7 @@
               <div class="mt-4">
                   <Checkbox v-model:checked="coverTransactionCost" />
                   <span class="ml-2 text-xs">
-                    Cover the 10% transaction fee, so all of my pledge goes to the contributors.
+                    Cover the 15% transaction fee, so all of my pledge goes to the contributors.
                   </span>
               </div>
           </div>
