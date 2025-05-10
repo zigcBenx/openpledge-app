@@ -14,6 +14,7 @@
         <script src="https://js.stripe.com/v3/"></script>
 
         <script defer src="https://cloud.umami.is/script.js" data-website-id="d1060324-fa90-4d15-958c-5f979e4f1083"></script>
+        <script type="text/javascript">window.$crisp=[];window.CRISP_WEBSITE_ID="c7bd70c9-4da2-4988-956a-07cbbd83a25e";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();</script>
 
         <!-- Scripts -->
         @routes
