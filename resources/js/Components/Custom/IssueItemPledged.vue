@@ -81,7 +81,13 @@
         </div>
     </td>
     <td class="py-6">
-
+        <span
+            :class="['text-purple-heart font-medium', {
+            '!dark:text-spun-pearl text-tundora': issue.state === 'closed'
+            }]"
+        >
+            {{ issue.donations_sum_net_amount ?? 0 }} €
+        </span>
     </td>
     <td class="rounded-br-md rounded-tr-md pr-6">
         <div class="flex justify-end">
