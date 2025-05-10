@@ -11,6 +11,7 @@ use App\Actions\Github\{
     RepositoryActions,
     UserActions
 };
+use Illuminate\Support\Facades\Http;
 
 class GithubService
 {
@@ -66,8 +67,31 @@ class GithubService
         return RepositoryActions::getBySearchQuery($searchQuery, $resultsToFetch, $localResults);
     }
 
-    public static function commentOnIssue($installationId, $owner, $repo, $issueNumber, $comment)
+    public static function hasAccessToRepositoryOrganization($repositoryTitle, $token): bool
     {
+        $permissions = self::getRepositoryPermissions($repositoryTitle, $token);
+
+        return $permissions['admin'] ?? false;
+    }
+
+    public static function getRepositoryPermissions($repositoryTitle, $token): array
+    {
+        $url = GithubService::BASE_URL . "/repos/{$repositoryTitle}";
+
+        $response = Http::withToken($token)->get($url);
+
+        if ($response->successful()) {
+            return $response->json()['permissions'] ?? [];
+        }
+
+        return [];
+    }
+
+    public static function commentOnIssue($issue, $comment)
+    {
+        [$owner, $repo] = explode('/', $issue['repository']['title']);
+        $issueNumber = basename(parse_url($issue['github_url'], PHP_URL_PATH));
+        $installationId = $issue['repository']['githubInstallation']['installation_id'];
         return IssueActions::comment($installationId, $owner, $repo, $issueNumber, $comment);
     }
 

@@ -10,6 +10,9 @@ query GetConnectedPullRequests($repoOwner: String!, $repoName: String!, $issueNu
                                 number
                                 url
                                 state
+                                author {
+                                  login
+                                }
                             }
                         }
                     }
@@ -20,6 +23,9 @@ query GetConnectedPullRequests($repoOwner: String!, $repoName: String!, $issueNu
                                 number
                                 url
                                 state
+                                author {
+                                  login
+                                }
                             }
                         }
                     }

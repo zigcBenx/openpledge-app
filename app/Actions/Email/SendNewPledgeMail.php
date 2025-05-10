@@ -4,14 +4,19 @@ namespace App\Actions\Email;
 
 use App\Mail\NewPledgeMail;
 use App\Mail\NewPledgeForResolversMail;
+use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Mail;
 
 class SendNewPledgeMail
 {
-    public static function send($donorMail, $donorName, $issueId, $amount, $usersWithActiveIssue)
+    public static function send($donorMail, $donorName, $issueId, $amount)
     {
         try {
+            $usersWithActiveIssue = User::whereHas('active_issues', function ($query) use ($issueId) {
+                $query->where('issue_id', $issueId);
+            })->get();
+
             // Send email to thank the donor
             Mail::to($donorMail)->send(new NewPledgeMail($donorName, $issueId));
 

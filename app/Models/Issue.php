@@ -2,8 +2,12 @@
 
 namespace App\Models;
 
+use App\Casts\MoneyCast;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\Auth;
 
 class Issue extends Model
@@ -23,6 +27,11 @@ class Issue extends Model
         'resolver_github_id',
         'resolved_at',
         'description'
+    ];
+
+    protected $casts = [
+        'donations_sum_net_amount'   => MoneyCast::class,
+        'donations_sum_gross_amount' => MoneyCast::class,
     ];
 
     public function repository()
@@ -47,7 +56,8 @@ class Issue extends Model
 
     public function getDonationSumAttribute()
     {
-        return $this->donations()->sum('amount');
+        $amount = $this->donations()->sum('net_amount');
+        return app(MoneyCast::class)->get($this, 'donation_sum', $amount, []);
     }
 
     public function userFavorite()
@@ -75,5 +85,21 @@ class Issue extends Model
     public function resolvedBy()
     {
         return $this->belongsTo(User::class, 'resolver_github_id', 'github_id');
+    }
+
+    public function unpaidDonations(): MorphMany
+    {
+        return $this->donations()->where('paid', false);
+    }
+
+    public function getUnpaidDonations()
+    {
+        return $this->donations()
+            ->where(function ($query) {
+                $query->whereNull('expire_date')
+                    ->orWhere('expire_date', '>', Carbon::now());
+            })
+            ->where('paid', false)
+            ->get();
     }
 }

@@ -13,16 +13,15 @@ class GetFavoriteRepositories
         $userId = Auth::id();
         $favoriteRepositoryIds = GetFavorites::getFavoriteIdsByUserAndType($userId, Repository::class);
 
-        return Repository::with([
-            'programmingLanguages:id,name',
-            'userFavorite',
-            'githubInstallation',
-        ])
-            ->withSum('donations', 'amount')
+        return Repository::select('repositories.*')
             ->withCount(['issues as pledged_issues_count' => function ($query) {
                 $query->whereHas('donations');
             }])
-            ->whereIn('id', $favoriteRepositoryIds)
+            ->leftJoin('issues', 'repositories.id', '=', 'issues.repository_id')
+            ->leftJoin('donations', 'issues.id', '=', 'donations.donatable_id')
+            ->selectRaw('SUM(donations.net_amount) as total_donations')
+            ->groupBy('repositories.id')
+            ->whereIn('repositories.id', $favoriteRepositoryIds)
             ->take(2)
             ->get()
             ->each(function ($repository) {
@@ -44,7 +43,7 @@ class GetFavoriteRepositories
             'userFavorite',
             'githubInstallation',
         ])
-            ->withSum('donations', 'amount')
+            ->withSum('donations', 'net_amount')
             ->withCount(['issues as pledged_issues_count' => function ($query) {
                 $query->whereHas('donations');
             }])

@@ -1,18 +1,18 @@
 <template>
     <AppLayout title="Issue Details">
         <div class="flex gap-10" v-if="issue">
-            <div>
+            <div class="w-[100%]">
                 <Breadcrumbs :links="breadcrumbsData" wrapperClass="mb-[5.25rem]" />
                 <IssueTopDetails :issue="issue" @onFavoriteClick="handleFavoriteClick" />
                 <IssueDetails :issue="issue" class="mt-[3.375rem]" />
                 <Activity :issue="issue" class="mt-14 pb-10" id="issue-activity-container" />
             </div>
-            <div class="pt-[6.43rem]">
-                <IssueDetailsSidebar 
-                    :issue="issue" 
-                    :stripePublicKey="stripePublicKey" 
-                    :isAuthenticated="isAuthenticated" 
-                    id="issue-sidebar-container" 
+            <div class="w-[70%] pt-[6.43rem]">
+                <IssueDetailsSidebar
+                    :issue="issue"
+                    :stripePublicKey="stripePublicKey"
+                    :isAuthenticated="isAuthenticated"
+                    id="issue-sidebar-container"
                 />
             </div>
         </div>
@@ -66,11 +66,11 @@ function handleFavoriteClick() {
         favorable_type: 'Issue',
     })
         .then(response => {
-            const toastOptions = response.data.message.includes('added') 
+            const toastOptions = response.data.message.includes('added')
                 ? {
                     onClick: () => router.visit(route('profile.favorites-show')),
                     toastClassName: 'cursor-pointer hover:opacity-90'
-                } 
+                }
                 : {};
             toast.success(response.data.message, toastOptions);
             props.issue.favorite = !props.issue.favorite

@@ -22,7 +22,7 @@ defineProps({
                     <div class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
                         <div class="flow-root">
                             <ul>
-                                <li v-for="donation in donations" :key="donation.id">{{ donation.amount }} by {{ donation.donor_id }} for {{ donation.donatable_id }}({{ donation.donatable_type }})</li>
+                                <li v-for="donation in donations" :key="donation.id">{{ donation.net_amount }} by {{ donation.donor_id }} for {{ donation.donatable_id }}({{ donation.donatable_type }})</li>
                             </ul>
                         </div>
                     </div>

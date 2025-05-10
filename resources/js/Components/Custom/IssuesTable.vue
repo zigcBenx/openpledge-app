@@ -14,7 +14,7 @@
               <th class="pb-5 font-normal">Labels</th>
               <th v-if="pledged" class="pb-5 font-normal">Repository</th>
               <th class="pb-5 font-normal">Languages</th>
-              <th v-if="pledged" class="pb-5 font-normal">Donations</th>
+              <th v-if="pledged" class="pb-5 font-normal">Pledges</th>
               <th></th>
           </tr>
       </thead>

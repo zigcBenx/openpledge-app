@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Events\DonationCreatedEvent;
 use App\Listeners\DonationCreatedListener;
+use App\Listeners\UserRegisteredListener;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -19,6 +20,7 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
+            UserRegisteredListener::class,
         ],
         DonationCreatedEvent::class => [
             DonationCreatedListener::class,

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\MoneyCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -19,6 +20,10 @@ class Repository extends Model
         'github_installation_id'
     ];
 
+    protected $casts = [
+        'total_donations' => MoneyCast::class
+    ];
+
     public function issues()
     {
         return $this->hasMany(Issue::class);
@@ -31,12 +36,12 @@ class Repository extends Model
 
     public function getDonationSumAttribute()
     {
-        return $this->donations()->sum('amount');
+        return $this->donations()->sum('net_amount');
     }
 
     public function getIssuesDonationSumAttribute()
     {
-        return $this->issues()->donations()->sum('amount');
+        return $this->issues()->donations()->sum('net_amount');
     }
 
     public function programmingLanguages()

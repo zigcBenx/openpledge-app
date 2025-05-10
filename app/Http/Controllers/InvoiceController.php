@@ -2,32 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IndexInvoiceRequest;
 use App\Jobs\GenerateInvoiceNumberJob;
 use App\Models\Invoice;
 use Inertia\Response;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class InvoiceController extends Controller
 {
-    public function index(): Response
+    public function index(IndexInvoiceRequest $request): Response
     {
-        if (!Auth::user()->hasRole('admin')) {
-            abort(403, 'Unauthorized');
-        }
-
         return Inertia::render('Invoices/Index', [
             'invoices' => Invoice::with('donation')->latest()->paginate(10)
         ]);
     }
 
-    public function create(Request $request): Response
+    public function create(IndexInvoiceRequest $request): Response
     {
-        if (!Auth::user()->hasRole('admin')) {
-            abort(403, 'Unauthorized');
-        }
         // Get the incoming data (if any)
         $invoiceData = $request->old() ?: $request->all();
 
@@ -36,12 +29,8 @@ class InvoiceController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(IndexInvoiceRequest $request)
     {
-        if (!Auth::user()->hasRole('admin')) {
-            abort(403, 'Unauthorized');
-        }
-
         $invoiceData = $request->all();
         $total = $this->calculateTotal($invoiceData['items']);
         $vatValue = $this->getVatValue($total, $invoiceData['invoice']['vat']);

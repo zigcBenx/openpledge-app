@@ -13,8 +13,8 @@ class GetIssuesByName
     public static function get($githubUser, $repositoryName, $repositoryGithubInstallationId, $state = null)
     {
         $pledgedIssues = Issue::where('github_url', 'LIKE', "https://github.com/$githubUser/$repositoryName/issues%")
-            ->withSum('donations', 'amount')
-            ->having('donations_sum_amount', '>', 0)
+            ->withSum('donations', 'net_amount')
+            ->having('donations_sum_net_amount', '>', 0)
             ->when($state, function ($query, $state) {
                 return $query->where('state', $state);
             })

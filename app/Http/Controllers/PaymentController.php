@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Payment\GetPaymentIntent;
+use App\Actions\Payment\ProcessPayout;
 use App\Http\Requests\ProcessPaymentRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -22,7 +23,7 @@ class PaymentController extends Controller
         $isPledgingAnonymously = !$isAuthenticated || (bool) $user->is_pledging_anonymously;
 
         $validatedProcessPaymentData = $request->validated();
-        
+
         if ($isAuthenticated) {
             $validatedProcessPaymentData['email'] = $user->email;
         }
@@ -36,5 +37,10 @@ class PaymentController extends Controller
             $isAuthenticated,
             $isPledgingAnonymously
         );
+    }
+
+    public function payout()
+    {
+        return ProcessPayout::process();
     }
 }

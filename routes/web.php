@@ -12,6 +12,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RepositoryController;
 use App\Http\Controllers\StripeConnectController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WalletTransactionController;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -64,6 +65,7 @@ Route::middleware([
 
     Route::get('/home', [MainController::class, 'index'])->name('home');
     Route::get('/dashboard', [MainController::class, 'dashboard'])->name('dashboard');
+    Route::get('/wallet/transactions', [WalletTransactionController::class, 'index'])->name('wallet.transactions');
     Route::post('/save-redirect-path', [MainController::class, 'saveRedirectPath'])->name('save-redirect-path');
 
     // TODO: this route is for displaying request view -> which will be removed
@@ -109,7 +111,7 @@ Route::middleware([
     Route::get('/user/profile/finished', [ProfileController::class, 'showAuthUsersFinishedIssues'])->name('profile.finished-show');
 
     Route::post('/user/new-user-quiz-submission', [UserController::class, 'handleNewUserQuizSubmission'])->name('user.new-user-quiz');
-    
+
     // Stripe Connect routes
     Route::get('/stripe/connect', [StripeConnectController::class, 'stripeConnect'])->name('stripe.connect');
     Route::post('/stripe/create-account-link', [StripeConnectController::class, 'createAccountLink'])->name('stripe.create.account.link');
@@ -117,6 +119,7 @@ Route::middleware([
     Route::get('/stripe/onboarding/return', [StripeConnectController::class, 'onboardingReturn'])->name('stripe.onboarding.return');
     Route::get('/stripe/dashboard/link', [StripeConnectController::class, 'getDashboardLink'])->name('stripe.dashboard.link');
 
+    Route::post('/payment/payout', [PaymentController::class, 'payout'])->name('payment.payout');
     // GitHub App integration route
     Route::get('/github/installation/callback', [GithubController::class, 'handleGithubAppCallback'])->name('github.installation.callback');
 });

@@ -33,7 +33,7 @@ class DonationCreatedListener implements ShouldQueue
             'items' => [
                 [
                     'name'  => 'Pledge on OpenPledge.io',
-                    'price_per_unit' => $event->donation->amount,
+                    'price_per_unit' => $event->donation->gross_amount,
                     'quantity' => 1,
                     'currency' => '€',
                 ]
@@ -45,8 +45,8 @@ class DonationCreatedListener implements ShouldQueue
                 'donation_id' => $event->donation->id,
                 'vat' => 0,
                 'vat_value' => 0,
-                'total' => $event->donation->amount,
-                'total_vat' => $event->donation->amount,
+                'total' => $event->donation->gross_amount,
+                'total_vat' => $event->donation->gross_amount,
                 'payment_method' => 'Stripe',
                 'status' => 'Paid',
             ]

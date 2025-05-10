@@ -2,7 +2,6 @@
 
 namespace App\Actions\Payment;
 
-use App\Models\Donation;
 use Stripe\Stripe;
 use Stripe\Transfer;
 
@@ -17,12 +16,17 @@ class TransferFunds
         Stripe::setApiKey(config('app.stripe_secret'));
 
         try {
-            $transfer = Transfer::create([
+            $transferOptions = [
                 'amount' => (int)($amount * 100), // Multiplied by 100 because Stripe expects the amount in cents
                 'currency' => 'eur',
                 'destination' => $destinationStripeId,
-                'source_transaction' => $chargeId
-            ]);
+            ];
+
+            if ($chargeId !== null) {
+                $transferOptions['source_transaction'] = $chargeId;
+            }
+
+            $transfer = Transfer::create($transferOptions);
 
             return $transfer->id;
         } catch (\Exception $e) {

@@ -5,8 +5,8 @@
         }"
         class="dark:text-white"
         containerClass="mt-6 p-4 rounded-lg shadow-lg transition duration-150 ease-in-out"
-        title="Anonymous donations"
-        subtitle="Total amount of anonymous donations"
+        title="Anonymous pledges"
+        subtitle="Total amount of anonymous pledges"
     >
         <div class="flex items-center">
             <span class="font-bold text-lg mr-2">💰</span>

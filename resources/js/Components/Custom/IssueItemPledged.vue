@@ -2,7 +2,7 @@
     <td :class="['rounded-bl-md font-medium overflow-hidden border-l-[6px] border-ocean-green dark:border-green pl-3.5 py-6 rounded-tl-md', {
         '!border-tundora': issue.state === 'closed'
         }]">
-        <div 
+        <div
             :class="['text-ocean-green dark:text-green', {
             '!text-spun-pearl': issue.state === 'closed'
             }]"
@@ -20,7 +20,7 @@
             {{ issue.title }}
         </Link>
         <a :href="issue.github_url" target="_blank"><i class="fa-brands fa-github"/></a>
-    
+
         <div class="flex gap-1 mt-3">
             <Avatar :url="issue.user_avatar" size="sm" />
             <span class="dark:text-spun-pearl text-tundora text-xs font-medium">{{ issue.github_username }}</span>
@@ -31,7 +31,7 @@
             <Avatar :url="issue.resolved_by.profile_photo_url" size="sm" />
             <span class="text-ocean-green dark:text-green text-xs font-medium">{{ issue.resolved_by.name }}</span>
             <span class="text-ocean-green dark:text-green text-xs font-light">was paid out</span>
-            <span class="text-ocean-green dark:text-green text-xs font-medium">{{ issue.donations_sum_amount ?? 0 }} €</span>
+            <span class="text-ocean-green dark:text-green text-xs font-medium">{{ issue.donations_sum_net_amount ?? 0 }} €</span>
             <span class="text-ocean-green dark:text-green text-xs font-light">{{ dayjs(issue.resolved_at).fromNow() }}</span>
         </div>
     </td>
@@ -58,22 +58,22 @@
     </td>
     <td class="py-6 pr-4 align-middle">
         <div class="flex flex-wrap gap-1">
-            <Pill 
+            <Pill
                 v-if="issue.programming_languages?.length > 0"
-                v-for="issue_lang in issue.programming_languages" 
+                v-for="issue_lang in issue.programming_languages"
                 :key="issue_lang"
-                color="present" 
-                size="sm" 
+                color="present"
+                size="sm"
                 :disabled="issue.state === 'closed'"
             >
                 {{ issue_lang.name }}
             </Pill>
-            <Pill 
+            <Pill
                 v-else-if="issue.repository?.programming_languages?.length > 0"
-                v-for="lang in issue.repository.programming_languages" 
+                v-for="lang in issue.repository.programming_languages"
                 :key="lang"
-                color="present" 
-                size="sm" 
+                color="present"
+                size="sm"
                 :disabled="issue.state === 'closed'"
             >
                 {{ lang.name }}
@@ -81,22 +81,31 @@
         </div>
     </td>
     <td class="py-6">
-        <span 
-            :class="['text-purple-heart font-medium', {
-            '!dark:text-spun-pearl text-tundora': issue.state === 'closed'
-            }]"
-        >
-            {{ issue.donations_sum_amount ?? 0 }} €
-        </span>
+
     </td>
     <td class="rounded-br-md rounded-tr-md pr-6">
-        <Icon 
-            name="star"
-            width="1.375rem"
-            :class="getIconStrokeColor(issue.favorite, issue.state === 'closed')"
-            :disabled="issue.state === 'closed'"
-            @click="addFavorites(issue)"
-        />
+        <div class="flex justify-end">
+            <Icon
+                name="star"
+                width="1.375rem"
+                :class="getIconStrokeColor(issue.favorite, issue.state === 'closed')"
+                :disabled="issue.state === 'closed'"
+                @click="addFavorites(issue)"
+            />
+            <Link
+                :class="['dark:text-white dark:hover:text-green hover:text-green text-base', {
+                '!text-spun-pearl': issue.state === 'closed'
+            }]"
+                :href="'/issues/' + issue.id"
+            >
+                <Pill
+                    color="secondary"
+                    class="ml-4"
+                >
+                    Pledge
+                </Pill>
+            </Link>
+        </div>
     </td>
 </template>
 
@@ -151,11 +160,11 @@
             favorable_type: 'Issue',
         })
         .then(response => {
-            const toastOptions = response.data.message.includes('added') 
+            const toastOptions = response.data.message.includes('added')
                 ? {
                     onClick: () => router.visit(route('profile.favorites-show')),
                     toastClassName: 'cursor-pointer hover:opacity-90'
-                } 
+                }
                 : {};
             toast.success(response.data.message, toastOptions);
             issue.favorite = !issue.favorite;

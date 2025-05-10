@@ -10,7 +10,7 @@ class GetRepositories
     public static function get()
     {
         return Repository::with('issues')
-        ->addSelect(['donations_sum' => Issue::selectRaw('sum(donations.amount) as sum')
+        ->addSelect(['donations_sum' => Issue::selectRaw('sum(donations.net_amount) as sum')
             ->join('donations', function ($join) {
                 $join->on('donations.donatable_id', '=', 'issues.id')
                      ->where('donations.donatable_type', Issue::class);

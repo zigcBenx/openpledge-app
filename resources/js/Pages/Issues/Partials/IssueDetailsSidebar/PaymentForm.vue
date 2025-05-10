@@ -28,27 +28,40 @@
         </div>
         <label class="dark:text-lavender-mist text-oil text-sm">
           Pledge amount
-          <MoneyInput 
-            v-model:input="form.amount" 
-            inputClass="!bg-transparent" 
-            wrapperClass="w-full !bg-transparent mt-2.5 !pl-0 !border-none" 
-            icon="euro"
+          <MoneyInput
+            v-model="form.amount"
+            class="w-full !bg-transparent mt-2.5 !pl-0 !border-none"
             currency="EUR"
             required
-            iconClass="fill-green"
-            @onInput="form.amount = preventStringInputWithNumber(form.amount)"
+            :min-donation="10"
+            :max-donation="100000"
           />
-          <small v-if="form.amount < minAmount" :class="classes.error">Minimum is {{ minAmount }}.</small>
-          <small v-if="form.errors?.amount" :class="classes.error">{{form.errors?.amount[0]}}</small>
         </label>
+
+          <div v-if="netAmount" class="dark:bg-rich-black bg-light-sea-shade rounded-md p-6 text-white">
+              <div class="border-0 border-b border-gray-200 mb-4 pb-4 flex justify-between">
+                  <p>Service fee</p>
+                  <p>15%</p>
+              </div>
+              <div class="flex justify-between">
+                  <p>Pledged amount:</p>
+                  <p>{{ netAmount }}€</p>
+              </div>
+              <div class="mt-4">
+                  <Checkbox v-model:checked="coverTransactionCost" />
+                  <span class="ml-2 text-xs">
+                    Cover the 15% transaction fee, so all of my pledge goes to the contributors.
+                  </span>
+              </div>
+          </div>
 
         <label class="dark:text-lavender-mist text-oil text-sm" v-if="!isAuthenticated">
           <p class="mb-2.5">Contact details</p>
-          <Input 
+          <Input
             v-model:input="form.email"
-            inputClass="w-full !bg-transparent" 
-            type="email" 
-            placeholder="Email" 
+            inputClass="w-full !bg-transparent"
+            type="email"
+            placeholder="Email"
             icon="letter"
             required
             iconClass="dark:text-spun-pearl text-tundora"
@@ -64,13 +77,13 @@
             <div id="payment-element">
                 <!-- Stripe will create form elements here -->
             </div>
-            <Button 
-              :loading="loading" 
-              :disabled="!isPledgeAmountValid || !isStripePaymentFormValid" 
-              class="mt-8" 
-              :plain="true" 
-              size="lg" 
-              color="primary" 
+            <Button
+              :loading="loading"
+              :disabled="!isPledgeAmountValid || !isStripePaymentFormValid"
+              class="mt-8"
+              :plain="true"
+              size="lg"
+              color="primary"
               @click="handleFormSubmit()"
             >
               Pledge This Issue
@@ -95,7 +108,6 @@ import PledgeMethod from './PledgeMethod.vue';
 import FormTypeButtons from './FormTypeButtons.vue';
 import Input from '@/Components/Input.vue';
 import MoneyInput from '@/Components/MoneyInput.vue';
-import { preventStringInputWithNumber } from '@/utils/preventStringInputWithNumber.js';
 import { PAYMENT_FORM_METHODS } from '@/constants';
 import dayjs from '@/libs/dayjs.js'
 import SolveIssue from './SolveIssue.vue';
@@ -106,6 +118,7 @@ import { router, usePage } from '@inertiajs/vue3'
 import { validateEmail } from '@/utils/validateEmail.js';
 import DatePicker from '@/Components/Form/DatePicker.vue';
 import confetti from 'canvas-confetti';
+import Checkbox from "@/Components/Checkbox.vue";
 
 const props = defineProps({
   'minAmount': String,
@@ -122,6 +135,18 @@ const isPledgeAmountValid = ref(false);
 const page = usePage();
 const isAuthenticated = page.props.auth.user !== null;
 const isStripePaymentFormValid = ref(false);
+const coverTransactionCost = ref(false);
+const originalAmount = ref(null)
+watch(coverTransactionCost, (newValue) => {
+    if (newValue) {
+        if (originalAmount.value === null) {
+            originalAmount.value = form.amount
+        }
+        form.amount = (originalAmount.value / 0.85).toFixed(2)
+    } else {
+        form.amount = originalAmount.value
+    }
+});
 
 const form = reactive({
   type: 'pledge',
@@ -131,12 +156,20 @@ const form = reactive({
     error: false
   },
   pledgeExpirationYear: '',
-  amount: '',
+  amount: 0,
   cardSave: false,
   email: '',
   paymentId: '',
   errors: {}
 });
+
+const fee = computed(() => {
+    return 15
+})
+const netAmount = computed (() => {
+    if (!form.amount) return null
+    return (form.amount - form.amount * fee.value * 0.01).toFixed(2)
+})
 
 const debouncedPaymentIntent = useDebounceFn(() => {
   paymentIntent();
@@ -269,10 +302,10 @@ const handleFormSubmit = async () => {
             form.pledgeExpirationYear = '';
 
             const animationEnd = Date.now() + 4000;
-            
+
             const interval = setInterval(function() {
               const timeLeft = animationEnd - Date.now();
-              
+
               if (timeLeft <= 0) {
                 return clearInterval(interval);
               }
@@ -298,6 +331,7 @@ const handleFormSubmit = async () => {
         })
         .finally(() => {
           loading.value = false
+          coverTransactionCost.value = false
         });
       }
   });

@@ -17,7 +17,7 @@ class GetUsersFinishedIssues
             'labels'
         ])
             ->where('resolver_github_id', $githubId)
-            ->withSum('donations', 'amount')
+            ->withSum('donations', 'net_amount')
             ->take(5)
             ->get()
             ->each(function ($issue) {
@@ -40,7 +40,7 @@ class GetUsersFinishedIssues
             'labels'
         ])
             ->where('resolver_github_id', $githubId)
-            ->withSum('donations', 'amount');
+            ->withSum('donations', 'net_amount');
 
         $issues = $query->paginate($perPage, $columns, $pageName, $page);
 
