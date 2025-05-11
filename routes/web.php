@@ -34,28 +34,33 @@ Route::middleware([
 ])->group(function () {
 
 
+    Route::middleware([
+        'auth:sanctum',
+        config('jetstream.auth_session'),
+        'verified',
+    ])->group(function () {
+        Route::get('/', function () {
+            return Redirect::route('discover.issues');
+        });
 
-Route::get('/', function () {
-    return Redirect::route('discover.issues');
-});
+        Route::get('/discover/issues', [MainController::class, 'discoverIssues'])->name('discover.issues');
+        Route::get('issues/{issue}', [IssueController::class, 'show'])->name('issues.show');
+        Route::get('/repositories/{githubUser}/{repository}', [RepositoryController::class, 'show'])->name('repositories.show');
 
-Route::get('/discover/issues', [MainController::class, 'discoverIssues'])->name('discover.issues');
-Route::get('issues/{issue}', [IssueController::class, 'show'])->name('issues.show');
-Route::get('/repositories/{githubUser}/{repository}', [RepositoryController::class, 'show'])->name('repositories.show');
-
-Route::post('/get-payment-intent', [PaymentController::class, 'getPaymentIntent'])->name('get-payment-intent');
-Route::post('/payment-process', [PaymentController::class, 'processPayment'])->name('payment-process');
-Route::post('issues/pledgeExternalIssue', [IssueController::class, 'pledgeExternalIssue'])->name('issues.pledge-external-issue');
-Route::post('/user/user-feedback-submission', [UserController::class, 'handleUserFeedbackSubmission'])->name('user.feedback');
+        Route::post('/get-payment-intent', [PaymentController::class, 'getPaymentIntent'])->name('get-payment-intent');
+        Route::post('/payment-process', [PaymentController::class, 'processPayment'])->name('payment-process');
+        Route::post('issues/pledgeExternalIssue', [IssueController::class, 'pledgeExternalIssue'])->name('issues.pledge-external-issue');
+        Route::post('/user/user-feedback-submission', [UserController::class, 'handleUserFeedbackSubmission'])->name('user.feedback');
 
 // top lists endpoints
-Route::get('/trending-today-issues', [IssueController::class, 'getTrendingToday'])->name('trending-today-issues');
-Route::get('/top-contributors', [Maincontroller::class, 'getTopContributors'])->name('top-contributors');
-Route::get('/top-donors', [Maincontroller::class, 'getTopDonors'])->name('top-donors');
-Route::get('/anonymous-donations', [Maincontroller::class, 'getAnonymousDonations'])->name('anonymous-donations');
+        Route::get('/trending-today-issues', [IssueController::class, 'getTrendingToday'])->name('trending-today-issues');
+        Route::get('/top-contributors', [Maincontroller::class, 'getTopContributors'])->name('top-contributors');
+        Route::get('/top-donors', [Maincontroller::class, 'getTopDonors'])->name('top-donors');
+        Route::get('/anonymous-donations', [Maincontroller::class, 'getAnonymousDonations'])->name('anonymous-donations');
 
 // Internal and external Issue and Repository search
-Route::get('/search', [SearchController::class, 'getSearchResults'])->name('search');
+        Route::get('/search', [SearchController::class, 'getSearchResults'])->name('search');
+    });
 
 Route::middleware([
     'auth:sanctum',
