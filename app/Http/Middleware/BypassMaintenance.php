@@ -16,10 +16,14 @@ class BypassMaintenance
      */
     public function handle(Request $request, Closure $next): Response
     {
+
+        return $next($request);
+        // This was for testing
         $allowedUsers = [
             'zigac.benko@gmail.com',
             'hunterteammovies@gmail.com',
-            'neja@openpledge.io'
+            'neja@openpledge.io',
+            'ng.benko@gmail.com',
         ];
 
         if (Auth::check() && in_array(Auth::user()->email, $allowedUsers)) {
