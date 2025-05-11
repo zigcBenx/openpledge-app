@@ -1,22 +1,16 @@
-### :tada: Code Red! We've Got a New Pledge! :tada:
-
-🚀 **Heads up! Our app is currently in Beta testing.** We're still polishing things up! 🎯
+### 💰✨ We’ve Got a New Pledge! ✨💰
 
 | **Donor** | **Amount Pledged** |
 |-------|----------------|
-| {{ $donorName }} | €{{ $amount }} |
+| {{ $donorName }} | {{ $amount }}€ |
 
 @if($expireDate)
 ${\textsf{\color{red}🚨 Time's ticking! This pledge expires on {{ $expireDate }} 🚨}}$
 @endif
 
-Thanks for helping us keep the bugs at bay and the code purring like a kitten! :cat: :heart:
+Jump on OpenPledge and [claim the pledge now.](<{{ $issueLink }}>)
+Once your pull request is accepted, you get paid. Simple as that.
 
-Here's a little joke for you:
+Please make sure that you are eligible for payouts.
 
-<details>
-    <summary>Why do programmers prefer dark mode?</summary>
-    <p>Because light attracts bugs! :bulb: :bug:</p>
-</details>
-
-Ready to squash some bugs and earn some extra dough? Check out the issue on [OpenPledge](<{{ $issueLink }}>) and see what's cooking! :hammer_and_wrench: :computer:
+Happy coding! 👑💻
