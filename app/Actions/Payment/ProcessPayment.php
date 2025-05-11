@@ -62,7 +62,7 @@ class ProcessPayment
         CreateNewDonation::create($donationData);
     }
 
-    private static function prepareGithubComment($issue, int $amount, bool $isAuthenticated, bool $isPledgingAnonymously, ?string $expireDate): string
+    private static function prepareGithubComment($issue, float $amount, bool $isAuthenticated, bool $isPledgingAnonymously, ?string $expireDate): string
     {
         $donorName = ($isAuthenticated && !$isPledgingAnonymously) ? Auth::user()->name : "Anonymous Pledger";
         $formattedExpireDate = $expireDate ? Carbon::parse($expireDate)->format('F j, Y') : null;
