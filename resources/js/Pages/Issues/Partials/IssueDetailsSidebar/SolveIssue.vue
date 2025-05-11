@@ -24,7 +24,7 @@
             ? {
                 onClick: () => router.visit(route('profile.actives-show')),
                 toastClassName: 'cursor-pointer hover:opacity-90'
-            } 
+            }
             : {};
         toast.success(response.data.message, toastOptions);
         props.issue.isAuthUsersActiveIssue = !props.issue.isAuthUsersActiveIssue;
@@ -60,6 +60,13 @@
           <p class="dark:text-spun-pearl text-tundora text-xs">Make your changes or additions to the code, then submit a pull request to the original repository.</p>
         </div>
       </div>
+        <div class="flex flex-col gap-2 p-4">
+            <p class="dark:text-tundora text-spun-pearl">4</p>
+            <div>
+                <p class="dark:text-lavender-mist text-oil font-semibold">IMPORTANT: Reference the Issue</p>
+                <p class="dark:text-spun-pearl text-tundora text-xs">Include the issue number in your PR (example: Closes #123).</p>
+            </div>
+        </div>
     </div>
     <div class="p-6 flex flex-col gap-6 pt-8">
       <div class="flex flex-inline">
