@@ -25,14 +25,16 @@
                                 </div>
                                 <div class="mt-4">
                                     <button
-                                        :disabled="!canPayout || $page.props.user?.wallet_amount === 0"
-                                        :class="{'cursor-not-allowed opacity-50': !canPayout || $page.props.user?.wallet_amount === 0}"
+                                        :disabled="!canPayout || $page.props.user?.wallet_amount === 0 || !$page.props.auth?.user.stripe_id"
+                                        :class="{'cursor-not-allowed opacity-50': !canPayout || $page.props.user?.wallet_amount === 0 || !$page.props.auth?.user.stripe_id}"
                                         class="bg-green/10 text-green px-4 py-2 rounded-lg"
                                         @click="makePayout"
                                     >
                                         Payout to Stripe
                                     </button>
                                     <i v-if="!canPayout" class="block text-orange-500">You can make only one payout per month.</i>
+                                    <i v-if="!$page.props.auth?.user.stripe_id" class="block text-orange-500">Please <a
+                                        :href="route('stripe.connect')" class="underline">connect Stripe</a> before requesting a payout.</i>
                                 </div>
                             </div>
 
