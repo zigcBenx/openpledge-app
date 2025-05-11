@@ -13,7 +13,7 @@
                             <span class="text-xs text-gray-400 uppercase tracking-wide">WALLET</span>
                             <div :class="walletAmount> 0 ? 'bg-teal-400' : 'bg-yellow-400'" class="ml-1.5 w-2 h-2 rounded-full animate-pulse"></div>
                         </div>
-                        <span :class="walletAmount> 0 ? 'text-teal-400' : 'text-gray-400'" class="font-medium tracking-wide">${{ walletAmount }}</span>
+                        <span :class="walletAmount> 0 ? 'text-teal-400' : 'text-gray-400'" class="font-medium tracking-wide">{{ walletAmount }}€</span>
                     </div>
                     </div>
                 </div>

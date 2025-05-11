@@ -1,7 +1,7 @@
 <style src="@vueform/slider/themes/default.css"></style>
 <template>
   <div class="flex flex-inline">
-      <div class="w-12 text-center -mt-2 dark:text-spun-pearl text-tundora">${{ rangeValues[0] }}</div>
+      <div class="w-12 text-center -mt-2 dark:text-spun-pearl text-tundora">{{ rangeValues[0] }}€</div>
       <div class="w-9/12 mx-4">
         <Slider
           v-model="rangeValues"
@@ -9,7 +9,7 @@
           :min="0"
         />
       </div>
-      <div class="w-16 text-center -mt-2 dark:text-spun-pearl text-tundora">${{ rangeValues[1] }}</div>
+      <div class="w-16 text-center -mt-2 dark:text-spun-pearl text-tundora">{{ rangeValues[1] }}€</div>
   </div>
 </template>
 <script setup>

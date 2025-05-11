@@ -198,12 +198,18 @@
     <div class="fixed bottom-0 left-0 w-full text-white w-100 bg-openpledge-yellow p-2 text-center">
         OpenPledge is in <b>BETA</b>. Things might get a little quirky! 🚀
     </div>
-    <Button
-            @click="displayFeedbackModal = true"
-            class="fixed right-0 bottom-10 rounded-none !w-40"
-        >
-            Provide Feedback ✏️
-    </Button>
+<!--    <Button-->
+<!--            @click="displayFeedbackModal = true"-->
+<!--            class="fixed right-0 bottom-10 rounded-none !w-40"-->
+<!--        >-->
+<!--            Provide Feedback ✏️-->
+<!--    </Button>-->
+    <a href="https://discord.gg/FXvgQPVQvM" target="_blank"
+       title="Join our Discord server"
+       class="fixed p-2 right-2 bottom-2 rounded-full bg-[#7289DA]"
+    >
+        <i class="fab fa-discord text-3xl text-white transition-all duration-200 hover:scale-125"></i>
+    </a>
     <DialogModal :show="displayFeedbackModal" @close="displayFeedbackModal = false">
         <template #title>
             <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
