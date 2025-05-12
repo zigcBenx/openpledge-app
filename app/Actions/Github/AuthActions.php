@@ -91,7 +91,7 @@ class AuthActions
     public static function handleAuthRedirect()
     {
         return Socialite::driver('github')
-            ->scopes(['read:user', 'repo', 'read:org'])
+            ->scopes(['read:user', 'public_repo', 'read:org'])
             ->redirect();
     }
 
