@@ -34,11 +34,6 @@ Route::middleware([
 ])->group(function () {
 
 
-    Route::middleware([
-        'auth:sanctum',
-        config('jetstream.auth_session'),
-        'verified',
-    ])->group(function () {
         Route::get('/', function () {
             return Redirect::route('discover.issues');
         });
@@ -60,7 +55,7 @@ Route::middleware([
 
 // Internal and external Issue and Repository search
         Route::get('/search', [SearchController::class, 'getSearchResults'])->name('search');
-    });
+
 
 Route::middleware([
     'auth:sanctum',
