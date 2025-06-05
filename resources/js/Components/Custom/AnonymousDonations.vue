@@ -19,7 +19,7 @@
                 {{ anonymousDonationsAmount }} €
             </span>
         </div>
-        <p class="mt-2 text-sm italic text-tundora dark:text-spun-pearl">"Donating anonymously: because sometimes, it's nice to be a mystery!"</p>
+        <p class="mt-2 text-sm italic text-tundora dark:text-spun-pearl">"Keep this pledge private—your identity won’t be shown."</p>
         <div class="w-full flex mt-4 justify-between items-center">
             <span class="dark:text-white">Pledge Anonymously</span>
             <Switch v-model="isPledgingAnonymously" :disabled="!isAuthenticated" @click="togglePledgingAnonymously" />
