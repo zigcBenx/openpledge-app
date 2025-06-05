@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Company\UpdateOrCreateCompany;
 use App\Actions\Profile\UpdateProfile;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -192,5 +193,16 @@ class ProfileController extends Controller
     public function updateAnonymousPledging(Request $request)
     {
         return UpdateProfile::toggleAnonymousPledging($request->input('is_pledging_anonymously'));
+    }
+
+    public function updateCompany(Request $request)
+    {
+        UpdateOrCreateCompany::updateExisting(
+            $request->input('companyId'), 
+            $request->input('companyName'), 
+            $request->input('companyAddress'), 
+            $request->input('companyVatId'),
+            $request->input('shouldBillCompany')
+        );
     }
 }

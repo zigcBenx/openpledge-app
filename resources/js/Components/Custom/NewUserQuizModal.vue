@@ -14,7 +14,7 @@
                 currentQuizStep === 0 &&
                 newUserQuizSubmission.intent &&
                 newUserQuizSubmission.intent !== UserIntent.CONTRIBUTOR
-                    ? 'h-104'
+                    ? 'h-120'
                     : 'h-80',
             ]"
         >
@@ -67,7 +67,7 @@
                             </span>
                         </label>
                         <div
-                            class="py-4"
+                            class="py-4 flex flex-col gap-3"
                             v-if="
                                 newUserQuizSubmission.intent &&
                                 newUserQuizSubmission.intent !==
@@ -85,6 +85,31 @@
                                     newUserQuizSubmission.companyName
                                 "
                             />
+                            <div v-if="hasCompanyName" class="flex flex-col gap-3 mt-2">
+                                <div class="flex flex-col gap-2">
+                                    <span class="leading-none text-gray-900 dark:text-white">
+                                        Company address:
+                                    </span>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">
+                                        Street, Postal Code, City, State, Country
+                                    </span>
+                                    <Input
+                                        inputClass="h-30"
+                                        placeholder="e.g. Marktstr. 5, 10115, Berlin, Germany"
+                                        v-model:input="newUserQuizSubmission.companyAddress"
+                                    />
+                                </div>
+                            </div>
+                            <div v-if="hasCompanyName" class="flex flex-col gap-3 mt-2">
+                                <span class="leading-none text-gray-900 dark:text-white">
+                                    Company VAT ID:
+                                </span>
+                                <Input
+                                    inputClass="h-30"
+                                    placeholder="e.g. DE123456789"
+                                    v-model:input="newUserQuizSubmission.companyVatId"
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -147,7 +172,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import Checkbox from "@/Components/Checkbox.vue";
 import Modal from "@/Components/Modal.vue";
 import Button from "@/Components/Button.vue";
@@ -171,6 +196,8 @@ const newUserQuizSubmission = ref({
     programmingLanguages: [],
     jobTitle: undefined,
     companyName: undefined,
+    companyAddress: undefined,
+    companyVatId: undefined,
 });
 
 const UserIntent = Object.freeze({
@@ -226,14 +253,21 @@ const handlePageNext = () => {
 };
 
 const isNextPageDisabled = () => {
-    if (currentQuizStep.value === 0 && !newUserQuizSubmission.value.intent) {
-        return true;
+    const currentStep = currentQuizStep.value;
+
+    if (currentStep === 0) {
+        if (!hasIntent.value) {
+            return true;
+        }
+
+        if (hasCompanyName.value && (!hasCompanyAddress.value || !hasCompanyVatId.value)) {
+            return true;
+        }
     }
-    if (
-        currentQuizStep.value === 1 &&
-        newUserQuizSubmission.value.programmingLanguages.length === 0
-    ) {
-        return true;
+    if (currentStep === 1) {
+        if (!hasSelectedProgrammingLanguages.value) {
+            return true;
+        }
     }
     return false;
 };
@@ -265,6 +299,29 @@ const handleProgrammingLanguagesInput = (e) => {
     }
     newUserQuizSubmission.value.programmingLanguages = e;
 };
+
+const hasCompanyName = computed(() => {
+  const name = newUserQuizSubmission.value.companyName;
+  return !!name && name.toString().trim() !== '';
+});
+
+const hasCompanyAddress = computed(() => {
+    const address = newUserQuizSubmission.value.companyAddress;
+    return !!address && address.toString().trim() !== '';
+});
+
+const hasCompanyVatId = computed(() => {
+    const vatId = newUserQuizSubmission.value.companyVatId;
+    return !!vatId && vatId.toString().trim() !== '';
+});
+
+const hasSelectedProgrammingLanguages = computed(() => {
+  return newUserQuizSubmission.value.programmingLanguages.length > 0;
+});
+
+const hasIntent = computed(() => {
+    return !!newUserQuizSubmission.value.intent;
+});
 </script>
 
 <style scoped>

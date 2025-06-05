@@ -11,7 +11,11 @@ class Company extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'address', 'vat_id', 'should_bill_company'];
+
+    protected $casts = [
+        'should_bill_company' => 'boolean',
+    ];
 
     public function users()
     {

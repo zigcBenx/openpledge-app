@@ -40,9 +40,15 @@
                 <tr>
                     <td style="width: 50%">
                         <br>
-                        <p>{!! nl2br(e($invoice_data['customer']['name'])) !!}</p>
-                        @if(isset($invoice_data['customer']['email']))
-                            <p>{{ $invoice_data['customer']['email'] }}</p>
+                        @if(isset($invoice_data['customer']['company']) && $invoice_data['customer']['company']['should_bill_company'] === true)
+                            <p>{{ $invoice_data['customer']['company']['name'] }}</p>
+                            <p>{{ $invoice_data['customer']['company']['address'] }}</p>
+                            <p>VAT ID: {{ $invoice_data['customer']['company']['vat_id'] }}</p>
+                        @else
+                            <p>{!! nl2br(e($invoice_data['customer']['name'])) !!}</p>
+                            @if(isset($invoice_data['customer']['email']))
+                                <p>{{ $invoice_data['customer']['email'] }}</p>
+                            @endif
                         @endif
                     </td>
                     <td style="width: 50%">
