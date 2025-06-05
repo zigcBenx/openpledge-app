@@ -51,6 +51,10 @@
                     <div class="pb-2.5">Time Created</div>
                     <VueDatePicker v-model="date" placeholder="Select time" month-picker :clearable="true"/>
                 </div>
+                <div class="flex items-center">
+                    <Checkbox v-model:checked="showPledgedOnly" id="showPledgedOnly" @update:checked="handleShowPledgedOnlyChange" />
+                    <label for="showPledgedOnly" class="ml-2">Show only pledged issues</label>
+                </div>
             </div>
         </template>
         <template #footer>
@@ -78,6 +82,7 @@
   import DialogModal from '@/Components/DialogModal.vue';
   import Button from '@/Components/Button.vue';
   import VueDatePicker from '@vuepic/vue-datepicker';
+  import Checkbox from '@/Components/Checkbox.vue';
 
   const props = defineProps({
     displayFilterModal: {
@@ -109,6 +114,7 @@
 
   const filters = ref([]);
   const date = ref();
+  const showPledgedOnly = ref();
 
   const handleSelectOption = (value, key) => {
     const index = filters.value.findIndex(item => item.key === key && item.value === value);
@@ -139,6 +145,23 @@
       range.value = value;
     } else {
       filters.value.push({ key: props.keys.range, value: value });
+    }
+  };
+
+  const handleShowPledgedOnlyChange = (shouldShowOnlyPledged) => {
+    const showOnlyPledgedFilterIndex = filters.value.findIndex(
+      (filter) => filter.key === props.keys.showPledgedOnly
+    );
+
+    if (shouldShowOnlyPledged === true) {
+      if (showOnlyPledgedFilterIndex === -1) {
+        filters.value.push({ key: props.keys.showPledgedOnly, value: true });
+      }
+    } else {
+      // we remove the filter from the params if the user unchecks the checkbox
+      if (showOnlyPledgedFilterIndex !== -1) {
+        filters.value.splice(showOnlyPledgedFilterIndex, 1);
+      }
     }
   };
 
@@ -174,6 +197,7 @@
       }
     }
     date.value = filters.value.find(item => item.key === props.keys.date)?.value;
+    showPledgedOnly.value = filters.value.find(item => item.key === props.keys.showPledgedOnly)?.value;
   });
 
   watch(() => date, () => {

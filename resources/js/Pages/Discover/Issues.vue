@@ -90,7 +90,7 @@ const props = defineProps
 const inertiaPage = usePage();
 const isAuthenticated = inertiaPage.props.auth.user !== null;
 
-const keys = { labels: 'labels', languages: 'languages', range: 'range', date: 'date', storageDiscoverKey: 'discover' };
+const keys = { labels: 'labels', languages: 'languages', range: 'range', date: 'date', storageDiscoverKey: 'discover', showPledgedOnly: 'showPledgedOnly' };
 
 const isQuizModalVisible = ref(!props.userIsContributor && !props.userIsResolver);
 const labels = ref(labelsList);

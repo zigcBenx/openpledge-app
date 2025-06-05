@@ -10,13 +10,13 @@
                         <div class="flex">
                             <!-- Logo -->
                             <div class="shrink-0 flex items-center">
-                                <Link :href="route('discover.issues')">
+                                <Link :href="route('discover.issues')" @click="clearFilters()">
                                     <ApplicationMark class="block h-9 w-auto" :isDark="isDark" />
                                 </Link>
                             </div>
                             <!-- Navigation Links -->
                             <div class="space-x-8 sm:-my-px sm:ms-10 content-center">
-                                <NavLink :href="route('discover.issues')" :active="route().current('discover.issues')">
+                                <NavLink :href="route('discover.issues')" @click="clearFilters()" :active="route().current('discover.issues')">
                                     Discover
                                 </NavLink>
                                 <div title="We are still working on that one :)" class="cursor-pointer inline-flex uppercase items-center px-1 pb-2 pt-1 border-b-2 border-transparent text-sm leading-5 text-rich-black dark:text-platinum hover:text-green dark:hover:text-green"
@@ -126,7 +126,7 @@
                 <!-- Responsive Navigation Menu -->
                 <div :class="{'block': showingNavigationDropdown, 'hidden': ! showingNavigationDropdown}" class="sm:hidden">
                     <div class="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink :href="route('discover.issues')" :active="route().current('discover.issues')">
+                        <ResponsiveNavLink :href="route('discover.issues')" @click="clearFilters()" :active="route().current('discover.issues')">
                             Discover
                         </ResponsiveNavLink>
                         <div @click="displayLeaderBoardModal=true" :active="route().current('donations.index')">
@@ -354,6 +354,10 @@
                 }
             });
 
+            const clearFilters = () => {
+                localStorage.removeItem('discover');
+            }
+
             const filteredData = computed(() => {
                 const { repositories, issues } = data.value;
 
@@ -460,7 +464,8 @@
                 feedbackData,
                 submitFeedback,
                 feedbackModalMessage,
-                isAuthenticated
+                isAuthenticated,
+                clearFilters
             };
         }
     };

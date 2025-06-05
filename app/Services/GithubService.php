@@ -100,9 +100,9 @@ class GithubService
         return IssueActions::getActivityTimeline($issueGithubUrl, $githubAccessToken, $donations, $resolver, $resolvedAt);
     }
 
-    public static function getConnectedIssuesInBatch($neededIssues, $existingIssues)
+    public static function getConnectedIssuesInBatch($neededIssues, $existingIssues, $filters)
     {
-        return IssueActions::getConnectedInBatch($neededIssues, $existingIssues);
+        return IssueActions::getConnectedInBatch($neededIssues, $existingIssues, $filters);
     }
 
     public static function getIssuesBySearchQuery($searchQuery, $resultsToFetch, $localResults)

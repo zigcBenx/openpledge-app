@@ -146,6 +146,7 @@ const redirectToStripeDashboard = async () => {
 }
 
 const setTutorialInProgress = () => {
+  localStorage.removeItem("discover");
   localStorage.setItem("isTutorialInProgress", "true");
 };
 </script>

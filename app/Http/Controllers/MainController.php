@@ -55,16 +55,7 @@ class MainController extends Controller
         );
 
         $programmingLanguages = ProgrammingLanguage::select('id', 'name')->get();
-
-        // Immediately return if filters are present
-        if (!empty($paginationParams['filters'])) {
-            return Inertia::render('Discover/Issues', [
-                'issues' => $pledgedIssues,
-                'userIsContributor' => isset($user) ? $user->isContributor() : true,
-                'userIsResolver' => isset($user) ? $user->isResolver() : true,
-                'programmingLanguages' => $programmingLanguages
-            ]);
-        }
+        $showPledgedOnly = filter_var($paginationParams['filters']['showPledgedOnly'] ?? false, FILTER_VALIDATE_BOOLEAN);
 
         if (empty($paginationParams['existingUrls'])) {
             $paginationParams['existingUrls'] = array_map(function ($issue) {
@@ -74,8 +65,12 @@ class MainController extends Controller
 
         if (count($pledgedIssues) < $paginationParams['perPage']) {
             $neededIssues = $paginationParams['perPage'] - count($pledgedIssues);
+            $externalIssues = [];
 
-            $externalIssues = GithubService::getConnectedIssuesInBatch($neededIssues, $paginationParams['existingUrls']);
+            if (!$showPledgedOnly) {
+                $externalIssues = GithubService::getConnectedIssuesInBatch($neededIssues, $paginationParams['existingUrls'], $paginationParams['filters']);
+            }
+
             $combinedIssues = array_merge($pledgedIssues->toArray(), $externalIssues);
         }
 
