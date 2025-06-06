@@ -78,6 +78,9 @@
                                             click the <img class="inline pb-1" width="40"
                                                 alt="Screenshot of the GitHub save button"
                                                 src="../../../img/github_save_button.png"> button.</p>
+                                        <p class="mt-4 text-yellow-300">
+                                            <span class="font-bold">Note:</span> We request write access to issues so our GitHub bot can automatically comment on your issues when needed.
+                                         </p>
                                     </div>
                                 </template>
 
