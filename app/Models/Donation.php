@@ -25,7 +25,8 @@ class Donation extends Model
         'expire_date',
         'refund_transaction_id',
         'payout_transaction_id',
-        'charge_id'
+        'charge_id',
+        'company_id'
     ];
 
     protected $casts = [
@@ -41,6 +42,11 @@ class Donation extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'donor_id');
+    }
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
     }
 
     public function donatable(): MorphTo

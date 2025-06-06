@@ -21,10 +21,12 @@ class QuizSubmissions
             $company = UpdateOrCreateCompany::handle(
                 $newUserQuizSubmission['companyName'],
                 $newUserQuizSubmission['companyAddress'],
-                $newUserQuizSubmission['companyVatId']
+                $newUserQuizSubmission['companyCity'],
+                $newUserQuizSubmission['companyPostalCode'],
+                $newUserQuizSubmission['companyState'],
+                $newUserQuizSubmission['companyVatId'],
+                $newUserQuizSubmission['companyCountry'],
             );
-
-            $user->company_id = $company->id;
         }
 
         $user->job_title = $newUserQuizSubmission['jobTitle'];

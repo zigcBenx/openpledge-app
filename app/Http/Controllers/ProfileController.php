@@ -201,8 +201,11 @@ class ProfileController extends Controller
             $request->input('companyId'), 
             $request->input('companyName'), 
             $request->input('companyAddress'), 
+            $request->input('companyCity'),
+            $request->input('companyPostalCode'),
+            $request->input('companyState'),
             $request->input('companyVatId'),
-            $request->input('shouldBillCompany')
+            $request->input('companyCountry'),
         );
     }
 }

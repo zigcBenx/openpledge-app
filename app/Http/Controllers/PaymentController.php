@@ -35,7 +35,8 @@ class PaymentController extends Controller
             $validatedProcessPaymentData['amount'],
             $validatedProcessPaymentData['email'],
             $isAuthenticated,
-            $isPledgingAnonymously
+            $isPledgingAnonymously,
+            $validatedProcessPaymentData['shouldBillCompany']
         );
     }
 

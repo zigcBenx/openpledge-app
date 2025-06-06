@@ -90,13 +90,57 @@
                                     <span class="leading-none text-gray-900 dark:text-white">
                                         Company address:
                                     </span>
-                                    <span class="text-sm text-gray-500 dark:text-gray-400">
-                                        Street, Postal Code, City, State, Country
+                                    <Input
+                                        inputClass="h-30"
+                                        placeholder="e.g. Marktstr. 5"
+                                        v-model:input="newUserQuizSubmission.companyAddress"
+                                    />
+                                </div>
+                            </div>
+                            <div v-if="hasCompanyName" class="flex flex-col gap-3 mt-2">
+                                <div class="flex flex-col gap-2">
+                                    <span class="leading-none text-gray-900 dark:text-white">
+                                        Company city:
                                     </span>
                                     <Input
                                         inputClass="h-30"
-                                        placeholder="e.g. Marktstr. 5, 10115, Berlin, Germany"
-                                        v-model:input="newUserQuizSubmission.companyAddress"
+                                        placeholder="e.g. Berlin"
+                                        v-model:input="newUserQuizSubmission.companyCity"
+                                    />
+                                </div>
+                            </div>
+                            <div v-if="hasCompanyName" class="flex flex-col gap-3 mt-2">
+                                <div class="flex flex-col gap-2">
+                                    <span class="leading-none text-gray-900 dark:text-white">
+                                        Company postal code:
+                                    </span>
+                                    <Input
+                                        inputClass="h-30"
+                                        placeholder="e.g. 10115"
+                                        v-model:input="newUserQuizSubmission.companyPostalCode"
+                                    />
+                                </div>
+                            </div>
+                            <div v-if="hasCompanyName" class="flex flex-col gap-3 mt-2">
+                                <div class="flex flex-col gap-2">
+                                    <span class="leading-none text-gray-900 dark:text-white">
+                                        Company state:
+                                    </span>
+                                    <Input
+                                        inputClass="h-30"
+                                        placeholder="e.g. Bavaria"
+                                        v-model:input="newUserQuizSubmission.companyState"
+                                    />
+                                </div>
+                            </div>
+                            <div v-if="hasCompanyName" class="flex flex-col gap-3 mt-2">
+                                <div class="flex flex-col gap-2">
+                                    <span class="leading-none text-gray-900 dark:text-white">
+                                        Company country:
+                                    </span>
+                                    <CountrySelect
+                                        v-model="newUserQuizSubmission.companyCountry"
+                                        class="!w-80"
                                     />
                                 </div>
                             </div>
@@ -181,6 +225,8 @@ import ProgressStepper from "@/Components/Form/ProgressStepper.vue";
 import Select from "@/Components/Select.vue";
 import MultiSelect from "@/Components/MultiSelect.vue";
 import Input from "@/Components/Input.vue";
+import CountrySelect from "@/Components/Custom/CountrySelect.vue";
+
 
 const props = defineProps({
     isQuizModalVisible: Boolean,
@@ -197,6 +243,10 @@ const newUserQuizSubmission = ref({
     jobTitle: undefined,
     companyName: undefined,
     companyAddress: undefined,
+    companyCity: undefined,
+    companyPostalCode: undefined,
+    companyState: undefined,
+    companyCountry: undefined,
     companyVatId: undefined,
 });
 
@@ -260,7 +310,7 @@ const isNextPageDisabled = () => {
             return true;
         }
 
-        if (hasCompanyName.value && (!hasCompanyAddress.value || !hasCompanyVatId.value)) {
+        if (hasCompanyName.value && isCompanyFormIncomplete.value) {
             return true;
         }
     }
@@ -301,19 +351,30 @@ const handleProgrammingLanguagesInput = (e) => {
 };
 
 const hasCompanyName = computed(() => {
-  const name = newUserQuizSubmission.value.companyName;
-  return !!name && name.toString().trim() !== '';
+    const name = newUserQuizSubmission.value.companyName;
+    return !!name && name.toString().trim() !== '';
 });
 
-const hasCompanyAddress = computed(() => {
-    const address = newUserQuizSubmission.value.companyAddress;
-    return !!address && address.toString().trim() !== '';
-});
+const isNonEmpty = (field) =>
+    computed(() => !!newUserQuizSubmission.value[field] && newUserQuizSubmission.value[field].toString().trim() !== '');
 
-const hasCompanyVatId = computed(() => {
-    const vatId = newUserQuizSubmission.value.companyVatId;
-    return !!vatId && vatId.toString().trim() !== '';
-});
+const requiredCompanyFields = [
+    'companyName',
+    'companyAddress',
+    'companyPostalCode',
+    'companyCity',
+    'companyState',
+    'companyCountry',
+    'companyVatId',
+];
+
+const companyFieldValidators = Object.fromEntries(
+    requiredCompanyFields.map((field) => [field, isNonEmpty(field)])
+);
+
+const isCompanyFormIncomplete = computed(() =>
+    requiredCompanyFields.some((field) => !companyFieldValidators[field].value)
+);
 
 const hasSelectedProgrammingLanguages = computed(() => {
   return newUserQuizSubmission.value.programmingLanguages.length > 0;

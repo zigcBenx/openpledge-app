@@ -1,25 +1,26 @@
 <script setup>
-import { computed } from 'vue';
-import { useForm } from '@inertiajs/vue3';
+import { computed, ref, watch } from 'vue';
+import { useForm, usePage } from '@inertiajs/vue3';
 import ActionMessage from '@/Components/ActionMessage.vue';
 import FormSection from '@/Components/FormSection.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import Checkbox from '@/Components/Checkbox.vue';
+import CountrySelect from '@/Components/Custom/CountrySelect.vue';
 
-const props = defineProps({
-    user: Object,
-});
+const user = usePage().props.auth.user;
 
 const form = useForm({
     _method: 'POST',
-    companyId: props.user.company.id,
-    companyName: props.user.company.name,
-    companyAddress: props.user.company.address,
-    companyVatId: props.user.company.vat_id,
-    shouldBillCompany: props.user.company.should_bill_company,
+    companyId: user.company?.id,
+    companyName: user.company?.name,
+    companyAddress: user.company?.address,
+    companyPostalCode: user.company?.postal_code,
+    companyCity: user.company?.city,
+    companyState: user.company?.state,
+    companyCountry: user.company?.country,
+    companyVatId: user.company?.vat_id,
 });
 
 const updateCompanyInformation = () => {
@@ -29,32 +30,29 @@ const updateCompanyInformation = () => {
     });
 };
 
-const hasCompanyName = computed(() => {
-  const name = form.companyName;
-  return !!name && name.toString().trim() !== '';
-});
+const hasExistingCompany = computed(() => !!user.company?.id);
+const hasCompany = ref(hasExistingCompany.value);
 
-const hasCompanyAddress = computed(() => {
-    const address = form.companyAddress;
-    return !!address && address.toString().trim() !== '';
-});
+const isNonEmpty = (field) =>
+    computed(() => !!form[field] && form[field].toString().trim() !== '');
 
-const hasCompanyVatId = computed(() => {
-    const vatId = form.companyVatId;
-    return !!vatId && vatId.toString().trim() !== '';
-});
+const requiredFields = [
+    'companyName',
+    'companyAddress',
+    'companyPostalCode',
+    'companyCity',
+    'companyState',
+    'companyCountry',
+    'companyVatId',
+];
 
-const isCompanyFormIncomplete = computed(() => {
-    if (!hasCompanyName.value) {
-        return true;
-    }
+const fieldValidators = Object.fromEntries(
+    requiredFields.map((field) => [field, isNonEmpty(field)])
+);
 
-    if (hasCompanyName.value && (!hasCompanyAddress.value || !hasCompanyVatId.value)) {
-        return true;
-    }
-
-    return false;
-});
+const isCompanyFormIncomplete = computed(() =>
+    requiredFields.some((field) => !fieldValidators[field].value)
+);
 </script>
 
 <template>
@@ -64,60 +62,39 @@ const isCompanyFormIncomplete = computed(() => {
         </template>
 
         <template #description>
-            Update your company's information.
+            {{
+                hasExistingCompany
+                    ? "Update your company's information."
+                    : "Create a company to get started."
+            }}
         </template>
 
-        <template #form>
-            <!-- Company Name -->
+        <template #form v-if="hasCompany">
+            <div v-for="field in [
+                { id: 'companyName', label: 'Company Name', type: 'text' },
+                { id: 'companyAddress', label: 'Company Address', type: 'text' },
+                { id: 'companyPostalCode', label: 'Company Postal Code', type: 'text' },
+                { id: 'companyCity', label: 'Company City', type: 'text' },
+                { id: 'companyState', label: 'Company State', type: 'text' }
+            ]" :key="field.id" class="col-span-6 sm:col-span-4">
+                <InputLabel :for="field.id" :value="field.label" />
+                <TextInput :id="field.id" v-model="form[field.id]" :type="field.type" class="mt-1 block w-full" required
+                    :autocomplete="field.id" />
+                <InputError :message="form.errors[field.id]" class="mt-2" />
+            </div>
+
             <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="companyName" value="Company Name" />
-                <TextInput
-                    id="companyName"
-                    v-model="form.companyName"
-                    type="text"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="company"
-                />
-                <InputError :message="form.errors.companyName" class="mt-2" />
+                <InputLabel for="companyCountry" value="Company Country" />
+                <CountrySelect id="companyCountry" v-model="form.companyCountry"
+                    class="mt-1 dark:text-white dark:bg-oil bg-white dark:placeholder-spun-pearl dark:border-mondo focus:border-spun-pearl border-gray-300" />
+                <InputError :message="form.errors.companyCountry" class="mt-2" />
             </div>
 
-             <!-- Company Address -->
-            <div class="col-span-6 sm:col-span-4" v-if="hasCompanyName">
-                <InputLabel for="companyAddress" value="Company Address" />
-                <TextInput
-                    id="companyAddress"
-                    v-model="form.companyAddress"
-                    type="text"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="companyAddress"
-                />
-                <InputError :message="form.errors.companyAddress" class="mt-2" />
-            </div>
-
-            <!-- Company VAT ID -->
-            <div class="col-span-6 sm:col-span-4" v-if="hasCompanyName">
+            <div class="col-span-6 sm:col-span-4">
                 <InputLabel for="companyVatId" value="Company VAT ID" />
-                <TextInput
-                    id="companyVatId"
-                    v-model="form.companyVatId"
-                    type="text"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="companyVatId"
-                />
+                <TextInput id="companyVatId" v-model="form.companyVatId" type="text" class="mt-1 block w-full" required
+                    autocomplete="companyVatId" />
                 <InputError :message="form.errors.companyVatId" class="mt-2" />
-            </div>
-
-            <!-- Should Bill Company -->
-            <div class="col-span-6 sm:col-span-4 flex items-center gap-2" v-if="hasCompanyName">
-                <Checkbox
-                    id="shouldBillCompany"
-                    v-model:checked="form.shouldBillCompany"
-                />
-                <InputLabel for="shouldBillCompany" value="Bill my company" />
-                <InputError :message="form.errors.shouldBillCompany" class="mt-2" />
             </div>
         </template>
 
@@ -125,8 +102,11 @@ const isCompanyFormIncomplete = computed(() => {
             <ActionMessage :on="form.recentlySuccessful" class="me-3">
                 Saved.
             </ActionMessage>
-
-            <PrimaryButton :class="{ 'opacity-25': form.processing || isCompanyFormIncomplete }" :disabled="form.processing || isCompanyFormIncomplete">
+            <PrimaryButton v-if="!hasCompany" type="button" @click="hasCompany = true">
+                Create Company
+            </PrimaryButton>
+            <PrimaryButton v-else :class="{ 'opacity-25': form.processing || isCompanyFormIncomplete }"
+                :disabled="form.processing || isCompanyFormIncomplete">
                 Save
             </PrimaryButton>
         </template>

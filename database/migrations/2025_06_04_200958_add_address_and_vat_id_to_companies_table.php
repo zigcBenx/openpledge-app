@@ -13,8 +13,11 @@ return new class extends Migration
     {
         Schema::table('companies', function (Blueprint $table) {
             $table->string('address');
+            $table->string('postal_code');
+            $table->string('city');
+            $table->string('state');
+            $table->string('country');
             $table->string('vat_id');
-            $table->boolean('should_bill_company')->default(true);
         });
     }
 
@@ -24,7 +27,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('companies', function (Blueprint $table) {
-            $table->dropColumn(['address', 'vat_id', 'should_bill_company']);
+            $table->dropColumn(['address', 'postal_code', 'city', 'state', 'country', 'vat_id']);
         });
     }
 };

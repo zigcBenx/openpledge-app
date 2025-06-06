@@ -31,7 +31,7 @@ defineProps({
                 </div>
 
                 <div>
-                    <UpdateCompanyInformationForm :user="$page.props.auth.user" />
+                    <UpdateCompanyInformationForm />
 
                     <SectionBorder />
                 </div>

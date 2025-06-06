@@ -38,6 +38,13 @@
           />
         </label>
 
+        <label class="dark:text-lavender-mist text-oil text-sm" v-if="hasCompany">
+          <Checkbox v-model:checked="form.shouldBillCompany" />
+            <span class="ml-2 text-sm">
+              Bill my company
+            </span>
+        </label>
+
           <div v-if="netAmount" class="dark:bg-rich-black bg-light-sea-shade rounded-md p-6 text-white">
               <div class="border-0 border-b border-gray-200 mb-4 pb-4 flex justify-between">
                   <p>Service fee</p>
@@ -148,6 +155,10 @@ watch(coverTransactionCost, (newValue) => {
     }
 });
 
+const hasCompany = computed(() => {
+  return page.props.auth.user.company !== null;
+});
+
 const form = reactive({
   type: 'pledge',
   pledgeMethod: PAYMENT_FORM_METHODS.INFINITE,
@@ -160,7 +171,8 @@ const form = reactive({
   cardSave: false,
   email: '',
   paymentId: '',
-  errors: {}
+  errors: {},
+  shouldBillCompany: hasCompany.value
 });
 
 const fee = computed(() => {
