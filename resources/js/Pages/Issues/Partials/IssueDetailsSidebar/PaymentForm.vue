@@ -156,7 +156,7 @@ watch(coverTransactionCost, (newValue) => {
 });
 
 const hasCompany = computed(() => {
-  return page.props.auth.user.company !== null;
+  return !!page.props.auth.user?.company;
 });
 
 const form = reactive({
