@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
 class Invoice extends Model
@@ -18,15 +19,21 @@ class Invoice extends Model
     public static function generateInvoiceNumber($invoiceDate)
     {
         $year = Carbon::parse($invoiceDate)->year;
-        $lastInvoice = self::whereYear(self::NUMBERING_DATE_COLUMN, $year)
-                            ->orderBy('id', 'desc')
-                            ->first();
+        
+        // Use database transaction with locking to prevent race conditions
+        return DB::transaction(function () use ($year) {
+            // Lock the invoices table for this year to prevent concurrent access
+            $lastInvoice = self::whereYear(self::NUMBERING_DATE_COLUMN, $year)
+                                ->lockForUpdate()
+                                ->orderBy('id', 'desc')
+                                ->first();
 
-        if($lastInvoice === null) {
-            return "{$year}-1-1-1";
-        }
+            if($lastInvoice === null) {
+                return "{$year}-1-1-1";
+            }
 
-        return self::incrementInvoiceNumber($lastInvoice->number);
+            return self::incrementInvoiceNumber($lastInvoice->number);
+        });
     }
 
     private static function incrementInvoiceNumber(string $invoiceNumber): string

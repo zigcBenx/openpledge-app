@@ -12,15 +12,22 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
-class GenerateInvoiceNumberJob implements ShouldQueue
+class GenerateInvoiceNumberJob implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     private array $invoiceData;
     private int $donationId;
+    
+    /**
+     * The number of seconds after which the job's unique lock will be released.
+     */
+    public $uniqueFor = 3600; // 1 hour
+    
     /**
      * Create a new job instance.
      */
@@ -31,21 +38,39 @@ class GenerateInvoiceNumberJob implements ShouldQueue
     }
 
     /**
+     * Get the unique ID for the job.
+     */
+    public function uniqueId()
+    {
+        return $this->donationId ?: 'manual-invoice-' . md5(serialize($this->invoiceData));
+    }
+
+    /**
      * Execute the job.
      */
     public function handle(): Invoice
     {
-        if ($this->donationId) {
-            $this->invoiceData = $this->generateInvoiceData($this->donationId);
-        }
-        $invoiceNumber = $this->generateInvoiceNumber();
-        $pdf = $this->generateInvoicePdf($invoiceNumber);
-        $pdfPath = $this->storePdf($pdf, $invoiceNumber);
-        $invoice = $this->saveInvoiceRecord($invoiceNumber, $pdfPath);
-//        $this->sendInvoiceMail($pdfPath, $invoice);
+        return DB::transaction(function () {
+            // Check if invoice already exists for this donation
+            if ($this->donationId) {
+                $existingInvoice = Invoice::where('donation_id', $this->donationId)->first();
+                if ($existingInvoice) {
+                    logger()->info("Invoice already exists for donation: {$this->donationId}");
+                    return $existingInvoice;
+                }
+                
+                $this->invoiceData = $this->generateInvoiceData($this->donationId);
+            }
+            
+            $invoiceNumber = $this->generateInvoiceNumber();
+            $pdf = $this->generateInvoicePdf($invoiceNumber);
+            $pdfPath = $this->storePdf($pdf, $invoiceNumber);
+            $invoice = $this->saveInvoiceRecord($invoiceNumber, $pdfPath);
+    //        $this->sendInvoiceMail($pdfPath, $invoice);
 
-        logger()->info("Invoice PDF generated successfully: {$invoiceNumber}");
-        return $invoice;
+            logger()->info("Invoice PDF generated successfully: {$invoiceNumber}");
+            return $invoice;
+        });
     }
 
     private function generateInvoiceNumber(): string
@@ -70,7 +95,7 @@ class GenerateInvoiceNumberJob implements ShouldQueue
             'isHtml5ParserEnabled' => true,
             'isPhpEnabled' => true,
             'isRemoteEnabled' => true,
-            'tempDir' => storage_path('app/dompdf_temp_' . uniqid()),
+            'tempDir' => storage_path('app/dompdf_temp_' . $this->donationId . '_' . uniqid()),
         ]);
     }
 
