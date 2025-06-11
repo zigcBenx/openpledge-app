@@ -12,6 +12,11 @@ class DoSomething extends Command
 
     public function handle()
     {
-        $this->info("Do Something");
+//        $donations = Donation::with('user')->get();
+//
+//        foreach($donations as $donation) {
+//            $this->info('Processing donation: ' . $donation->id);
+//            dispatch(new GenerateInvoiceNumberJob([], $donation->id))->onQueue('default');
+//        }
     }
 }

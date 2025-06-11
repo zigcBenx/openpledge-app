@@ -3,28 +3,31 @@
 namespace App\Jobs;
 
 use App\Mail\PledgeInvoiceMail;
+use App\Models\Donation;
 use App\Models\Invoice;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\View;
+use Symfony\Component\Process\Process;
 
 class GenerateInvoiceNumberJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private $invoiceData;
+    private array $invoiceData;
+    private ?int $donationId;
+
     /**
      * Create a new job instance.
      */
-    public function __construct($invoiceData)
+    public function __construct(array $invoiceData, ?int $donationId = null)
     {
         $this->invoiceData = $invoiceData;
+        $this->donationId = $donationId;
     }
 
     /**
@@ -32,9 +35,12 @@ class GenerateInvoiceNumberJob implements ShouldQueue
      */
     public function handle(): Invoice
     {
+        if (!$this->invoiceData) {
+            $this->invoiceData = $this->generateInvoiceData($this->donationId);
+        }
+
         $invoiceNumber = $this->generateInvoiceNumber();
-        $pdf = $this->generateInvoicePdf($invoiceNumber);
-        $pdfPath = $this->storePdf($pdf, $invoiceNumber);
+        $pdfPath = $this->generateInvoicePdf($invoiceNumber);
         $invoice = $this->saveInvoiceRecord($invoiceNumber, $pdfPath);
         $this->sendInvoiceMail($pdfPath, $invoice);
 
@@ -47,37 +53,50 @@ class GenerateInvoiceNumberJob implements ShouldQueue
         return Invoice::generateInvoiceNumber($this->invoiceData['invoice'][Invoice::NUMBERING_DATE_COLUMN]);
     }
 
-    private function generateInvoicePdf(string $invoiceNumber): \Barryvdh\DomPDF\PDF
+    private function generateInvoicePdf(string $invoiceNumber): string
     {
         $stampSrc = $this->getBase64DataForImage('images/openpledge_stamp.png');
         $logoSrc = $this->getBase64DataForImage('images/logotip_black.png');
-        // we remove year from numbering, because of accounting requirements
         $invoiceNumberFormatted = explode('-', $invoiceNumber, 2)[1];
-        return Pdf::loadView('invoices.invoice_pledge', [
+        $pdfPath = storage_path("app/private/invoices/{$invoiceNumber}.pdf");
+        $htmlPath = storage_path("app/private/invoices/{$invoiceNumber}.html");
+
+        $html = View::make('invoices.invoice_pledge', [
             'invoice_number' => $invoiceNumberFormatted,
             'invoice_data' => $this->invoiceData,
             'stamp' => $stampSrc,
             'logo' => $logoSrc
-        ])->setPaper('a4')->setOptions([
-            'defaultFont' => 'dejavusans',
-            'isHtml5ParserEnabled' => true,
-            'isPhpEnabled' => true,
-            'isRemoteEnabled' => true,
+        ])->render();
+
+        file_put_contents($htmlPath, $html);
+
+        $process = new Process([
+            'weasyprint',
+            $htmlPath,
+            $pdfPath
         ]);
+
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            throw new \RuntimeException("WeasyPrint failed: " . $process->getErrorOutput());
+        }
+
+        $this->cleanupHTMLfile($htmlPath);
+
+        return "invoices/{$invoiceNumber}.pdf";
     }
 
-    private function getBase64DataForImage($imagePath): string
+    private function cleanupHTMLfile($htmlPath): void
+    {
+        unlink($htmlPath);
+    }
+
+    private function getBase64DataForImage(string $imagePath): string
     {
         $path = public_path($imagePath);
         $imgData = base64_encode(file_get_contents($path));
         return 'data:image/png;base64,' . $imgData;
-    }
-
-    private function storePdf(\Barryvdh\DomPDF\PDF $pdf, string $invoiceNumber): string
-    {
-        $pdfPath = "invoices/{$invoiceNumber}.pdf";
-        Storage::disk('private')->put($pdfPath, $pdf->output());
-        return $pdfPath;
     }
 
     private function saveInvoiceRecord(string $invoiceNumber, string $pdfPath): Invoice
@@ -98,12 +117,13 @@ class GenerateInvoiceNumberJob implements ShouldQueue
         ]);
     }
 
-    private function sendInvoiceMail($pdfPath, $invoice): void
+    private function sendInvoiceMail(string $pdfPath, Invoice $invoice): void
     {
-        // Retrieve donor's email
         $invoice->load('donation.user');
-        
-        if (!$invoice->donation) return;
+
+        if (!$invoice->donation) {
+            return;
+        }
 
         $donorEmail = $invoice->donation->user->email ?? null;
 
@@ -113,5 +133,36 @@ class GenerateInvoiceNumberJob implements ShouldQueue
         } else {
             logger()->warning("Donor email not found for donation ID: {$invoice->donation_id}");
         }
+    }
+
+    private function generateInvoiceData(int $donationId): array
+    {
+        $donation = Donation::with('user')->find($donationId);
+        return [
+            'customer' => [
+                'name' => $donation->user->name,
+                'email' => $donation->user->email,
+            ],
+            'items' => [
+                [
+                    'name' => 'Pledge on OpenPledge.io',
+                    'price_per_unit' => $donation->gross_amount,
+                    'quantity' => 1,
+                    'currency' => '€',
+                ]
+            ],
+            'invoice' => [
+                'invoice_date' => $donation->created_at,
+                'payment_date' => $donation->created_at,
+                'service_date' => $donation->created_at,
+                'donation_id' => $donation->id,
+                'vat' => 0,
+                'vat_value' => 0,
+                'total' => $donation->gross_amount,
+                'total_vat' => $donation->gross_amount,
+                'payment_method' => 'Stripe',
+                'status' => 'Paid',
+            ]
+        ];
     }
 }
