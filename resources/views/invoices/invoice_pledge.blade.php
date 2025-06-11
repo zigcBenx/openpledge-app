@@ -4,8 +4,19 @@
     <meta charset="utf-8">
     <title>Invoice {{ $invoice_number }}</title>
     <style>
-        body { font-family: DejaVu Sans, Arial, sans-serif; font-size: 14px; color: #333; }
-        .invoice-container { width: 100%; display: flex; justify-content: center; padding: 30px 0; }
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: DejaVu Sans, Arial, sans-serif; font-size: 14px; color: #333;
+            line-height: 1.6;
+        }
+
+        .invoice-container { margin-top: 30px; width: 100%; display: flex; justify-content: center; padding: 0px 0; }
         .invoice-box { width: 90%; max-width: 700px; padding: 20px; border: 1px solid #ddd; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1); position: relative; }
         .header { text-align: left; display: flex; justify-content: space-between; align-items: center; }
         .header img { max-width: 300px; }
@@ -23,7 +34,7 @@
 <body>
     <div class="invoice-container">
         <div class="invoice-box">
-            
+
             <!-- Header -->
             <div class="header">
                 <img src="{{ $logo }}" alt="OpenPledge Logo">

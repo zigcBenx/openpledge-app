@@ -14,7 +14,9 @@
           >
           {{ issue.title }}
       </a>
-      <a :href="issue.github_url" target="_blank"><i class="fa-brands fa-github"/></a>
+      <a :href="issue.github_url" target="_blank">
+        <i class="fa-brands fa-github dark:text-white hover:text-green dark:hover:text-green"/>
+      </a>
 
       <div class="flex gap-1 mt-3">
           <Avatar :url="issue.user_avatar" size="sm" />

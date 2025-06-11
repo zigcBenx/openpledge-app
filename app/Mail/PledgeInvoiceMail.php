@@ -5,6 +5,7 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 
 class PledgeInvoiceMail extends Mailable
 {
@@ -26,6 +27,6 @@ class PledgeInvoiceMail extends Mailable
                         'invoice' => $this->invoice
                     ])
                     ->view('emails.pledge-invoice')
-                    ->attach(storage_path("app/private/{$this->pdfPath}"));
+                    ->attach(Storage::disk('private')->path($this->pdfPath));
     }
 }
