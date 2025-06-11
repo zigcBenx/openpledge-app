@@ -35,14 +35,14 @@ class GenerateInvoiceNumberJob implements ShouldQueue
      */
     public function handle(): Invoice
     {
-        if ($this->donationId) {
+        if (!$this->invoiceData) {
             $this->invoiceData = $this->generateInvoiceData($this->donationId);
         }
 
         $invoiceNumber = $this->generateInvoiceNumber();
         $pdfPath = $this->generateInvoicePdf($invoiceNumber);
         $invoice = $this->saveInvoiceRecord($invoiceNumber, $pdfPath);
-        // $this->sendInvoiceMail($pdfPath, $invoice);
+        $this->sendInvoiceMail($pdfPath, $invoice);
 
         logger()->info("Invoice PDF generated successfully: {$invoiceNumber}");
         return $invoice;
