@@ -88,6 +88,7 @@ Route::middleware([
     Route::get('/user/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/user/profile/settings', [ProfileController::class, 'settings'])->name('profile.settings');
     Route::post('/user/profile/settings/anonymous-pledging', [ProfileController::class, 'updateAnonymousPledging'])->name('profile.settings.anonymous-pledging');
+    Route::post('/user/profile/settings/company', [ProfileController::class, 'updateCompany'])->name('profile.settings.company');
 
     // Get favorites from currently authenticated user
     Route::get('/user/favorites', [ProfileController::class, 'getFavorites'])->name('profile.favorites');

@@ -13,7 +13,8 @@ class ProcessPaymentRequest extends FormRequest
             'paymentId'            => ['required', 'string', 'max:255'],
             'issue_id'             => ['required', 'integer', 'exists:issues,id'],
             'amount'               => ['required', 'numeric', 'min:0.01'],
-            'email'                => ['nullable', 'email']
+            'email'                => ['nullable', 'email'],
+            'shouldBillCompany'    => ['nullable', 'boolean']
         ];
     }
 }

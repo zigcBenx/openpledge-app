@@ -2,7 +2,7 @@
 
 namespace App\Actions\User;
 
-use App\Actions\Company\GetOrCreateCompany;
+use App\Actions\Company\UpdateOrCreateCompany;
 use App\Models\ProgrammingLanguageable;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -14,8 +14,19 @@ class QuizSubmissions
         $user = Auth::user();
 
         if (!empty($newUserQuizSubmission['companyName'])) {
-            $company = GetOrCreateCompany::get($newUserQuizSubmission['companyName']);
-            $user->company_id = $company->id;
+            if (empty($newUserQuizSubmission['companyAddress']) || empty($newUserQuizSubmission['companyVatId'])) {
+                throw new \Exception("Company address and VAT ID are required upon registering as a company!");
+            }
+
+            UpdateOrCreateCompany::handle(
+                $newUserQuizSubmission['companyName'],
+                $newUserQuizSubmission['companyAddress'],
+                $newUserQuizSubmission['companyCity'],
+                $newUserQuizSubmission['companyPostalCode'],
+                $newUserQuizSubmission['companyState'] ?? null,
+                $newUserQuizSubmission['companyVatId'],
+                $newUserQuizSubmission['companyCountry'],
+            );
         }
 
         $user->job_title = $newUserQuizSubmission['jobTitle'];

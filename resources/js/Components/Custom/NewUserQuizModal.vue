@@ -14,7 +14,7 @@
                 currentQuizStep === 0 &&
                 newUserQuizSubmission.intent &&
                 newUserQuizSubmission.intent !== UserIntent.CONTRIBUTOR
-                    ? 'h-104'
+                    ? 'h-120'
                     : 'h-80',
             ]"
         >
@@ -67,7 +67,7 @@
                             </span>
                         </label>
                         <div
-                            class="py-4"
+                            class="py-4 flex flex-col gap-3"
                             v-if="
                                 newUserQuizSubmission.intent &&
                                 newUserQuizSubmission.intent !==
@@ -85,6 +85,75 @@
                                     newUserQuizSubmission.companyName
                                 "
                             />
+                            <div v-if="hasCompanyName" class="flex flex-col gap-3 mt-2">
+                                <div class="flex flex-col gap-2">
+                                    <span class="leading-none text-gray-900 dark:text-white">
+                                        Address:
+                                    </span>
+                                    <Input
+                                        inputClass="h-30"
+                                        placeholder="e.g. Marktstr. 5"
+                                        v-model:input="newUserQuizSubmission.companyAddress"
+                                    />
+                                </div>
+                            </div>
+                            <div v-if="hasCompanyName" class="flex flex-col gap-3 mt-2">
+                                <div class="flex flex-col gap-2">
+                                    <span class="leading-none text-gray-900 dark:text-white">
+                                        City:
+                                    </span>
+                                    <Input
+                                        inputClass="h-30"
+                                        placeholder="e.g. Berlin"
+                                        v-model:input="newUserQuizSubmission.companyCity"
+                                    />
+                                </div>
+                            </div>
+                            <div v-if="hasCompanyName" class="flex flex-col gap-3 mt-2">
+                                <div class="flex flex-col gap-2">
+                                    <span class="leading-none text-gray-900 dark:text-white">
+                                        Postal code:
+                                    </span>
+                                    <Input
+                                        inputClass="h-30"
+                                        placeholder="e.g. 10115"
+                                        v-model:input="newUserQuizSubmission.companyPostalCode"
+                                    />
+                                </div>
+                            </div>
+                            <div v-if="hasCompanyName" class="flex flex-col gap-3 mt-2">
+                                <div class="flex flex-col gap-2">
+                                    <span class="leading-none text-gray-900 dark:text-white">
+                                        State:
+                                    </span>
+                                    <Input
+                                        inputClass="h-30"
+                                        placeholder="e.g. Bavaria"
+                                        v-model:input="newUserQuizSubmission.companyState"
+                                    />
+                                </div>
+                            </div>
+                            <div v-if="hasCompanyName" class="flex flex-col gap-3 mt-2">
+                                <div class="flex flex-col gap-2">
+                                    <span class="leading-none text-gray-900 dark:text-white">
+                                        Country:
+                                    </span>
+                                    <CountrySelect
+                                        v-model="newUserQuizSubmission.companyCountry"
+                                        class="!w-80"
+                                    />
+                                </div>
+                            </div>
+                            <div v-if="hasCompanyName" class="flex flex-col gap-3 mt-2">
+                                <span class="leading-none text-gray-900 dark:text-white">
+                                    VAT ID:
+                                </span>
+                                <Input
+                                    inputClass="h-30"
+                                    placeholder="e.g. DE123456789"
+                                    v-model:input="newUserQuizSubmission.companyVatId"
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -147,7 +216,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import Checkbox from "@/Components/Checkbox.vue";
 import Modal from "@/Components/Modal.vue";
 import Button from "@/Components/Button.vue";
@@ -156,6 +225,8 @@ import ProgressStepper from "@/Components/Form/ProgressStepper.vue";
 import Select from "@/Components/Select.vue";
 import MultiSelect from "@/Components/MultiSelect.vue";
 import Input from "@/Components/Input.vue";
+import CountrySelect from "@/Components/Custom/CountrySelect.vue";
+
 
 const props = defineProps({
     isQuizModalVisible: Boolean,
@@ -171,6 +242,12 @@ const newUserQuizSubmission = ref({
     programmingLanguages: [],
     jobTitle: undefined,
     companyName: undefined,
+    companyAddress: undefined,
+    companyCity: undefined,
+    companyPostalCode: undefined,
+    companyState: undefined,
+    companyCountry: undefined,
+    companyVatId: undefined,
 });
 
 const UserIntent = Object.freeze({
@@ -226,14 +303,21 @@ const handlePageNext = () => {
 };
 
 const isNextPageDisabled = () => {
-    if (currentQuizStep.value === 0 && !newUserQuizSubmission.value.intent) {
-        return true;
+    const currentStep = currentQuizStep.value;
+
+    if (currentStep === 0) {
+        if (!hasIntent.value) {
+            return true;
+        }
+
+        if (hasCompanyName.value && isCompanyFormIncomplete.value) {
+            return true;
+        }
     }
-    if (
-        currentQuizStep.value === 1 &&
-        newUserQuizSubmission.value.programmingLanguages.length === 0
-    ) {
-        return true;
+    if (currentStep === 1) {
+        if (!hasSelectedProgrammingLanguages.value) {
+            return true;
+        }
     }
     return false;
 };
@@ -265,6 +349,39 @@ const handleProgrammingLanguagesInput = (e) => {
     }
     newUserQuizSubmission.value.programmingLanguages = e;
 };
+
+const hasCompanyName = computed(() => {
+    const name = newUserQuizSubmission.value.companyName;
+    return !!name && name.toString().trim() !== '';
+});
+
+const isNonEmpty = (field) =>
+    computed(() => !!newUserQuizSubmission.value[field] && newUserQuizSubmission.value[field].toString().trim() !== '');
+
+const requiredCompanyFields = [
+    'companyName',
+    'companyAddress',
+    'companyPostalCode',
+    'companyCity',
+    'companyCountry',
+    'companyVatId',
+];
+
+const companyFieldValidators = Object.fromEntries(
+    requiredCompanyFields.map((field) => [field, isNonEmpty(field)])
+);
+
+const isCompanyFormIncomplete = computed(() =>
+    requiredCompanyFields.some((field) => !companyFieldValidators[field].value)
+);
+
+const hasSelectedProgrammingLanguages = computed(() => {
+  return newUserQuizSubmission.value.programmingLanguages.length > 0;
+});
+
+const hasIntent = computed(() => {
+    return !!newUserQuizSubmission.value.intent;
+});
 </script>
 
 <style scoped>

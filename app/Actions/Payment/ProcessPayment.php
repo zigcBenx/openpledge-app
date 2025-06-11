@@ -16,7 +16,7 @@ use Carbon\Carbon;
 
 class ProcessPayment
 {
-    public static function process($pledgeExpirationDate, $paymentId, $issueId, $amount, $donorEmail, $isAuthenticated, $isPledgingAnonymously): JsonResponse
+    public static function process($pledgeExpirationDate, $paymentId, $issueId, $amount, $donorEmail, $isAuthenticated, $isPledgingAnonymously, $shouldBillCompany = false): JsonResponse
     {
         $expireDate = null;
         if (isset($pledgeExpirationDate)) {
@@ -27,7 +27,7 @@ class ProcessPayment
 
         $donationData = self::prepareDonationDate($afterFeeAmounts, $issueId, $expireDate, $isPledgingAnonymously);
 
-        self::createDonation($paymentId, $donationData);
+        self::createDonation($paymentId, $donationData, $shouldBillCompany);
 
         $issue = GetIssueById::getWithActiveDonations($issueId);
         $comment = self::prepareGithubComment($issue, $afterFeeAmounts['net_amount'], $isAuthenticated, $isPledgingAnonymously, $expireDate);
@@ -51,13 +51,17 @@ class ProcessPayment
         );
     }
 
-    private static function createDonation(string $paymentId, array $donationData): void
+    private static function createDonation(string $paymentId, array $donationData, bool $shouldBillCompany = false): void
     {
         $stripe = new StripeClient(config('app.stripe_secret'));
         $paymentDetail = $stripe->paymentIntents->retrieve($paymentId);
 
         $donationData['transaction_id'] = $paymentDetail->id;
         $donationData['charge_id'] = $paymentDetail->latest_charge;
+
+        if ($shouldBillCompany) {
+            $donationData['company_id'] = Auth::user()->company_id;
+        }
 
         CreateNewDonation::create($donationData);
     }

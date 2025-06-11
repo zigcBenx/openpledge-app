@@ -28,7 +28,8 @@ class DonationCreatedListener implements ShouldQueue
             'customer' => [
                 'name' => $event->donation->user->name,
                 'email' => $event->donation->user->email,
-                // TODO: Add company if applicable
+                'company' => $event->donation->user->company,
+                'should_bill_company' => isset($event->donation->company_id),
             ],
             'items' => [
                 [

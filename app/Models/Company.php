@@ -11,7 +11,11 @@ class Company extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'address', 'vat_id', 'city', 'postal_code', 'state', 'country'];
+
+    protected $casts = [
+        'country' => 'array',
+    ];
 
     public function users()
     {
