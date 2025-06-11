@@ -88,7 +88,7 @@
                             <div v-if="hasCompanyName" class="flex flex-col gap-3 mt-2">
                                 <div class="flex flex-col gap-2">
                                     <span class="leading-none text-gray-900 dark:text-white">
-                                        Company address:
+                                        Address:
                                     </span>
                                     <Input
                                         inputClass="h-30"
@@ -100,7 +100,7 @@
                             <div v-if="hasCompanyName" class="flex flex-col gap-3 mt-2">
                                 <div class="flex flex-col gap-2">
                                     <span class="leading-none text-gray-900 dark:text-white">
-                                        Company city:
+                                        City:
                                     </span>
                                     <Input
                                         inputClass="h-30"
@@ -112,7 +112,7 @@
                             <div v-if="hasCompanyName" class="flex flex-col gap-3 mt-2">
                                 <div class="flex flex-col gap-2">
                                     <span class="leading-none text-gray-900 dark:text-white">
-                                        Company postal code:
+                                        Postal code:
                                     </span>
                                     <Input
                                         inputClass="h-30"
@@ -124,7 +124,7 @@
                             <div v-if="hasCompanyName" class="flex flex-col gap-3 mt-2">
                                 <div class="flex flex-col gap-2">
                                     <span class="leading-none text-gray-900 dark:text-white">
-                                        Company state:
+                                        State:
                                     </span>
                                     <Input
                                         inputClass="h-30"
@@ -136,7 +136,7 @@
                             <div v-if="hasCompanyName" class="flex flex-col gap-3 mt-2">
                                 <div class="flex flex-col gap-2">
                                     <span class="leading-none text-gray-900 dark:text-white">
-                                        Company country:
+                                        Country:
                                     </span>
                                     <CountrySelect
                                         v-model="newUserQuizSubmission.companyCountry"
@@ -146,7 +146,7 @@
                             </div>
                             <div v-if="hasCompanyName" class="flex flex-col gap-3 mt-2">
                                 <span class="leading-none text-gray-900 dark:text-white">
-                                    Company VAT ID:
+                                    VAT ID:
                                 </span>
                                 <Input
                                     inputClass="h-30"

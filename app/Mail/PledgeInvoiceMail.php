@@ -26,6 +26,6 @@ class PledgeInvoiceMail extends Mailable
                         'invoice' => $this->invoice
                     ])
                     ->view('emails.pledge-invoice')
-                    ->attach(storage_path("app/public/{$this->pdfPath}"));
+                    ->attach(storage_path("app/private/{$this->pdfPath}"));
     }
 }

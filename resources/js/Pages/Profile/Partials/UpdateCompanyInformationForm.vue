@@ -41,7 +41,6 @@ const requiredFields = [
     'companyAddress',
     'companyPostalCode',
     'companyCity',
-    'companyState',
     'companyCountry',
     'companyVatId',
 ];
@@ -71,14 +70,14 @@ const isCompanyFormIncomplete = computed(() =>
 
         <template #form v-if="hasCompany">
             <div v-for="field in [
-                { id: 'companyName', label: 'Company Name', type: 'text' },
-                { id: 'companyAddress', label: 'Company Address', type: 'text' },
-                { id: 'companyPostalCode', label: 'Company Postal Code', type: 'text' },
-                { id: 'companyCity', label: 'Company City', type: 'text' },
-                { id: 'companyState', label: 'Company State', type: 'text' }
+                { id: 'companyName', label: 'Company Name', type: 'text', required: true },
+                { id: 'companyAddress', label: 'Address', type: 'text', required: true },
+                { id: 'companyPostalCode', label: 'Postal Code', type: 'text', required: true },
+                { id: 'companyCity', label: 'City', type: 'text', required: true },
+                { id: 'companyState', label: 'State', type: 'text', required: false }
             ]" :key="field.id" class="col-span-6 sm:col-span-4">
                 <InputLabel :for="field.id" :value="field.label" />
-                <TextInput :id="field.id" v-model="form[field.id]" :type="field.type" class="mt-1 block w-full" required
+                <TextInput :id="field.id" v-model="form[field.id]" :type="field.type" class="mt-1 block w-full" :required="field.required"
                     :autocomplete="field.id" />
                 <InputError :message="form.errors[field.id]" class="mt-2" />
             </div>
