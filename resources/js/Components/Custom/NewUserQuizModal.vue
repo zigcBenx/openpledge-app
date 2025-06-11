@@ -363,7 +363,6 @@ const requiredCompanyFields = [
     'companyAddress',
     'companyPostalCode',
     'companyCity',
-    'companyState',
     'companyCountry',
     'companyVatId',
 ];

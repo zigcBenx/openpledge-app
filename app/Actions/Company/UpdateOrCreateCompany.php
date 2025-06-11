@@ -12,7 +12,7 @@ class UpdateOrCreateCompany
         string $companyAddress,
         string $companyCity,
         string $companyPostalCode,
-        string $companyState,
+        ?string $companyState,
         string $companyVatId,
         array $companyCountry,
     )
@@ -43,7 +43,7 @@ class UpdateOrCreateCompany
         string $companyAddress,
         string $companyCity,
         string $companyPostalCode,
-        string $companyState,
+        ?string $companyState,
         string $companyVatId,
         array $companyCountry
     ) {

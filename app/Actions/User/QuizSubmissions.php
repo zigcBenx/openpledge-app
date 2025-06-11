@@ -18,12 +18,12 @@ class QuizSubmissions
                 throw new \Exception("Company address and VAT ID are required upon registering as a company!");
             }
 
-            $company = UpdateOrCreateCompany::handle(
+            UpdateOrCreateCompany::handle(
                 $newUserQuizSubmission['companyName'],
                 $newUserQuizSubmission['companyAddress'],
                 $newUserQuizSubmission['companyCity'],
                 $newUserQuizSubmission['companyPostalCode'],
-                $newUserQuizSubmission['companyState'],
+                $newUserQuizSubmission['companyState'] ?? null,
                 $newUserQuizSubmission['companyVatId'],
                 $newUserQuizSubmission['companyCountry'],
             );
