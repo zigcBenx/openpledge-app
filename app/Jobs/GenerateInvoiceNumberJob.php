@@ -5,44 +5,32 @@ namespace App\Jobs;
 use App\Mail\PledgeInvoiceMail;
 use App\Models\Donation;
 use App\Models\Invoice;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\View;
+use Spatie\LaravelPdf\Facades\Pdf;
+use Symfony\Component\Process\Process;
 
 class GenerateInvoiceNumberJob implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     private array $invoiceData;
-    private int $donationId;
-    
-    /**
-     * The number of seconds after which the job's unique lock will be released.
-     */
-    public $uniqueFor = 3600; // 1 hour
-    
+    private ?int $donationId;
+
     /**
      * Create a new job instance.
      */
-    public function __construct($invoiceData, $donationId = null)
+    public function __construct(array $invoiceData, ?int $donationId = null)
     {
         $this->invoiceData = $invoiceData;
         $this->donationId = $donationId;
-    }
-
-    /**
-     * Get the unique ID for the job.
-     */
-    public function uniqueId()
-    {
-        return $this->donationId ?: 'manual-invoice-' . md5(serialize($this->invoiceData));
     }
 
     /**
@@ -50,27 +38,17 @@ class GenerateInvoiceNumberJob implements ShouldQueue, ShouldBeUnique
      */
     public function handle(): Invoice
     {
-        return DB::transaction(function () {
-            // Check if invoice already exists for this donation
-            if ($this->donationId) {
-                $existingInvoice = Invoice::where('donation_id', $this->donationId)->first();
-                if ($existingInvoice) {
-                    logger()->info("Invoice already exists for donation: {$this->donationId}");
-                    return $existingInvoice;
-                }
-                
-                $this->invoiceData = $this->generateInvoiceData($this->donationId);
-            }
-            
-            $invoiceNumber = $this->generateInvoiceNumber();
-            $pdf = $this->generateInvoicePdf($invoiceNumber);
-            $pdfPath = $this->storePdf($pdf, $invoiceNumber);
-            $invoice = $this->saveInvoiceRecord($invoiceNumber, $pdfPath);
-    //        $this->sendInvoiceMail($pdfPath, $invoice);
+        if ($this->donationId) {
+            $this->invoiceData = $this->generateInvoiceData($this->donationId);
+        }
 
-            logger()->info("Invoice PDF generated successfully: {$invoiceNumber}");
-            return $invoice;
-        });
+        $invoiceNumber = $this->generateInvoiceNumber();
+        $pdfPath = $this->generateInvoicePdf($invoiceNumber);
+        $invoice = $this->saveInvoiceRecord($invoiceNumber, $pdfPath);
+        // $this->sendInvoiceMail($pdfPath, $invoice);
+
+        logger()->info("Invoice PDF generated successfully: {$invoiceNumber}");
+        return $invoice;
     }
 
     private function generateInvoiceNumber(): string
@@ -78,39 +56,50 @@ class GenerateInvoiceNumberJob implements ShouldQueue, ShouldBeUnique
         return Invoice::generateInvoiceNumber($this->invoiceData['invoice'][Invoice::NUMBERING_DATE_COLUMN]);
     }
 
-    private function generateInvoicePdf(string $invoiceNumber): \Barryvdh\DomPDF\PDF
+    private function generateInvoicePdf(string $invoiceNumber): string
     {
         $stampSrc = $this->getBase64DataForImage('images/openpledge_stamp.png');
         $logoSrc = $this->getBase64DataForImage('images/logotip_black.png');
-        // we remove year from numbering, because of accounting requirements
         $invoiceNumberFormatted = explode('-', $invoiceNumber, 2)[1];
+        $pdfPath = storage_path("app/private/invoices/{$invoiceNumber}.pdf");
+        $htmlPath = storage_path("app/private/invoices/{$invoiceNumber}.html");
 
-        return Pdf::loadView('invoices.invoice_pledge', [
+        $html = View::make('invoices.invoice_pledge', [
             'invoice_number' => $invoiceNumberFormatted,
             'invoice_data' => $this->invoiceData,
             'stamp' => $stampSrc,
             'logo' => $logoSrc
-        ])->setPaper('a4')->setOptions([
-            'defaultFont' => 'dejavusans',
-            'isHtml5ParserEnabled' => true,
-            'isPhpEnabled' => true,
-            'isRemoteEnabled' => true,
-            'tempDir' => storage_path('app/dompdf_temp_' . $this->donationId . '_' . uniqid()),
+        ])->render();
+
+        file_put_contents($htmlPath, $html);
+
+        $process = new Process([
+            'weasyprint',
+            $htmlPath,
+            $pdfPath
         ]);
+
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            throw new \RuntimeException("WeasyPrint failed: " . $process->getErrorOutput());
+        }
+
+        $this->cleanupHTMLfile($htmlPath);
+
+        return "invoices/{$invoiceNumber}.pdf";
     }
 
-    private function getBase64DataForImage($imagePath): string
+    private function cleanupHTMLfile($htmlPath): void
+    {
+        unlink($htmlPath);
+    }
+
+    private function getBase64DataForImage(string $imagePath): string
     {
         $path = public_path($imagePath);
         $imgData = base64_encode(file_get_contents($path));
         return 'data:image/png;base64,' . $imgData;
-    }
-
-    private function storePdf(\Barryvdh\DomPDF\PDF $pdf, string $invoiceNumber): string
-    {
-        $pdfPath = "invoices/{$invoiceNumber}.pdf";
-        Storage::disk('private')->put($pdfPath, $pdf->output());
-        return $pdfPath;
     }
 
     private function saveInvoiceRecord(string $invoiceNumber, string $pdfPath): Invoice
@@ -131,12 +120,13 @@ class GenerateInvoiceNumberJob implements ShouldQueue, ShouldBeUnique
         ]);
     }
 
-    private function sendInvoiceMail($pdfPath, $invoice): void
+    private function sendInvoiceMail(string $pdfPath, Invoice $invoice): void
     {
-        // Retrieve donor's email
         $invoice->load('donation.user');
 
-        if (!$invoice->donation) return;
+        if (!$invoice->donation) {
+            return;
+        }
 
         $donorEmail = $invoice->donation->user->email ?? null;
 
@@ -148,7 +138,7 @@ class GenerateInvoiceNumberJob implements ShouldQueue, ShouldBeUnique
         }
     }
 
-    private function generateInvoiceData($donationId): array
+    private function generateInvoiceData(int $donationId): array
     {
         $donation = Donation::with('user')->find($donationId);
         return [
@@ -158,7 +148,7 @@ class GenerateInvoiceNumberJob implements ShouldQueue, ShouldBeUnique
             ],
             'items' => [
                 [
-                    'name'  => 'Pledge on OpenPledge.io',
+                    'name' => 'Pledge on OpenPledge.io',
                     'price_per_unit' => $donation->gross_amount,
                     'quantity' => 1,
                     'currency' => '€',
