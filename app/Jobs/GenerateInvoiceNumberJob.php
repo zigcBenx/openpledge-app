@@ -6,18 +6,15 @@ use App\Mail\PledgeInvoiceMail;
 use App\Models\Donation;
 use App\Models\Invoice;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
-use Spatie\LaravelPdf\Facades\Pdf;
 use Symfony\Component\Process\Process;
 
-class GenerateInvoiceNumberJob implements ShouldQueue, ShouldBeUnique
+class GenerateInvoiceNumberJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
