@@ -44,9 +44,12 @@
                         </div>
                     </template>
                     <template v-slot="">
-                        <IssuesTable :issues="issues" @onLazyLoading="handleLazyLoadingIssues" :pledged="true" :isAuthenticated="isAuthenticated"
-                            class="table" />
-                        <TableRowSkeleton v-if="loading" />
+                        <TableRowSkeleton v-if="isInitialLoad" :rows="8" />
+                        <template v-else>
+                            <IssuesTable :issues="issues" @onLazyLoading="handleIssueLazyLoading" :pledged="true" :isAuthenticated="isAuthenticated"
+                                class="table" />
+                            <TableRowSkeleton v-if="isLazyLoading" />
+                        </template>
                     </template>
                 </Page>
             </div>
@@ -81,7 +84,6 @@ import { usePage } from '@inertiajs/vue3';
 
 const props = defineProps
     ({
-        issues: Array,
         userIsContributor: Boolean,
         userIsResolver: Boolean,
         programmingLanguages: Array
@@ -90,17 +92,18 @@ const props = defineProps
 const inertiaPage = usePage();
 const isAuthenticated = inertiaPage.props.auth.user !== null;
 
-const keys = { labels: 'labels', languages: 'languages', range: 'range', date: 'date', storageDiscoverKey: 'discover' };
+const keys = { labels: 'labels', languages: 'languages', range: 'range', date: 'date', storageDiscoverKey: 'discover', showPledgedOnly: 'showPledgedOnly' };
 
 const isQuizModalVisible = ref(!props.userIsContributor && !props.userIsResolver);
 const labels = ref(labelsList);
 const languages = ref(props.programmingLanguages);
-const issues = ref(props.issues);
+const issues = ref([]);
 const displayFilterModal = ref(false);
 const queryFilters = ref({});
 const removedFilters = ref(0);
 const count = ref(0);
-const loading = ref(false);
+const isInitialLoad = ref(true);
+const isLazyLoading = ref(false);
 const page = ref(1);
 const el = ref(null)
 const { width } = useElementSize(el);
@@ -127,14 +130,51 @@ watch(width, (newWidth) => {
     });
 });
 
+const fetchIssuesWithParams = (params = {}, options = {}) => {
+    const {
+        onStart = () => {},
+        onSuccess = () => {},
+        onError = () => {},
+        onFinally = () => {}
+    } = options;
+
+    onStart();
+
+    return axios.get(route('discover.issues.filter'), { params })
+        .then(response => {
+            if (response.data.issues) {
+                onSuccess(response.data.issues);
+            }
+            return response.data;
+        })
+        .catch(error => {
+            console.error('Failed to load issues:', error);
+            onError(error);
+        })
+        .finally(() => {
+            onFinally();
+        });
+};
+
+const fetchIssues = (filters = []) => {
+    isInitialLoad.value = true;
+    
+    fetchIssuesWithParams(
+        { filters: prepareFiltersForQuery(filters), page: 1 },
+        {
+            onSuccess: (fetchedIssues) => {
+                issues.value = fetchedIssues;
+            },
+            onFinally: () => {
+                isInitialLoad.value = false;
+            }
+        }
+    );
+};
+
 const getFilteredIssues = (value) => {
     updateQueryFilters(value);
-
-    router.get(route('discover.issues'), { filters: prepareFiltersForQuery(value) }, {
-        preserveState: false,
-        replace: true,
-        preserveScroll: true
-    });
+    fetchIssues(value);
 }
 
 const updateFilterList = (value) => {
@@ -156,30 +196,30 @@ const handleDisplayModal = () => {
     displayFilterModal.value = !displayFilterModal.value;
 };
 
-const handleLazyLoadingIssues = () => {
-    if (loading.value) {
+const handleIssueLazyLoading = () => {
+    if (isLazyLoading.value || issues.value.length < 10) {
         return;
     }
 
-    loading.value = true;
+    isLazyLoading.value = true;
     page.value++;
     const existingIssueURLs = issues.value.map(issue => issue.github_url);
 
-    axios.get(route('discover.issues'), {
-        params: {
+    fetchIssuesWithParams(
+        { 
             filters: prepareFiltersForQuery(queryFilters.value),
             page: page.value,
             existingUrls: existingIssueURLs
+        },
+        {
+            onSuccess: (fetchedIssues) => {
+                issues.value = [...issues.value, ...fetchedIssues];
+            },
+            onFinally: () => {
+                isLazyLoading.value = false;
+            }
         }
-    }).then(response => {
-        if(response.data.issues) {
-            issues.value = [...issues.value, ...response.data.issues];
-        }
-        loading.value = false;
-    }).catch(error => {
-        console.error('Failed to load issues:', error);
-        loading.value = false;
-    });
+    );
 };
 
 onMounted(() => {
@@ -189,6 +229,8 @@ onMounted(() => {
     } else {
         queryFilters.value = parseQueryFilters();
     }
+
+    fetchIssues(queryFilters.value);
 });
 
 const showMoreFilters = () => {

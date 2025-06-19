@@ -39,6 +39,7 @@ Route::middleware([
         });
 
         Route::get('/discover/issues', [MainController::class, 'discoverIssues'])->name('discover.issues');
+        Route::get('/discover/issues/filter', [MainController::class, 'filterIssues'])->name('discover.issues.filter');
         Route::get('issues/{issue}', [IssueController::class, 'show'])->name('issues.show');
         Route::get('/repositories/{githubUser}/{repository}', [RepositoryController::class, 'show'])->name('repositories.show');
 

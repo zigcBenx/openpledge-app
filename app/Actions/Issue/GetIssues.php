@@ -4,6 +4,8 @@ namespace App\Actions\Issue;
 
 use App\Models\Issue;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use App\Services\GithubService;
 
 class GetIssues
 {
@@ -69,5 +71,52 @@ class GetIssues
         });
 
         return $issues;
+    }
+
+    public static function getWithFilters(Request $request)
+    {
+        $paginationParams = self::getFilterPaginationParameters($request);
+
+        $pledgedIssues = GetIssues::getWithActiveDonations(
+            $paginationParams['filters'], 
+            $paginationParams['offset'], 
+            $paginationParams['perPage']
+        );
+
+        $showPledgedOnly = filter_var($paginationParams['filters']['showPledgedOnly'] ?? false, FILTER_VALIDATE_BOOLEAN);
+
+        if (empty($paginationParams['existingUrls'])) {
+            $paginationParams['existingUrls'] = array_map(function ($issue) {
+                return $issue['github_url'];
+            }, $pledgedIssues->toArray());
+        }
+
+        if (count($pledgedIssues) < $paginationParams['perPage']) {
+            $neededIssues = $paginationParams['perPage'] - count($pledgedIssues);
+            $externalIssues = [];
+
+            if (!$showPledgedOnly) {
+                $externalIssues = GithubService::getConnectedIssuesInBatch($neededIssues, $paginationParams['existingUrls'], $paginationParams['filters']);
+            }
+
+            $combinedIssues = array_merge($pledgedIssues->toArray(), $externalIssues);
+        }
+
+        $paginatedIssues = array_slice($combinedIssues ?? $pledgedIssues->toArray(), 0, $paginationParams['perPage']);
+    
+        return response()->json([
+            'issues' => $paginatedIssues,
+        ]);
+    }
+
+    private static function getFilterPaginationParameters(Request $request)
+    {
+        $filters = $request->query('filters', []);
+        $existingUrls = $request->query('existingUrls', []);
+        $page = (int) $request->query('page', 1);
+        $perPage = 10;
+        $offset = ($page - 1) * $perPage;
+
+        return compact('filters', 'existingUrls', 'page', 'perPage', 'offset');
     }
 }

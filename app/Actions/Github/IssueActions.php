@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Http;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise\Utils as PromiseUtils;
 use App\Models\Label;
+use Carbon\Carbon;
 
 class IssueActions
 {
@@ -77,9 +78,17 @@ class IssueActions
         }
     }
 
-    public static function getConnectedInBatch($neededIssues, $existingIssues)
+    public static function getConnectedInBatch($neededIssues, $existingIssues, $filters)
     {
-        $connectedRepositories = Repository::inRandomOrder()->with('programmingLanguages')->get();
+        // if user filters issues by programming languages, get repositories with only those programming languages
+        if (!empty($filters['languages'])) {
+            $filters['languages'] = explode(',', $filters['languages']);
+            $connectedRepositories = Repository::whereHas('programmingLanguages', function ($query) use ($filters) {
+                $query->whereIn('name', $filters['languages']);
+            })->inRandomOrder()->with('programmingLanguages')->get();
+        } else {
+            $connectedRepositories = Repository::inRandomOrder()->with('programmingLanguages')->get();
+        }
         $allConnectedIssues = [];
 
         if ($connectedRepositories->isEmpty()) {
@@ -102,6 +111,12 @@ class IssueActions
             $promises = [];
             foreach ($repositoriesBatch as $connectedRepository) {
                 $url = "/repos/{$connectedRepository['title']}/issues";
+                $queryParams = self::getQueryParamsForBatchSearch($filters);
+            
+                if (!empty($queryParams)) {
+                    $url .= '?' . http_build_query($queryParams);
+                }
+
                 $promises[] = [
                     'promise' => $client->getAsync($url),
                     'repository' => $connectedRepository,
@@ -110,12 +125,20 @@ class IssueActions
 
             $results = PromiseUtils::settle(array_column($promises, 'promise'))->wait();
 
+            $dateFilter = !empty($filters['date'])
+                ? Carbon::createFromFormat('n-Y', $filters['date'], 'UTC')->startOfMonth()
+                : null;
+
             foreach ($results as $index => $result) {
                 $repository = $promises[$index]['repository'];
                 if ($result['state'] === 'fulfilled' && $result['value']->getStatusCode() === 200) {
                     $issues = json_decode($result['value']->getBody()->getContents(), true);
                     foreach ($issues as $issue) {
-                        if (!strpos($issue['html_url'], '/pull/') && !in_array($issue['html_url'], $existingIssues)) {
+                        if (
+                            !strpos($issue['html_url'], '/pull/') &&
+                            !in_array($issue['html_url'], $existingIssues) &&
+                            (!$dateFilter || Carbon::parse($issue['created_at'])->gte($dateFilter))
+                        ) {
                             $allConnectedIssues[] = [
                                 'title' => $issue['title'],
                                 'github_url' => $issue['html_url'],
@@ -195,5 +218,26 @@ class IssueActions
                 ];
             })
             ->toArray();
+    }
+
+    private static function getQueryParamsForBatchSearch($filters)
+    {
+        $queryParams = [];
+
+        if (!empty($filters['labels'])) {
+            $queryParams['labels'] = implode(',', $filters['labels']);
+        }
+
+        if (!empty($filters['languages'])) {
+            // GitHub REST API does not support "languages" as a query param so we should filter the repositories by programming languages beforehand
+        }
+
+        if (!empty($filters['date'])) {
+            // "since" query param filters by updated date, not created date, so we need to filter by created time manually afterwards
+            $iso8601Date = Carbon::createFromFormat('n-Y', $filters['date'], 'UTC')->startOfMonth()->toIso8601String();
+            $queryParams['since'] = $iso8601Date;
+        }
+    
+        return $queryParams;
     }
 }

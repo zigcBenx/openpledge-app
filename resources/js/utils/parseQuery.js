@@ -14,6 +14,8 @@ export const parseQueryFilters = () => {
       } else if(key == 'range' && value != "null"){
         let parsedRange = value.split('-');
         filters.push({key: 'range', value: {start: parsedRange[0], end: parsedRange[1]}});
+      } else if(key == 'show_pledged_only' && value != "null"){
+        filters.push({key: 'show_pledged_only', value: value});
       }
     }  
     return filters;
@@ -30,6 +32,8 @@ export const parseQueryFilters = () => {
       } else if(key == 'range' && value != null){
         if(value.start && value.end)
           queryString += `${key}=${value.start}-${value.end}&`;
+      } else if(key == 'show_pledged_only' && value != null){
+        queryString += `${key}=${value}&`;
       }
       else if(!prepareFilters[key]) {
         prepareFilters[key] =  `${value}`;
@@ -69,6 +73,8 @@ export const parseQueryFilters = () => {
                     filterValue.year
                 }`;
             }
+        } else if (key === "show_pledged_only") {
+            formattedFilters[key] = formattedFilters[key][0];
         } else {
             formattedFilters[key] = formattedFilters[key].join(",");
         }

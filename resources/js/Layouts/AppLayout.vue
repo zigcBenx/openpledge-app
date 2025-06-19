@@ -460,7 +460,7 @@
                 feedbackData,
                 submitFeedback,
                 feedbackModalMessage,
-                isAuthenticated
+                isAuthenticated,
             };
         }
     };
