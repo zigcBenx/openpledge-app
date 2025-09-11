@@ -59,4 +59,9 @@ class Repository extends Model
         return $this->morphMany(Favorite::class, 'favorable')
             ->where('user_id', Auth::id());
     }
+
+    public function settings()
+    {
+        return $this->hasOne(RepositorySettings::class);
+    }
 }
