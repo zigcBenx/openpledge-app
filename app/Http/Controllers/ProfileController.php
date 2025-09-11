@@ -13,6 +13,7 @@ use Laravel\Jetstream\Agent;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use App\Actions\Repository\GetInstalledRepositories;
+use App\Actions\Repository\GetUserRepositoriesWithSettings;
 use App\Actions\Favorite\GetFavorites;
 use App\Actions\Issue\GetUsersActiveIssues;
 use App\Actions\Issue\GetUsersFinishedIssues;
@@ -207,5 +208,10 @@ class ProfileController extends Controller
             $request->input('companyVatId'),
             $request->input('companyCountry'),
         );
+    }
+
+    public function getUserRepositories()
+    {
+        return GetUserRepositoriesWithSettings::get();
     }
 }
