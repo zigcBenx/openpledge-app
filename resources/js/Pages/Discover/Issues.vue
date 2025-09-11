@@ -4,7 +4,7 @@
         </template>
         <div class="flex gap-10">
             <div class="flex flex-grow">
-                <Page title="Issues" :class="['pb-10', { 'blur-sm': isQuizModalVisible }]"
+                <Page title="Issues" :class="['pb-10', { 'blur-sm': isOnboardingVisible }]"
                     description="Search issues you are interested in...">
                     <template #actions>
                         <button @click="displayFilterModal = true" id="filter-issues-button"
@@ -57,8 +57,7 @@
         <Filters @submit="updateFilterList" @display="handleDisplayModal" :displayFilterModal="displayFilterModal"
             :labels="labels" :languages="languages" :queryFilters="queryFilters" :removedFilters="removedFilters"
             :keys="keys" />
-        <NewUserQuizModal v-model:isQuizModalVisible="isQuizModalVisible"
-            :programmingLanguages="programmingLanguages" />
+        <OnboardingModal v-model:isOnboardingVisible="isOnboardingVisible" />
     </AppLayout>
 </template>
 <script setup>
@@ -75,7 +74,7 @@ import IssuesTable from '@/Components/Custom/IssuesTable.vue';
 import Sidebar from './Partials/Sidebar.vue';
 import { useElementSize } from '@vueuse/core';
 import TableRowSkeleton from '@/Components/Custom/TableRowSkeleton.vue';
-import NewUserQuizModal from '@/Components/Custom/NewUserQuizModal.vue';
+import OnboardingModal from '@/Components/Custom/OnboardingModal.vue';
 import { getDiscoverIssuesTour } from '@/utils/onboardingWalkthrough.js';
 import { usePage } from '@inertiajs/vue3';
 
@@ -92,7 +91,7 @@ const isAuthenticated = inertiaPage.props.auth.user !== null;
 
 const keys = { labels: 'labels', languages: 'languages', range: 'range', date: 'date', storageDiscoverKey: 'discover' };
 
-const isQuizModalVisible = ref(!props.userIsContributor && !props.userIsResolver);
+const isOnboardingVisible = ref(!props.userIsContributor && !props.userIsResolver);
 const labels = ref(labelsList);
 const languages = ref(props.programmingLanguages);
 const issues = ref(props.issues);
@@ -213,7 +212,7 @@ const startDiscoverIssuesTour = () => {
     discoverIssuesTour.start();
 }
 
-watch(isQuizModalVisible, (newValue, oldValue) => {
+watch(isOnboardingVisible, (newValue, oldValue) => {
     if (oldValue && !newValue) {
         startDiscoverIssuesTour();
     }
