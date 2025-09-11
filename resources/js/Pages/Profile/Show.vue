@@ -5,6 +5,7 @@ import Graphs from './Partials/Graphs.vue';
 import ProfileCard from './Partials/ProfileCard.vue';
 import Favorites from './Partials/Favorites.vue';
 import IssuesList from './Partials/IssuesList.vue';
+import RepositoriesList from './Partials/RepositoriesList.vue';
 
 defineProps({});
 </script>
@@ -29,6 +30,9 @@ defineProps({});
                     <div class="w-8/12">
                         <Graphs />
                     </div>
+                </div>
+                <div class="mt-4">
+                    <RepositoriesList />
                 </div>
                 <div class="mt-4">
                     <IssuesList
