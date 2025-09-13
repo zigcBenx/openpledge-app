@@ -23,9 +23,9 @@
                     <tbody>
                         <tr v-for="repository in repositories" :key="repository.id"
                             class="text-sm bg-white dark:bg-charcoal-gray border-separate">
-                            <td class="rounded-bl-md font-medium overflow-hidden border-l-[6px] border-ocean-green dark:border-green pl-3.5 py-6 rounded-tl-md">
+                            <td class="rounded-bl-md font-medium overflow-hidden pl-3.5 py-6 rounded-tl-md">
                                 <div class="flex items-center space-x-2">
-                                    <Link 
+                                    <Link
                                         :href="`/repositories/${repository.title}`"
                                         class="dark:text-white dark:hover:text-green hover:text-green text-base"
                                     >
