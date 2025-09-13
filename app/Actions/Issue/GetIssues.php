@@ -19,7 +19,13 @@ class GetIssues
         $today = Carbon::now()->toDateString();
 
         $query = Issue::query()
-            ->with('programmingLanguages', 'repository.programmingLanguages', 'userFavorite', 'labels')
+            ->with(
+                'programmingLanguages',
+                'repository.programmingLanguages',
+                'repository.settings',
+                'userFavorite',
+                'labels'
+            )
             ->withSum([
                 'donations' => function ($query) use ($today) {
                     $query->where(function ($query) use ($today) {
