@@ -25,6 +25,7 @@ class Label extends Model
         'invalid',
         'duplicate',
         'security',
+        'pledgeable',
         'Pledgeable',
     ];
 

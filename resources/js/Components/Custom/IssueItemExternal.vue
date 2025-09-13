@@ -129,7 +129,6 @@
     // Check if issue can receive donations based on repository settings
     const canReceiveDonations = computed(() => {
         const repository = props.repository;
-        console.log('A', repository)
         if (!repository?.settings || !repository.settings.allowed_labels) {
             return true; // No restrictions
         }
