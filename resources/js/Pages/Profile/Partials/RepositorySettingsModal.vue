@@ -30,68 +30,68 @@
                                     </div>
                                 </div>
 
-                <!-- Donation Expiry -->
-                <div>
-                    <div class="flex items-center">
-                        <input
-                            id="enable_donation_expiry"
-                            v-model="form.enable_donation_expiry"
-                            type="checkbox"
-                            class="h-4 w-4 text-ocean-green dark:text-green focus:ring-ocean-green dark:focus:ring-green border-gray-300 rounded"
-                        >
-                        <label for="enable_donation_expiry" class="ml-2 text-sm font-medium dark:text-lavender-mist text-oil">
-                            Enable Pledge Expiry
-                        </label>
-                    </div>
-                    <p class="text-xs dark:text-spun-pearl text-tundora mt-1">
-                        Automatically expire pledges after a specified period
-                    </p>
-                </div>
+<!--                &lt;!&ndash; Donation Expiry &ndash;&gt;-->
+<!--                <div>-->
+<!--                    <div class="flex items-center">-->
+<!--                        <input-->
+<!--                            id="enable_donation_expiry"-->
+<!--                            v-model="form.enable_donation_expiry"-->
+<!--                            type="checkbox"-->
+<!--                            class="h-4 w-4 text-ocean-green dark:text-green focus:ring-ocean-green dark:focus:ring-green border-gray-300 rounded"-->
+<!--                        >-->
+<!--                        <label for="enable_donation_expiry" class="ml-2 text-sm font-medium dark:text-lavender-mist text-oil">-->
+<!--                            Enable Pledge Expiry-->
+<!--                        </label>-->
+<!--                    </div>-->
+<!--                    <p class="text-xs dark:text-spun-pearl text-tundora mt-1">-->
+<!--                        Automatically expire pledges after a specified period-->
+<!--                    </p>-->
+<!--                </div>-->
 
-                <!-- Default Expiry Days -->
-                <div v-if="form.enable_donation_expiry">
-                    <label class="block text-sm font-medium dark:text-lavender-mist text-oil mb-1">
-                        Default Expiry Days
-                    </label>
-                    <input
-                        v-model="form.default_expiry_days"
-                        type="number"
-                        min="1"
-                        max="365"
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-ocean-green dark:focus:ring-green focus:border-ocean-green dark:focus:border-green dark:bg-charcoal-gray dark:text-lavender-mist sm:text-sm"
-                        placeholder="30"
-                    >
-                </div>
+<!--                &lt;!&ndash; Default Expiry Days &ndash;&gt;-->
+<!--                <div v-if="form.enable_donation_expiry">-->
+<!--                    <label class="block text-sm font-medium dark:text-lavender-mist text-oil mb-1">-->
+<!--                        Default Expiry Days-->
+<!--                    </label>-->
+<!--                    <input-->
+<!--                        v-model="form.default_expiry_days"-->
+<!--                        type="number"-->
+<!--                        min="1"-->
+<!--                        max="365"-->
+<!--                        class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-ocean-green dark:focus:ring-green focus:border-ocean-green dark:focus:border-green dark:bg-charcoal-gray dark:text-lavender-mist sm:text-sm"-->
+<!--                        placeholder="30"-->
+<!--                    >-->
+<!--                </div>-->
 
-                <!-- Min Donation Amount -->
-                <div>
-                    <label class="block text-sm font-medium dark:text-lavender-mist text-oil mb-1">
-                        Minimum Donation Amount ($)
-                    </label>
-                    <input
-                        v-model="form.min_donation_amount"
-                        type="number"
-                        step="0.01"
-                        min="0.01"
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-ocean-green dark:focus:ring-green focus:border-ocean-green dark:focus:border-green dark:bg-charcoal-gray dark:text-lavender-mist sm:text-sm"
-                        placeholder="5.00"
-                    >
-                </div>
+<!--                &lt;!&ndash; Min Donation Amount &ndash;&gt;-->
+<!--                <div>-->
+<!--                    <label class="block text-sm font-medium dark:text-lavender-mist text-oil mb-1">-->
+<!--                        Minimum Donation Amount ($)-->
+<!--                    </label>-->
+<!--                    <input-->
+<!--                        v-model="form.min_donation_amount"-->
+<!--                        type="number"-->
+<!--                        step="0.01"-->
+<!--                        min="0.01"-->
+<!--                        class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-ocean-green dark:focus:ring-green focus:border-ocean-green dark:focus:border-green dark:bg-charcoal-gray dark:text-lavender-mist sm:text-sm"-->
+<!--                        placeholder="5.00"-->
+<!--                    >-->
+<!--                </div>-->
 
-                <!-- Max Donation Amount -->
-                <div>
-                    <label class="block text-sm font-medium dark:text-lavender-mist text-oil mb-1">
-                        Maximum Donation Amount ($)
-                    </label>
-                    <input
-                        v-model="form.max_donation_amount"
-                        type="number"
-                        step="0.01"
-                        min="0.01"
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-ocean-green dark:focus:ring-green focus:border-ocean-green dark:focus:border-green dark:bg-charcoal-gray dark:text-lavender-mist sm:text-sm"
-                        placeholder="1000.00"
-                    >
-                </div>
+<!--                &lt;!&ndash; Max Donation Amount &ndash;&gt;-->
+<!--                <div>-->
+<!--                    <label class="block text-sm font-medium dark:text-lavender-mist text-oil mb-1">-->
+<!--                        Maximum Donation Amount ($)-->
+<!--                    </label>-->
+<!--                    <input-->
+<!--                        v-model="form.max_donation_amount"-->
+<!--                        type="number"-->
+<!--                        step="0.01"-->
+<!--                        min="0.01"-->
+<!--                        class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-ocean-green dark:focus:ring-green focus:border-ocean-green dark:focus:border-green dark:bg-charcoal-gray dark:text-lavender-mist sm:text-sm"-->
+<!--                        placeholder="1000.00"-->
+<!--                    >-->
+<!--                </div>-->
 
                 <!-- Error Message -->
                 <div v-if="errorMessage" class="text-red-600 dark:text-red-400 text-sm">
