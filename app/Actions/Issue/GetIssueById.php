@@ -11,6 +11,7 @@ class GetIssueById
     {
         $issue = Issue::with([
             'repository.programmingLanguages',
+            'repository.settings',
             'donations.user',
             'userFavorite',
         ])->find($id)->append('donation_sum');

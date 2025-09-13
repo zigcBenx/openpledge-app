@@ -1,7 +1,7 @@
 <template>
-    <TopList 
+    <TopList
         containerClass="mt-6"
-        title="Trending today" 
+        title="Trending today"
         subtitle="List of top donated open issues today"
     >
         <li v-for="item in trendingTodayItems" :key="item.id" class="flex justify-between overflow-hidden py-1.5">
@@ -15,7 +15,7 @@
                     {{ item.repository.title }}
                 </Link>
             </span>
-            <span class="w-2/12 text-purple-heart font-medium text-xs" title="Sum of donations">{{ item.today_donations_sum }} €</span>
+            <span class="w-2/12 text-purple-heart font-medium text-xs" title="Sum of pledges">{{ item.today_donations_sum }} €</span>
         </li>
     </TopList>
 </template>

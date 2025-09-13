@@ -111,6 +111,12 @@ Route::middleware([
     // All finished issues page for currently authenticated user
     Route::get('/user/profile/finished', [ProfileController::class, 'showAuthUsersFinishedIssues'])->name('profile.finished-show');
 
+    // Get repositories from currently authenticated user
+    Route::get('/user/repositories', [ProfileController::class, 'getUserRepositories'])->name('profile.repositories');
+
+    // Repository settings routes
+    Route::put('/repositories/{repositoryId}/settings', [RepositoryController::class, 'updateSettings'])->name('repositories.settings.update');
+
     Route::post('/user/new-user-quiz-submission', [UserController::class, 'handleNewUserQuizSubmission'])->name('user.new-user-quiz');
 
     // Stripe Connect routes

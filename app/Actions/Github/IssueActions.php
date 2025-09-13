@@ -79,7 +79,7 @@ class IssueActions
 
     public static function getConnectedInBatch($neededIssues, $existingIssues)
     {
-        $connectedRepositories = Repository::inRandomOrder()->with('programmingLanguages')->get();
+        $connectedRepositories = Repository::inRandomOrder()->with('programmingLanguages', 'settings')->get();
         $allConnectedIssues = [];
 
         if ($connectedRepositories->isEmpty()) {

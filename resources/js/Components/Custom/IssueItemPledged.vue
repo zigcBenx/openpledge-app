@@ -101,6 +101,7 @@
                 @click="addFavorites(issue)"
             />
             <Link
+                v-if="canReceiveDonations"
                 :class="['dark:text-white dark:hover:text-green hover:text-green text-base', {
                 '!text-spun-pearl': issue.state === 'closed'
             }]"
@@ -113,6 +114,21 @@
                     Pledge
                 </Pill>
             </Link>
+
+            <button
+                v-else
+                @click="requestPledgeableLabel()"
+                :class="['dark:text-white dark:hover:text-green hover:text-green text-base', {
+                '!text-spun-pearl': issue.state === 'closed'
+            }]"
+                :title="'This repository requires the \&quot;Pledgeable\&quot; label for donations. Click to request it on GitHub.'"
+            >
+                <Pill
+                    class="ml-4 !bg-gray-600 !text-green"
+                >
+                    Request
+                </Pill>
+            </button>
         </div>
     </td>
 </template>
@@ -120,7 +136,7 @@
 <script setup>
     import dayjs from '@/libs/dayjs'
     import { useDark } from '@vueuse/core'
-    import { ref } from 'vue'
+    import { ref, computed } from 'vue'
     import Icon from '@/Components/Icon.vue'
     import Avatar from '@/Components/Avatar.vue'
     import { Link } from '@inertiajs/vue3'
@@ -143,6 +159,37 @@
     const isDark = useDark()
     const page = usePage()
     const isAuthenticated = page.props.auth.user !== null
+    const toast = useToast()
+
+    // Check if issue can receive donations based on repository settings
+    const canReceiveDonations = computed(() => {
+        const repository = props.issue?.repository;
+        if (!repository?.settings || !repository.settings.allowed_labels) {
+            return true; // No restrictions
+        }
+
+        // Check if repository requires "Pledgeable" label
+        if (repository.settings.allowed_labels.includes('Pledgeable')) {
+            // Check if issue has the "Pledgeable" label
+            const issueLabels = props.issue?.labels?.map(label => label.name) || [];
+            return issueLabels.includes('Pledgeable');
+        }
+
+        return true;
+    });
+
+    const requestPledgeableLabel = () => {
+        const repository = props.issue?.repository;
+        if (!repository) return;
+
+        const githubUrl = `${props.issue.github_url}`;
+
+        toast.info(`Please comment on this GitHub issue to request the "Pledgeable" label`, {
+            timeout: 8000,
+            hideProgressBar: false,
+            closeButton: true,
+        });
+    };
 
     const getIconStrokeColor = (isFavorite, isDisabled) => {
         if (isDark.value) {
