@@ -15,7 +15,7 @@
                         <tr class="text-tundora dark:text-spun-pearl uppercase text-xs text-left">
                             <th class="pb-5 font-normal">Repository</th>
                             <th class="pb-5 font-normal">Issues</th>
-                            <th class="pb-5 font-normal">Total Pledges</th>
+<!--                            <th class="pb-5 font-normal">Total Pledges</th>-->
                             <th class="pb-5 font-normal">Settings</th>
                             <th></th>
                         </tr>
@@ -39,9 +39,9 @@
                             <td class="py-6 dark:text-spun-pearl text-tundora">
                                 {{ repository.issues_count }} {{ repository.issues_count === 1 ? 'issue' : 'issues' }}
                             </td>
-                            <td class="py-6 dark:text-green text-ocean-green font-medium">
-                                ${{ (repository.total_donations / 100).toFixed(2) }}
-                            </td>
+<!--                            <td class="py-6 dark:text-green text-ocean-green font-medium">-->
+<!--                                ${{ (repository.total_donations / 100).toFixed(2) }}-->
+<!--                            </td>-->
                             <td class="py-6">
                                 <div v-if="repository.settings && repository.settings.allowed_labels && repository.settings.allowed_labels.includes('Pledgeable')"
                                      class="text-xs text-ocean-green dark:text-green">
