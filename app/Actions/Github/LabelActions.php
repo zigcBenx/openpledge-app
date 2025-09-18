@@ -17,7 +17,7 @@ class LabelActions
             'Accept' => 'application/vnd.github+json',
         ])->post($url, [
             'name' => 'Pledgeable',
-            'description' => 'This issue can receive pledges/donations on OpenPledge',
+            'description' => 'This issue can receive pledges/funds on OpenPledge',
             'color' => '10B981' // Green color
         ]);
 
@@ -27,17 +27,17 @@ class LabelActions
             // Check if label already exists (422 status)
             if ($response->status() === 422) {
                 $errorData = $response->json();
-                if (isset($errorData['errors']) && 
+                if (isset($errorData['errors']) &&
                     collect($errorData['errors'])->contains('field', 'name')) {
                     return ['message' => 'Label already exists'];
                 }
             }
-            
+
             logger('[ERROR] Failed to create Pledgeable label on GitHub: ', [
                 'response' => $response->body(),
                 'status' => $response->status()
             ]);
-            
+
             throw new \Exception('Failed to create Pledgeable label: ' . $response->body());
         }
     }
