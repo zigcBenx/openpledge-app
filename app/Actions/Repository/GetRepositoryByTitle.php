@@ -8,7 +8,7 @@ class GetRepositoryByTitle
 {
     public static function get($title)
     {
-        $repository = Repository::with(['programmingLanguages:id,name', 'userFavorite', 'issues' => function ($query) {
+        $repository = Repository::with(['settings', 'programmingLanguages:id,name', 'userFavorite', 'issues' => function ($query) {
             $query->with('repository.settings', 'repository.programmingLanguages:id,name', 'userFavorite', 'resolvedBy', 'labels')
                 ->withSum('donations', 'net_amount')
                 ->whereHas('donations', function ($query) {
