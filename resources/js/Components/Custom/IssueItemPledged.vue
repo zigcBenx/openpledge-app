@@ -100,35 +100,38 @@
                 :disabled="issue.state === 'closed'"
                 @click="addFavorites(issue)"
             />
-            <Link
-                v-if="canReceiveDonations"
-                :class="['dark:text-white dark:hover:text-green hover:text-green text-base', {
-                '!text-spun-pearl': issue.state === 'closed'
-            }]"
-                :href="'/issues/' + issue.id"
-            >
-                <Pill
-                    color="secondary"
-                    class="ml-4"
+            <template v-if="issue.state === 'closed'">
+                <span class="ml-4 text-spun-pearl text-sm font-medium">
+                    closed
+                </span>
+            </template>
+            <template v-else>
+                <Link
+                    v-if="canReceiveDonations"
+                    class="dark:text-white dark:hover:text-green hover:text-green text-base"
+                    :href="'/issues/' + issue.id"
                 >
-                    Pledge
-                </Pill>
-            </Link>
+                    <Pill
+                        color="secondary"
+                        class="ml-4"
+                    >
+                        Pledge
+                    </Pill>
+                </Link>
 
-            <button
-                v-else
-                @click="requestPledgeableLabel()"
-                :class="['dark:text-white dark:hover:text-green hover:text-green text-base', {
-                '!text-spun-pearl': issue.state === 'closed'
-            }]"
-                :title="'This repository requires the \&quot;Pledgeable\&quot; label for donations. Click to request it on GitHub.'"
-            >
-                <Pill
-                    class="ml-4 !bg-gray-600 !text-green"
+                <button
+                    v-else
+                    @click="requestPledgeableLabel()"
+                    class="dark:text-white dark:hover:text-green hover:text-green text-base"
+                    :title="'This repository requires the \&quot;Pledgeable\&quot; label for donations. Click to request it on GitHub.'"
                 >
-                    Request
-                </Pill>
-            </button>
+                    <Pill
+                        class="ml-4 !bg-gray-600 !text-green"
+                    >
+                        Request
+                    </Pill>
+                </button>
+            </template>
         </div>
     </td>
 </template>
