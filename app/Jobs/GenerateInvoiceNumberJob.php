@@ -148,7 +148,7 @@ class GenerateInvoiceNumberJob implements ShouldQueue
                     'name' => 'Pledge on OpenPledge.io',
                     'price_per_unit' => $donation->gross_amount,
                     'quantity' => 1,
-                    'currency' => '€',
+                    'currency' => '$',
                 ]
             ],
             'invoice' => [

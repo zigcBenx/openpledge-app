@@ -1,8 +1,8 @@
 ### 💰✨ We’ve Got a New Pledge! ✨💰
 
-| **Donor** | **Amount Pledged** |
+| **Pledger** | **Amount Pledged** |
 |-------|----------------|
-| {{ $donorName }} | {{ $amount }}€ |
+| {{ $donorName }} | {{ $amount }}$ |
 
 @if($expireDate)
 ${\textsf{\color{red}🚨 Time's ticking! This pledge expires on {{ $expireDate }} 🚨}}$

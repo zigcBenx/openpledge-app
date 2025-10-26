@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class MoneyCast implements CastsAttributes
 {
     /**
-     * For converting cents to euros.
+     * For converting cents to dollars.
      *
      * @param  array<string, mixed>  $attributes
      */

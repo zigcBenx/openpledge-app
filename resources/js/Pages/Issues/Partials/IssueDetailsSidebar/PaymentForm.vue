@@ -31,7 +31,7 @@
           <MoneyInput
             v-model="form.amount"
             class="w-full !bg-transparent mt-2.5 !pl-0 !border-none"
-            currency="EUR"
+            currency="USD"
             required
             :min-donation="5"
             :max-donation="100000"
@@ -52,7 +52,7 @@
               </div>
               <div class="flex justify-between">
                   <p>Pledged amount:</p>
-                  <p>{{ netAmount }}€</p>
+                  <p>{{ netAmount }}$</p>
               </div>
               <div class="mt-4">
                   <Checkbox v-model:checked="coverTransactionCost" />

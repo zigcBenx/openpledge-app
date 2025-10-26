@@ -15,7 +15,7 @@
                     {{ item.repository.title }}
                 </Link>
             </span>
-            <span class="w-2/12 text-purple-heart font-medium text-xs" title="Sum of pledges">{{ item.today_donations_sum }} €</span>
+            <span class="w-2/12 text-purple-heart font-medium text-xs" title="Sum of pledges">{{ item.today_donations_sum }} $</span>
         </li>
     </TopList>
 </template>
