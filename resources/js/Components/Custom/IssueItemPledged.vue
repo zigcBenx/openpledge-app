@@ -33,7 +33,7 @@
             <Avatar :url="issue.resolved_by.profile_photo_url" size="sm" />
             <span class="text-ocean-green dark:text-green text-xs font-medium">{{ issue.resolved_by.name }}</span>
             <span class="text-ocean-green dark:text-green text-xs font-light">was paid out</span>
-            <span class="text-ocean-green dark:text-green text-xs font-medium">{{ issue.donations_sum_net_amount ?? 0 }} €</span>
+            <span class="text-ocean-green dark:text-green text-xs font-medium">{{ issue.donations_sum_net_amount ?? 0 }} $</span>
             <span class="text-ocean-green dark:text-green text-xs font-light">{{ dayjs(issue.resolved_at).fromNow() }}</span>
         </div>
     </td>
@@ -88,7 +88,7 @@
             '!dark:text-spun-pearl text-tundora': issue.state === 'closed'
             }]"
         >
-            {{ issue.donations_sum_net_amount ?? 0 }} €
+            {{ issue.donations_sum_net_amount ?? 0 }} $
         </span>
     </td>
     <td class="rounded-br-md rounded-tr-md pr-6">

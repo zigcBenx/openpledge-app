@@ -3,8 +3,8 @@
 
 | **Pledger** | **Amount Pledged** |
 |-------|----------------|
-| {{ $donorName }} | {{ $amount }}€ |
-| TOTAL SUM IS NOW | {{ $totalBounty }}€ |
+| {{ $donorName }} | {{ $amount }}$ |
+| TOTAL SUM IS NOW | {{ $totalBounty }}$ |
 
 @if($expireDate)
     ${\textsf{\color{red}🚨 Time's ticking! This pledge expires on {{ $expireDate }} 🚨}}$

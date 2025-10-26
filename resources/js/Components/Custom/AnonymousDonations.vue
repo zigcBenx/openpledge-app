@@ -1,5 +1,5 @@
 <template>
-    <TopList 
+    <TopList
         :class="{
             'bg-mint-green text-turquoise dark:bg-dark-green': true && isPledgingAnonymously
         }"
@@ -10,13 +10,13 @@
     >
         <div class="flex items-center">
             <span class="font-bold text-lg mr-2">💰</span>
-            <span 
-                class="font-medium text-lg" 
+            <span
+                class="font-medium text-lg"
                 :class="{
                     'text-purple-heart': !isPledgingAnonymously
                 }"
             >
-                {{ anonymousDonationsAmount }} €
+                {{ anonymousDonationsAmount }} $
             </span>
         </div>
         <p class="mt-2 text-sm italic text-tundora dark:text-spun-pearl">"Keep this pledge private—your identity won’t be shown."</p>

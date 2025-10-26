@@ -36,7 +36,7 @@ class DonationCreatedListener implements ShouldQueue
                     'name'  => 'Pledge on OpenPledge.io',
                     'price_per_unit' => $event->donation->gross_amount,
                     'quantity' => 1,
-                    'currency' => '€',
+                    'currency' => '$',
                 ]
             ],
             'invoice' => [
