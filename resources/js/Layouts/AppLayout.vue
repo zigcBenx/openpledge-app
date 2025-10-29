@@ -129,7 +129,7 @@
                         <ResponsiveNavLink :href="route('discover.issues')" :active="route().current('discover.issues')">
                             Discover
                         </ResponsiveNavLink>
-                        <div @click="displayLeaderBoardModal=true" :active="route().current('donations.index')">
+                        <div @click="displayLeaderBoardModal=true">
                             Leaderboard
                         </div>
                     </div>

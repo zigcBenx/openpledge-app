@@ -24,6 +24,10 @@ class DonationCreatedListener implements ShouldQueue
      */
     public function handle(DonationCreatedEvent $event): void
     {
+        if (!config('app.send_custom_invoice_email')) {
+            return;
+        }
+
         $invoiceData = [
             'customer' => [
                 'name' => $event->donation->user->name,

@@ -213,4 +213,14 @@ return [
     */
 
     'payment_holding_days' => env('PAYMENT_HOLDING_DAYS', 30),
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Send Custom Invoice Email
+    |--------------------------------------------------------------------------
+    | This value determines whether to send custom invoice emails to pledgers.
+    |
+    */
+    'send_custom_invoice_email' => env('SEND_CUSTOM_INVOICE_EMAIL', false),
 ];

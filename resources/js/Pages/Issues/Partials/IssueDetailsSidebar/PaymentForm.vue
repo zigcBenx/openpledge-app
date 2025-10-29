@@ -175,7 +175,7 @@ const canReceiveDonations = computed(() => {
     if (repository.settings.allowed_labels.includes('Pledgeable')) {
         // Check if issue has the "Pledgeable" label
         const issueLabels = props.issue?.labels?.map(label => label.name) || [];
-        return issueLabels.includes('pledgeable');
+        return issueLabels.includes('pledgeable') || issueLabels.includes('Pledgeable');
     }
 
     return true;
