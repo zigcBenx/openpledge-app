@@ -61,7 +61,7 @@ const copyInvoice = (invoice) => {
                     <tr v-for="invoice in invoices.data" :key="invoice.id" class="hover:bg-gray-600">
                         <td class="border p-2">{{ invoice.number }}</td>
                         <td class="border p-2 max-w-28 text-wrap">{{ invoice.customer }}</td>
-                        <td class="border p-2">{{ invoice.total }}€</td>
+                        <td class="border p-2">{{ invoice.total }}€/$</td>
                         <td class="border p-2">{{ new Date(invoice.invoice_date).toLocaleDateString() }}</td>
                         <td class="border p-2">{{ new Date(invoice.service_date).toLocaleDateString() }}</td>
                         <td class="border p-2">

@@ -200,7 +200,7 @@ const getValue = (value) => {
     } else if (languages.value.find(item => keys.languages === value.key && item.value === value.value)) {
         return languages.value.find(item => keys.languages === value.key && item.value === value.value).label;
     } else if (value.key === keys.range) {
-        return '€' + value.value.start + '-€' + value.value.end;
+        return '$' + value.value.start + '-$' + value.value.end;
     } else if (value.key === keys.date) {
         return value.value.year;
     }

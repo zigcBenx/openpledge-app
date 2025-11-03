@@ -10,7 +10,7 @@ class PayoutFeeService
      */
 
     /**
-     * We subtract 2€ because we allow only one payout per month.
+     * We subtract 2$ because we allow only one payout per month.
      * Therefore, we need to pay stripe commission for
      * active user that month that payout occurred.
      * @param float $payoutAmount

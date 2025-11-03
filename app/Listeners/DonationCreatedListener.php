@@ -24,6 +24,10 @@ class DonationCreatedListener implements ShouldQueue
      */
     public function handle(DonationCreatedEvent $event): void
     {
+        if (!config('app.send_custom_invoice_email')) {
+            return;
+        }
+
         $invoiceData = [
             'customer' => [
                 'name' => $event->donation->user->name,
@@ -36,7 +40,7 @@ class DonationCreatedListener implements ShouldQueue
                     'name'  => 'Pledge on OpenPledge.io',
                     'price_per_unit' => $event->donation->gross_amount,
                     'quantity' => 1,
-                    'currency' => '€',
+                    'currency' => '$',
                 ]
             ],
             'invoice' => [

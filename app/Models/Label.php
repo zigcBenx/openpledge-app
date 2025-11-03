@@ -25,6 +25,8 @@ class Label extends Model
         'invalid',
         'duplicate',
         'security',
+        'pledgeable',
+        'Pledgeable',
     ];
 
     // Validate labels before creating or updating, we only want to allow the labels that are in the allowedLabels array

@@ -122,7 +122,7 @@ class WebhookActions
         foreach ($labels as $label) {
             if (in_array(strtolower($label['name']), $allowedLabels)) {
                 $issue->labels()->create([
-                    'name' => strtolower($label['name'])
+                    'name' => $label['name']
                 ]);
             }
         }

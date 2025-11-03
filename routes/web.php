@@ -4,7 +4,6 @@ use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\GithubController;
 use App\Http\Controllers\IssueController;
 use App\Http\Controllers\SearchController;
-use App\Http\Controllers\DonationController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\PaymentController;
@@ -77,7 +76,6 @@ Route::middleware([
 
     Route::resource('repositories', RepositoryController::class)->only('index', 'store');
     Route::resource('issues', IssueController::class)->only(['store'])->except(['show']);
-    Route::resource('donations', DonationController::class)->only('index', 'show', 'store');
 
 
     Route::get('issues/{issue}/donations', [IssueController::class, 'donations'])->name('issues.donations');
@@ -110,6 +108,12 @@ Route::middleware([
 
     // All finished issues page for currently authenticated user
     Route::get('/user/profile/finished', [ProfileController::class, 'showAuthUsersFinishedIssues'])->name('profile.finished-show');
+
+    // Get repositories from currently authenticated user
+    Route::get('/user/repositories', [ProfileController::class, 'getUserRepositories'])->name('profile.repositories');
+
+    // Repository settings routes
+    Route::put('/repositories/{repositoryId}/settings', [RepositoryController::class, 'updateSettings'])->name('repositories.settings.update');
 
     Route::post('/user/new-user-quiz-submission', [UserController::class, 'handleNewUserQuizSubmission'])->name('user.new-user-quiz');
 

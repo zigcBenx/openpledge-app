@@ -31,7 +31,7 @@
           <MoneyInput
             v-model="form.amount"
             class="w-full !bg-transparent mt-2.5 !pl-0 !border-none"
-            currency="EUR"
+            currency="USD"
             required
             :min-donation="5"
             :max-donation="100000"
@@ -52,7 +52,7 @@
               </div>
               <div class="flex justify-between">
                   <p>Pledged amount:</p>
-                  <p>{{ netAmount }}€</p>
+                  <p>{{ netAmount }}$</p>
               </div>
               <div class="mt-4">
                   <Checkbox v-model:checked="coverTransactionCost" />
@@ -85,6 +85,7 @@
                 <!-- Stripe will create form elements here -->
             </div>
             <Button
+              v-if="canReceiveDonations"
               :loading="loading"
               :disabled="!isPledgeAmountValid || !isStripePaymentFormValid"
               class="mt-8"
@@ -95,6 +96,24 @@
             >
               Pledge This Issue
             </Button>
+
+            <div v-else>
+              <div class="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md">
+                <p class="text-sm text-yellow-800 dark:text-yellow-200">
+                  This repository requires issues to have the "Pledgeable" label to receive donations.
+                </p>
+              </div>
+              <Button
+                class="mt-4"
+                :plain="true"
+                size="lg"
+                color="primary"
+                @click="requestPledgeableLabel()"
+              >
+                <i class="fa-brands fa-github mr-2"></i>
+                Request "Pledgeable" Label
+              </Button>
+            </div>
             <small v-if="loading" class="text-white">Payment is beeing processed...</small>
           </form>
         </div>
@@ -144,6 +163,38 @@ const isAuthenticated = page.props.auth.user !== null;
 const isStripePaymentFormValid = ref(false);
 const coverTransactionCost = ref(false);
 const originalAmount = ref(null)
+
+// Check if issue can receive donations based on repository settings
+const canReceiveDonations = computed(() => {
+    const repository = props.issue?.repository;
+    if (!repository?.settings || !repository.settings.allowed_labels) {
+        return true;
+    }
+
+    // Check if repository requires "Pledgeable" label
+    if (repository.settings.allowed_labels.includes('Pledgeable')) {
+        // Check if issue has the "Pledgeable" label
+        const issueLabels = props.issue?.labels?.map(label => label.name) || [];
+        return issueLabels.includes('pledgeable') || issueLabels.includes('Pledgeable');
+    }
+
+    return true;
+});
+
+const requestPledgeableLabel = () => {
+    const repository = props.issue?.repository;
+    if (!repository) return;
+
+    const githubUrl = `${props.issue.github_url}`;
+
+    toast.info(`Please comment on this GitHub issue to request the "Pledgeable" label`, {
+        timeout: 8000,
+        hideProgressBar: false,
+        closeButton: true,
+        enableHtml: true
+    });
+};
+
 watch(coverTransactionCost, (newValue) => {
     if (newValue) {
         if (originalAmount.value === null) {

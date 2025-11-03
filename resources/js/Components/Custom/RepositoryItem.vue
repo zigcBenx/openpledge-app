@@ -27,7 +27,7 @@
     </td>
     <td class="py-6 align-middle">
         <span class="text-purple-heart font-medium text-base">
-            {{ repository.total_donations ?? 0 }}€
+            {{ repository.total_donations ?? 0 }}$
         </span>
     </td>
     <td class="py-6 pr-6 align-middle">

@@ -6,13 +6,13 @@ use App\Services\GithubService;
 use App\Actions\Repository\CreateNewRepository;
 use App\Actions\Repository\GetRepositories;
 use App\Actions\Repository\GetRepositoryByTitle;
+use App\Actions\Repository\UpdateRepositorySettings;
 use App\Actions\Issue\GetIssuesByName;
 use App\Http\Requests\CreateNewRepositoryRequest;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-use Laravel\Socialite\Facades\Socialite;
 
 class RepositoryController extends Controller
 {
@@ -104,5 +104,31 @@ class RepositoryController extends Controller
             }
         }
         return isset($user, $repository['owner_id']) && $repository['owner_id'] === (int) $user->github_id;
+    }
+
+    public function updateSettings(Request $request, $repositoryId)
+    {
+        $validated = $request->validate([
+            'require_pledgeable_label' => 'boolean',
+            'allowed_labels' => 'nullable|array',
+            'allowed_labels.*' => 'string',
+            'enable_donation_expiry' => 'boolean',
+            'default_expiry_days' => 'nullable|integer|min:1|max:365',
+            'min_donation_amount' => 'nullable|numeric|min:0.01',
+            'max_donation_amount' => 'nullable|numeric|min:0.01',
+        ]);
+
+        try {
+            $settings = UpdateRepositorySettings::update($repositoryId, $validated);
+
+            return response()->json([
+                'message' => 'Repository settings updated successfully.',
+                'settings' => $settings
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 422);
+        }
     }
 }

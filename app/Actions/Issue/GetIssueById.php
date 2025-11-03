@@ -11,8 +11,10 @@ class GetIssueById
     {
         $issue = Issue::with([
             'repository.programmingLanguages',
+            'repository.settings',
             'donations.user',
             'userFavorite',
+            'labels'
         ])->find($id)->append('donation_sum');
 
         $issue->favorite = $issue->userFavorite->isNotEmpty();

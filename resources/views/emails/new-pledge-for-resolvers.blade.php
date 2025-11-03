@@ -48,7 +48,7 @@
                         </p>
                         <div style="height:10px;line-height:10px;">&nbsp;</div>
                         <p class="t24" style="margin:0;Margin:0;font-family:Exo,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:25px;font-weight:400;font-style:normal;font-size:15px;text-decoration:none;text-transform:none;letter-spacing:-0.1px;direction:ltr;color:#141414;text-align:left;mso-line-height-rule:exactly;mso-text-raise:3px;">
-                            Great news! A new pledge of <b>{{ number_format($amount, 2) }} €</b> has been made on an issue you're actively working on. Your dedication to resolving this issue has caught the attention of our community, and your efforts are being recognized and supported.
+                            Great news! A new pledge of <b>{{ number_format($amount, 2) }} $</b> has been made on an issue you're actively working on. Your dedication to resolving this issue has caught the attention of our community, and your efforts are being recognized and supported.
                         </p>
                         <div style="height:10px;line-height:10px;">&nbsp;</div>
                         <p class="t24" style="margin:0;Margin:0;font-family:Exo,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:25px;font-weight:400;font-style:normal;font-size:15px;text-decoration:none;text-transform:none;letter-spacing:-0.1px;direction:ltr;color:#141414;text-align:left;mso-line-height-rule:exactly;mso-text-raise:3px;">

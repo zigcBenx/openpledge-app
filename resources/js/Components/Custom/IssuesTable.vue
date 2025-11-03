@@ -19,7 +19,7 @@
           </tr>
       </thead>
       <tbody>
-        <tr 
+        <tr
             v-for="issue in issues"
             :key="issue.id"
             :class="['text-sm bg-white dark:bg-charcoal-gray border-separate', {
