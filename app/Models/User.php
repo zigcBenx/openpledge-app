@@ -39,6 +39,7 @@ class User extends Authenticatable
         'stripe_id',
         'is_pledger',
         'is_contributor',
+        'is_maintainer',
         'job_title',
         'company_id',
         'is_pledging_anonymously',
