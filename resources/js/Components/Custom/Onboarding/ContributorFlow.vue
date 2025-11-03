@@ -3,12 +3,21 @@
         <!-- Progress Indicator -->
         <div class="mb-8 flex items-center justify-center space-x-2">
             <div class="w-3 h-3 bg-grayish dark:bg-gunmetal rounded-full"></div>
-            <div class="w-3 h-3 bg-green rounded-full"></div>
-            <div class="w-3 h-3 bg-grayish dark:bg-gunmetal rounded-full"></div>
+            <div class="w-3 h-3 rounded-full" :class="currentStep >= 2 ? 'bg-green' : 'bg-grayish dark:bg-gunmetal'"></div>
+            <div class="w-3 h-3 rounded-full" :class="currentStep >= 3 ? 'bg-green' : 'bg-grayish dark:bg-gunmetal'"></div>
+            <div class="w-3 h-3 rounded-full" :class="currentStep >= 4 ? 'bg-green' : 'bg-grayish dark:bg-gunmetal'"></div>
         </div>
 
-        <!-- Step 1: Programming Languages -->
-        <div v-if="currentStep === 1">
+        <!-- Step 1: GitHub Login -->
+        <GitHubAuthStep
+            v-if="currentStep === 1"
+            :is-authenticated="isGitHubAuthenticated"
+            flow-type="contributor"
+            @github-login-clicked="handleGitHubLogin"
+        />
+
+        <!-- Step 2: Programming Languages -->
+        <div v-if="currentStep === 2">
             <div class="text-center mb-8">
                 <div class="w-16 h-16 mx-auto mb-4 bg-mint-green dark:bg-shade-green rounded-full flex items-center justify-center">
                     <svg class="w-8 h-8 text-dark-green dark:text-green" fill="currentColor" viewBox="0 0 20 20">
@@ -47,8 +56,8 @@
             </div>
         </div>
 
-        <!-- Step 2: Experience Level -->
-        <div v-else-if="currentStep === 2">
+        <!-- Step 3: Experience Level -->
+        <div v-else-if="currentStep === 3">
             <div class="text-center mb-8">
                 <div class="w-16 h-16 mx-auto mb-4 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
                     <svg class="w-8 h-8 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
@@ -84,8 +93,8 @@
             </div>
         </div>
 
-        <!-- Step 3: Interests -->
-        <div v-else-if="currentStep === 3">
+        <!-- Step 4: Interests -->
+        <div v-else-if="currentStep === 4">
             <div class="text-center mb-8">
                 <div class="w-16 h-16 mx-auto mb-4 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center">
                     <svg class="w-8 h-8 text-purple-600 dark:text-purple-400" fill="currentColor" viewBox="0 0 20 20">
@@ -132,7 +141,7 @@
 
             <div class="space-x-4">
                 <button
-                    v-if="currentStep < 3"
+                    v-if="currentStep < 4"
                     @click="nextStep"
                     :disabled="!canProceed"
                     class="px-8 py-3 bg-green text-rich-black font-semibold rounded-lg hover:bg-turquoise disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
@@ -153,14 +162,32 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
+import { usePage } from '@inertiajs/vue3';
+import GitHubAuthStep from './GitHubAuthStep.vue';
 
 const emit = defineEmits(["completed", "back"]);
 
-const currentStep = ref(1);
+// Check if user is already authenticated (skip GitHub login step)
+const isUserAuthenticated = computed(() => usePage().props.auth.user !== null);
+
+// Check if resuming from GitHub auth - stay at step 1 to show welcome message
+const resumingFromAuth = localStorage.getItem('onboarding_step') === '2';
+// Priority: resumingFromAuth (stay at 1) > wasAlreadyAuthenticated (skip to 2) > not authenticated (start at 1)
+const wasAlreadyAuthenticated = isUserAuthenticated.value && !resumingFromAuth;
+const currentStep = ref(resumingFromAuth ? 1 : (wasAlreadyAuthenticated ? 2 : 1));
+const isGitHubAuthenticated = ref(isUserAuthenticated.value);
+
+onMounted(() => {
+    if (resumingFromAuth) {
+        // Show success message at step 1
+        localStorage.removeItem('onboarding_step');
+    }
+});
 const selectedLanguages = ref([]);
 const selectedExperience = ref(null);
 const selectedInterests = ref([]);
+const loading = ref(false);
 
 const popularLanguages = [
     { id: 'javascript', name: 'JavaScript', emoji: '🟨' },
@@ -244,8 +271,9 @@ const issueTypes = [
 ];
 
 const canProceed = computed(() => {
-    if (currentStep.value === 1) return selectedLanguages.value.length > 0;
-    if (currentStep.value === 2) return selectedExperience.value !== null;
+    if (currentStep.value === 1) return isGitHubAuthenticated.value; // GitHub login step - only enabled after auth
+    if (currentStep.value === 2) return selectedLanguages.value.length > 0;
+    if (currentStep.value === 3) return selectedExperience.value !== null;
     return true;
 });
 
@@ -294,5 +322,13 @@ const completeFlow = () => {
         };
         emit("completed", formData);
     }
+};
+
+const handleGitHubLogin = () => {
+    loading.value = true;
+    // Store onboarding state in localStorage
+    localStorage.setItem('onboarding_in_progress', 'true');
+    localStorage.setItem('onboarding_goal', 'userIsContributor');
+    localStorage.setItem('onboarding_step', '2');
 };
 </script>

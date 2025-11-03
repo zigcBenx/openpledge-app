@@ -3,11 +3,20 @@
         <!-- Progress Indicator -->
         <div class="mb-8 flex items-center justify-center space-x-2">
             <div class="w-3 h-3 bg-grayish dark:bg-gunmetal rounded-full"></div>
-            <div class="w-3 h-3 bg-green rounded-full"></div>
+            <div class="w-3 h-3 rounded-full" :class="currentStep >= 2 ? 'bg-green' : 'bg-grayish dark:bg-gunmetal'"></div>
+            <div class="w-3 h-3 rounded-full" :class="currentStep >= 3 ? 'bg-green' : 'bg-grayish dark:bg-gunmetal'"></div>
         </div>
 
-        <!-- Step 1: Repository Connection -->
-        <div v-if="currentStep === 1">
+        <!-- Step 1: GitHub Login -->
+        <GitHubAuthStep
+            v-if="currentStep === 1"
+            :is-authenticated="isGitHubAuthenticated"
+            flow-type="maintainer"
+            @github-login-clicked="handleGitHubLogin"
+        />
+
+        <!-- Step 2: Repository Connection -->
+        <div v-if="currentStep === 2">
             <div class="text-center mb-8">
                 <div class="w-16 h-16 mx-auto mb-4 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
                     <svg class="w-8 h-8 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
@@ -70,8 +79,8 @@
         </div>
 
 
-        <!-- Step 2: Bot Settings -->
-        <div v-else-if="currentStep === 2">
+        <!-- Step 3: Bot Settings -->
+        <div v-else-if="currentStep === 3">
             <div class="text-center mb-8">
                 <div class="w-16 h-16 mx-auto mb-4 bg-indigo-100 dark:bg-indigo-900 rounded-full flex items-center justify-center">
                     <svg class="w-8 h-8 text-indigo-600 dark:text-indigo-400" fill="currentColor" viewBox="0 0 20 20">
@@ -201,17 +210,35 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
+import { usePage } from '@inertiajs/vue3';
+import GitHubAuthStep from './GitHubAuthStep.vue';
 
 const emit = defineEmits(["completed", "back"]);
 
-const currentStep = ref(1);
-const totalSteps = 2;
+// Check if user is already authenticated (skip GitHub login step)
+const isUserAuthenticated = computed(() => usePage().props.auth.user !== null);
+
+// Check if resuming from GitHub auth - stay at step 1 to show welcome message
+const resumingFromAuth = localStorage.getItem('onboarding_step') === '2';
+// Priority: resumingFromAuth (stay at 1) > wasAlreadyAuthenticated (skip to 2) > not authenticated (start at 1)
+const wasAlreadyAuthenticated = isUserAuthenticated.value && !resumingFromAuth;
+const currentStep = ref(resumingFromAuth ? 1 : (wasAlreadyAuthenticated ? 2 : 1));
+const isGitHubAuthenticated = ref(isUserAuthenticated.value);
+
+onMounted(() => {
+    if (resumingFromAuth) {
+        // Show success message at step 1
+        localStorage.removeItem('onboarding_step');
+    }
+});
+const totalSteps = 3;
 const repositoryUrl = ref('');
 const projectDescription = ref('');
 const pledgeAcceptance = ref('all-issues');
 const requiredLabels = ref('');
 const botCommentTemplate = ref('');
+const loading = ref(false);
 
 const defaultBotComment = `🎉 Great news! {pledger_name} has pledged {amount} to this issue.
 
@@ -231,10 +258,11 @@ const previewComment = computed(() => {
 });
 
 const canProceed = computed(() => {
-    if (currentStep.value === 1) {
+    if (currentStep.value === 1) return isGitHubAuthenticated.value; // GitHub login step - only enabled after auth
+    if (currentStep.value === 2) {
         return repositoryUrl.value.length > 0 && projectDescription.value.length > 0;
     }
-    if (currentStep.value === 2) {
+    if (currentStep.value === 3) {
         return pledgeAcceptance.value && (pledgeAcceptance.value === 'all-issues' || requiredLabels.value.length > 0);
     }
     return true;
@@ -270,5 +298,13 @@ const completeFlow = () => {
         };
         emit("completed", formData);
     }
+};
+
+const handleGitHubLogin = () => {
+    loading.value = true;
+    // Store onboarding state in localStorage
+    localStorage.setItem('onboarding_in_progress', 'true');
+    localStorage.setItem('onboarding_goal', 'userIsMaintainer');
+    localStorage.setItem('onboarding_step', '2');
 };
 </script>

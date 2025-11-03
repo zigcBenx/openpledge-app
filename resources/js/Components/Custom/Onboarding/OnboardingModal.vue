@@ -78,8 +78,26 @@ const props = defineProps({
 const emit = defineEmits(["update:isOnboardingVisible"]);
 
 const toast = useToast();
+
+// Check if resuming from GitHub auth
+const storedGoal = localStorage.getItem('onboarding_goal');
+const storedStep = localStorage.getItem('onboarding_step');
+
 const currentStep = ref('goal-selection');
 const selectedGoal = ref(null);
+
+// Resume onboarding if returning from GitHub auth
+if (storedGoal) {
+    selectedGoal.value = storedGoal;
+    if (storedGoal === 'userIsContributor') {
+        currentStep.value = 'contributor-flow';
+    } else if (storedGoal === 'userIsMaintainer') {
+        currentStep.value = 'maintainer-flow';
+    }
+    // Clear onboarding_goal from localStorage (but keep onboarding_step for the flow components to handle)
+    localStorage.removeItem('onboarding_goal');
+    // Note: onboarding_step is removed by the individual flow components after they use it
+}
 
 // Body scroll management
 watch(() => props.isOnboardingVisible, (newValue) => {
