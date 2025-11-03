@@ -280,7 +280,7 @@
     import { useToast } from "vue-toastification";
     import { validateEmail } from '@/utils/validateEmail';
     import Wallet from '@/Components/Custom/Wallet.vue';
-    import OnboardingModal from '@/Components/Custom/OnboardingModal.vue';
+    import OnboardingModal from '@/Components/Custom/Onboarding/OnboardingModal.vue';
 
     export default {
         props: {
@@ -326,7 +326,24 @@
             const isAuthenticated = computed(() => {
                 return user.value !== null;
             });
-            const isOnboardingVisible = ref(!isAuthenticated.value);
+
+            // Check if user needs onboarding
+            const needsOnboarding = computed(() => {
+                if (!isAuthenticated.value) return true; // Not authenticated - show onboarding
+
+                // Authenticated - check if they have completed onboarding
+                const u = user.value;
+                return u.is_contributor === null && u.is_pledger === null && u.is_maintainer === null;
+            });
+
+            const isOnboardingVisible = ref(needsOnboarding.value);
+
+            // Check if user just authenticated from onboarding flow
+            if (isAuthenticated.value && localStorage.getItem('onboarding_in_progress') === 'true') {
+                isOnboardingVisible.value = true;
+                // Clear the localStorage flag
+                localStorage.removeItem('onboarding_in_progress');
+            }
 
             const logout = () => {
                 router.post(route('logout'));
