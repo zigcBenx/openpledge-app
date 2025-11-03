@@ -175,6 +175,16 @@
             </div>
             <p class="text-xs text-tundora dark:text-spun-pearl mt-2">Step 1 of 3</p>
         </div>
+
+        <!-- Login link -->
+        <div class="mt-8 pt-6 border-t border-grayish dark:border-gunmetal" v-if="!selectedGoal">
+            <p class="text-sm text-mondo dark:text-spun-pearl">
+                Already a member?
+                <a :href="route('login')" class="text-green hover:text-dark-green dark:hover:text-turquoise font-medium transition-colors duration-200">
+                    Login
+                </a>
+            </p>
+        </div>
     </div>
 </template>
 

@@ -210,6 +210,7 @@
     >
         <i class="fab fa-discord text-3xl text-white transition-all duration-200 hover:scale-125"></i>
     </a>
+    <OnboardingModal v-model:isOnboardingVisible="isOnboardingVisible" />
     <DialogModal :show="displayFeedbackModal" @close="displayFeedbackModal = false">
         <template #title>
             <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
@@ -279,6 +280,7 @@
     import { useToast } from "vue-toastification";
     import { validateEmail } from '@/utils/validateEmail';
     import Wallet from '@/Components/Custom/Wallet.vue';
+    import OnboardingModal from '@/Components/Custom/OnboardingModal.vue';
 
     export default {
         props: {
@@ -299,7 +301,8 @@
             DialogModal,
             Button,
             TextArea,
-            Wallet
+            Wallet,
+            OnboardingModal
         },
         setup() {
             const isDark = useDark();
@@ -323,6 +326,7 @@
             const isAuthenticated = computed(() => {
                 return user.value !== null;
             });
+            const isOnboardingVisible = ref(!isAuthenticated.value);
 
             const logout = () => {
                 router.post(route('logout'));
@@ -460,7 +464,8 @@
                 feedbackData,
                 submitFeedback,
                 feedbackModalMessage,
-                isAuthenticated
+                isAuthenticated,
+                isOnboardingVisible
             };
         }
     };
