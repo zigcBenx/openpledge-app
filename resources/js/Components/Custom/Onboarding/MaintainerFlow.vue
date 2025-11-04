@@ -17,169 +17,210 @@
 
         <!-- Step 2: Repository Connection -->
         <div v-if="currentStep === 2">
-            <div class="text-center mb-8">
-                <div class="w-16 h-16 mx-auto mb-4 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
-                    <svg class="w-8 h-8 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z" clip-rule="evenodd" />
-                    </svg>
-                </div>
-                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                    Connect Your Repository
-                </h2>
-                <p class="text-lg text-gray-600 dark:text-gray-300">
-                    Let's get your GitHub repository set up to receive funding
-                </p>
-            </div>
-
-            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6 mb-8">
-                <div class="flex items-start space-x-4">
-                    <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center flex-shrink-0">
-                        <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+            <!-- Success State: App Installed -->
+            <div v-if="appInstalled">
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 mx-auto mb-6 bg-mint-green dark:bg-shade-green rounded-full flex items-center justify-center">
+                        <svg class="w-10 h-10 text-dark-green dark:text-green" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                         </svg>
                     </div>
-                    <div>
-                        <h3 class="font-semibold text-blue-900 dark:text-blue-100 mb-1">How it works</h3>
-                        <p class="text-blue-800 dark:text-blue-200 text-sm">
-                            We'll help you connect your GitHub repository so that supporters can fund specific issues. 
-                            You maintain full control over your project while receiving financial support from the community.
-                        </p>
+
+                    <h2 class="text-3xl font-bold text-rich-black dark:text-seashell mb-2">
+                        {{ connectedRepositories.length === 1 ? 'Repository Connected!' : 'Repositories Connected!' }}
+                    </h2>
+                    <p class="text-lg text-mondo dark:text-spun-pearl mb-6">
+                        {{ connectedRepositories.length }} {{ connectedRepositories.length === 1 ? 'repository' : 'repositories' }} connected to OpenPledge
+                    </p>
+
+                    <!-- Repository List -->
+                    <div v-if="loadingRepositories" class="mb-6">
+                        <div class="animate-pulse space-y-3">
+                            <div class="h-16 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+                            <div class="h-16 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Repository URL
-                    </label>
-                    <input
-                        v-model="repositoryUrl"
-                        type="url"
-                        placeholder="https://github.com/username/repository"
-                        class="w-full px-4 py-3 border border-grayish dark:border-gunmetal rounded-lg focus:ring-2 focus:ring-green focus:border-transparent bg-transparent text-rich-black dark:text-seashell"
-                    >
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        Make sure you have admin access to this repository
-                    </p>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Project Description
-                    </label>
-                    <textarea
-                        v-model="projectDescription"
-                        rows="3"
-                        placeholder="Brief description of your project and its goals..."
-                        class="w-full px-4 py-3 border border-grayish dark:border-gunmetal rounded-lg focus:ring-2 focus:ring-green focus:border-transparent bg-transparent text-rich-black dark:text-seashell resize-none"
-                    ></textarea>
-                </div>
-            </div>
-        </div>
-
-
-        <!-- Step 3: Bot Settings -->
-        <div v-else-if="currentStep === 3">
-            <div class="text-center mb-8">
-                <div class="w-16 h-16 mx-auto mb-4 bg-indigo-100 dark:bg-indigo-900 rounded-full flex items-center justify-center">
-                    <svg class="w-8 h-8 text-indigo-600 dark:text-indigo-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2h-2.22l.123.489.804.804A1 1 0 0113 18H7a1 1 0 01-.707-1.707l.804-.804L7.22 15H5a2 2 0 01-2-2V5zm5.771 7H5V5h10v7H8.771z" clip-rule="evenodd" />
-                    </svg>
-                </div>
-                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                    Bot Configuration
-                </h2>
-                <p class="text-lg text-gray-600 dark:text-gray-300">
-                    Customize how OpenPledge bot interacts with your repository
-                </p>
-            </div>
-
-            <div class="space-y-8">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
-                        When should pledges be accepted?
-                    </label>
-                    <div class="space-y-3">
-                        <label class="flex items-start space-x-3 cursor-pointer p-4 rounded-lg border hover:bg-gray-50 dark:hover:bg-gray-800"
-                            :class="pledgeAcceptance === 'all-issues' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700'">
-                            <input
-                                type="radio"
-                                value="all-issues"
-                                v-model="pledgeAcceptance"
-                                class="mt-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300"
-                            >
-                            <div>
-                                <span class="text-sm font-medium text-gray-900 dark:text-white">Accept pledges on all issues</span>
-                                <p class="text-xs text-gray-600 dark:text-gray-300 mt-1">Anyone can pledge money to any issue in your repository</p>
-                            </div>
-                        </label>
-                        <label class="flex items-start space-x-3 cursor-pointer p-4 rounded-lg border hover:bg-gray-50 dark:hover:bg-gray-800"
-                            :class="pledgeAcceptance === 'labeled-issues' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700'">
-                            <input
-                                type="radio"
-                                value="labeled-issues"
-                                v-model="pledgeAcceptance"
-                                class="mt-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300"
-                            >
-                            <div>
-                                <span class="text-sm font-medium text-gray-900 dark:text-white">Only on labeled issues</span>
-                                <p class="text-xs text-gray-600 dark:text-gray-300 mt-1">Pledges only accepted on issues with specific labels (e.g., 'help-wanted', 'funding-welcome')</p>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-
-                <div v-if="pledgeAcceptance === 'labeled-issues'" class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Required Labels (comma-separated)
-                    </label>
-                    <input
-                        v-model="requiredLabels"
-                        type="text"
-                        placeholder="help-wanted, funding-welcome, bounty"
-                        class="w-full px-3 py-2 border border-grayish dark:border-gunmetal rounded-lg focus:ring-2 focus:ring-green focus:border-transparent bg-transparent text-rich-black dark:text-seashell text-sm"
-                    >
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
-                        Bot Comment Customization
-                    </label>
-                    <p class="text-xs text-gray-600 dark:text-gray-400 mb-3">
-                        Customize the message our bot posts when someone pledges to an issue
-                    </p>
-                    <textarea
-                        v-model="botCommentTemplate"
-                        rows="4"
-                        class="w-full px-4 py-3 border border-grayish dark:border-gunmetal rounded-lg focus:ring-2 focus:ring-green focus:border-transparent bg-transparent text-rich-black dark:text-seashell resize-none text-sm"
-                        :placeholder="defaultBotComment"
-                    ></textarea>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                        Available variables: {pledger_name}, {amount}, {issue_title}, {repo_name}
-                    </p>
-                </div>
-
-                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                    <h4 class="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">Preview</h4>
-                    <div class="bg-transparent border border-grayish dark:border-gunmetal rounded p-3 text-sm">
-                        <div class="flex items-start space-x-2">
-                            <div class="w-6 h-6 bg-indigo-100 dark:bg-indigo-900 rounded-full flex items-center justify-center flex-shrink-0">
-                                <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400">OP</span>
-                            </div>
-                            <div class="flex-1">
-                                <div class="text-xs text-gray-500 dark:text-gray-400 mb-1">openpledge-bot commented</div>
-                                <div class="text-gray-900 dark:text-white whitespace-pre-wrap">{{ previewComment }}</div>
+                    <div v-else-if="connectedRepositories.length > 0" class="mb-8 max-h-64 overflow-y-auto space-y-3">
+                        <div
+                            v-for="repo in connectedRepositories"
+                            :key="repo.id"
+                            class="bg-pale-aqua dark:bg-tropical-rain-forest border border-ocean-green dark:border-ocean-green rounded-lg p-4 text-left"
+                        >
+                            <div class="flex items-center justify-between">
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-rich-black dark:text-seashell truncate">
+                                        {{ repo.title }}
+                                    </p>
+                                </div>
+                                <a
+                                    :href="repo.github_url"
+                                    target="_blank"
+                                    class="ml-3 text-tundora dark:text-spun-pearl hover:text-ocean-green dark:hover:text-green transition-colors flex-shrink-0"
+                                    title="View on GitHub"
+                                >
+                                    <i class="fa-brands fa-github"></i>
+                                </a>
                             </div>
                         </div>
                     </div>
+
+                    <button
+                        @click="nextStep"
+                        class="inline-flex items-center justify-center px-8 py-4 bg-dark-green dark:bg-turquoise text-white dark:text-rich-black font-semibold rounded-lg hover:bg-ocean-green dark:hover:bg-green transition-all duration-200 text-lg mb-4"
+                    >
+                        Configure {{ connectedRepositories.length === 1 ? 'Repository' : 'Repositories' }}
+                    </button>
+
+                    <div>
+                        <button
+                            @click="skipConfiguration"
+                            class="text-sm text-mondo dark:text-spun-pearl hover:text-rich-black dark:hover:text-seashell transition-colors duration-200"
+                        >
+                            Skip configuration, I'll do it later
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Install State: Not Yet Installed -->
+            <div v-else>
+                <div class="text-center mb-8">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-mint-green dark:bg-shade-green rounded-full flex items-center justify-center">
+                        <svg class="w-8 h-8 text-dark-green dark:text-green" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-bold text-rich-black dark:text-seashell mb-2">
+                        Connect Your First Repository
+                    </h2>
+                    <p class="text-lg text-mondo dark:text-spun-pearl mb-2">
+                        Install the OpenPledge GitHub App to enable funding on your repositories
+                    </p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                        You'll be able to connect more repositories later
+                    </p>
+                </div>
+
+                <div class="bg-pale-aqua dark:bg-tropical-rain-forest border border-ocean-green dark:border-ocean-green rounded-xl p-6 mb-8">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-10 h-10 bg-ocean-green dark:bg-turquoise rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-white dark:text-rich-black" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-rich-black dark:text-seashell mb-1">How it works</h3>
+                            <p class="text-rich-black dark:text-seashell text-sm">
+                                You'll be redirected to GitHub where you can select which repositories to connect.
+                                OpenPledge will be able to monitor issues and manage funding. You maintain full control and can modify permissions anytime.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <a
+                        :href="githubAppInstallUrl"
+                        @click="handleInstallApp"
+                        class="inline-flex items-center justify-center px-8 py-4 bg-dark-green dark:bg-turquoise text-white dark:text-rich-black font-semibold rounded-lg hover:bg-ocean-green dark:hover:bg-green transition-all duration-200 text-lg mb-4"
+                    >
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z" clip-rule="evenodd" />
+                        </svg>
+                        Install GitHub App
+                    </a>
+
+                    <div>
+                        <button
+                            @click="skipInstallation"
+                            class="text-sm text-mondo dark:text-spun-pearl hover:text-rich-black dark:hover:text-seashell transition-colors duration-200"
+                        >
+                            Skip for now, I'll explore on my own
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
 
+        <!-- Step 3: Repository Settings -->
+        <div v-else-if="currentStep === 3">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 mx-auto mb-4 bg-mint-green dark:bg-shade-green rounded-full flex items-center justify-center">
+                    <svg class="w-8 h-8 text-dark-green dark:text-green" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <h2 class="text-3xl font-bold text-rich-black dark:text-seashell mb-2">
+                    Configure {{ connectedRepositories.length === 1 ? 'Repository' : 'Repositories' }}
+                </h2>
+                <p class="text-lg text-mondo dark:text-spun-pearl mb-2">
+                    Set pledge acceptance rules for your {{ connectedRepositories.length === 1 ? 'repository' : 'repositories' }}
+                </p>
+                <p class="text-sm text-tundora dark:text-spun-pearl">
+                    You can always change these settings later in your profile
+                </p>
+            </div>
+
+            <!-- Repositories List with Settings -->
+            <div class="max-w-3xl mx-auto max-h-96 overflow-y-auto space-y-4 mb-8">
+                <div
+                    v-for="repo in connectedRepositories"
+                    :key="repo.id"
+                    class="bg-white dark:bg-charcoal-gray rounded-lg p-4 border border-gray-200 dark:border-gray-700"
+                >
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center space-x-2 mb-1">
+                                <h3 class="text-base font-medium text-rich-black dark:text-seashell truncate">
+                                    {{ repo.title }}
+                                </h3>
+                                <a
+                                    :href="repo.github_url"
+                                    target="_blank"
+                                    class="text-tundora dark:text-spun-pearl hover:text-ocean-green dark:hover:text-green transition-colors flex-shrink-0"
+                                    title="View on GitHub"
+                                >
+                                    <i class="fa-brands fa-github text-sm"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <button
+                            @click="openSettings(repo)"
+                            class="ml-4 p-2 text-tundora dark:text-spun-pearl hover:text-ocean-green dark:hover:text-green transition-colors flex-shrink-0"
+                            title="Configure Settings"
+                        >
+                            <i class="fa fa-cog"></i>
+                        </button>
+                    </div>
+
+                    <!-- Settings Preview -->
+                    <div class="text-xs">
+                        <span
+                            v-if="repo.settings?.allowed_labels?.includes('Pledgeable')"
+                            class="text-ocean-green dark:text-green"
+                        >
+                            ✓ Requires "Pledgeable" label
+                        </span>
+                        <span v-else class="text-tundora dark:text-spun-pearl">
+                            No restrictions
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Repository Settings Modal -->
+        <RepositorySettingsModal
+            v-if="showSettingsModal"
+            :repository="selectedRepository"
+            @close="closeSettings"
+            @updated="handleSettingsUpdated"
+        />
+
+
         <!-- Navigation -->
-        <div class="flex justify-between items-center mt-12">
+        <div v-if="currentStep !== 2" class="flex justify-between items-center mt-12">
             <button
                 @click="goBack"
                 class="px-6 py-3 text-mondo dark:text-spun-pearl hover:text-rich-black dark:hover:text-seashell transition-colors duration-200"
@@ -202,7 +243,7 @@
                     :disabled="!canComplete"
                     class="px-8 py-3 bg-green text-rich-black font-semibold rounded-lg hover:bg-turquoise disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                 >
-                    Connect Repository!
+                    Finish Setup
                 </button>
             </div>
         </div>
@@ -213,6 +254,7 @@
 import { ref, computed, onMounted } from "vue";
 import { usePage } from '@inertiajs/vue3';
 import GitHubAuthStep from './GitHubAuthStep.vue';
+import RepositorySettingsModal from '@/Pages/Profile/Partials/RepositorySettingsModal.vue';
 
 const emit = defineEmits(["completed", "back"]);
 
@@ -226,50 +268,82 @@ const wasAlreadyAuthenticated = isUserAuthenticated.value && !resumingFromAuth;
 const currentStep = ref(resumingFromAuth ? 1 : (wasAlreadyAuthenticated ? 2 : 1));
 const isGitHubAuthenticated = ref(isUserAuthenticated.value);
 
-onMounted(() => {
+// Track if GitHub App was installed
+const appInstalled = ref(false);
+const connectedRepositories = ref([]);
+const loadingRepositories = ref(false);
+
+onMounted(async () => {
     if (resumingFromAuth) {
         // Show success message at step 1
         localStorage.removeItem('onboarding_step');
     }
+
+    // Check if returning from GitHub App installation
+    if (localStorage.getItem('maintainer_onboarding_installing') === 'true') {
+        localStorage.removeItem('maintainer_onboarding_installing');
+        // Show success message and stay at step 2
+        appInstalled.value = true;
+        currentStep.value = 2;
+        // Fetch repositories that were just connected
+        await fetchRepositories();
+    }
 });
+
+const fetchRepositories = async () => {
+    try {
+        loadingRepositories.value = true;
+        const response = await axios.get(route('profile.repositories'));
+        connectedRepositories.value = response.data;
+    } catch (error) {
+        console.error('Failed to fetch repositories:', error);
+    } finally {
+        loadingRepositories.value = false;
+    }
+};
+
 const totalSteps = 3;
-const repositoryUrl = ref('');
-const projectDescription = ref('');
-const pledgeAcceptance = ref('all-issues');
-const requiredLabels = ref('');
-const botCommentTemplate = ref('');
 const loading = ref(false);
 
-const defaultBotComment = `🎉 Great news! {pledger_name} has pledged {amount} to this issue.
+// Settings modal state
+const showSettingsModal = ref(false);
+const selectedRepository = ref(null);
 
-This means there's now funding available for anyone who solves this issue. Feel free to start working on it!
+// GitHub App installation URL
+const githubAppInstallUrl = import.meta.env.VITE_GITHUB_APP_INSTALLATION_URL || 'https://github.com/apps/openpledge-io/installations/new';
 
-💡 New to OpenPledge? Check out how it works: [openpledge.io](https://openpledge.io)`;
+const openSettings = (repository) => {
+    selectedRepository.value = repository;
+    showSettingsModal.value = true;
+};
 
+const closeSettings = () => {
+    showSettingsModal.value = false;
+    selectedRepository.value = null;
+};
 
-
-const previewComment = computed(() => {
-    const template = botCommentTemplate.value || defaultBotComment;
-    return template
-        .replace('{pledger_name}', 'John Doe')
-        .replace('{amount}', '$50')
-        .replace('{issue_title}', 'Example Issue Title')
-        .replace('{repo_name}', 'example/repository');
-});
+const handleSettingsUpdated = (updatedSettings) => {
+    // Update the repository in the list with new settings
+    const index = connectedRepositories.value.findIndex(repo => repo.id === selectedRepository.value.id);
+    if (index !== -1) {
+        connectedRepositories.value[index].settings = updatedSettings;
+    }
+    closeSettings();
+};
 
 const canProceed = computed(() => {
     if (currentStep.value === 1) return isGitHubAuthenticated.value; // GitHub login step - only enabled after auth
     if (currentStep.value === 2) {
-        return repositoryUrl.value.length > 0 && projectDescription.value.length > 0;
+        return appInstalled.value; // Step 2 can continue only if app is installed
     }
     if (currentStep.value === 3) {
-        return pledgeAcceptance.value && (pledgeAcceptance.value === 'all-issues' || requiredLabels.value.length > 0);
+        return true; // Step 3 can always proceed (checkbox is optional)
     }
     return true;
 });
 
 const canComplete = computed(() => {
-    return pledgeAcceptance.value && (pledgeAcceptance.value === 'all-issues' || requiredLabels.value.length > 0);
+    return true; // Can always complete step 3
 });
 
 
@@ -288,16 +362,12 @@ const goBack = () => {
 };
 
 const completeFlow = () => {
-    if (canComplete.value) {
-        const formData = {
-            repositoryUrl: repositoryUrl.value,
-            projectDescription: projectDescription.value,
-            pledgeAcceptance: pledgeAcceptance.value,
-            requiredLabels: requiredLabels.value.split(',').map(label => label.trim()).filter(label => label.length > 0),
-            botCommentTemplate: botCommentTemplate.value || defaultBotComment
-        };
-        emit("completed", formData);
-    }
+    // Settings are already saved individually via the modal
+    // Just complete the onboarding
+    emit("completed", {
+        configured: true,
+        repositoriesConfigured: connectedRepositories.value.filter(r => r.settings?.allowed_labels?.includes('Pledgeable')).length
+    });
 };
 
 const handleGitHubLogin = () => {
@@ -306,5 +376,20 @@ const handleGitHubLogin = () => {
     localStorage.setItem('onboarding_in_progress', 'true');
     localStorage.setItem('onboarding_goal', 'userIsMaintainer');
     localStorage.setItem('onboarding_step', '2');
+};
+
+const handleInstallApp = () => {
+    // Store that we're in the middle of onboarding installation
+    localStorage.setItem('maintainer_onboarding_installing', 'true');
+};
+
+const skipInstallation = () => {
+    // User wants to skip installation and explore
+    emit("completed", { skipped: true });
+};
+
+const skipConfiguration = () => {
+    // User wants to skip repository configuration
+    emit("completed", { configured: false, skippedConfiguration: true });
 };
 </script>

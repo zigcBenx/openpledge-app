@@ -79,9 +79,10 @@ const emit = defineEmits(["update:isOnboardingVisible"]);
 
 const toast = useToast();
 
-// Check if resuming from GitHub auth
+// Check if resuming from GitHub auth or GitHub App installation
 const storedGoal = localStorage.getItem('onboarding_goal');
 const storedStep = localStorage.getItem('onboarding_step');
+const maintainerInstalling = localStorage.getItem('maintainer_onboarding_installing');
 
 const currentStep = ref('goal-selection');
 const selectedGoal = ref(null);
@@ -97,6 +98,13 @@ if (storedGoal) {
     // Clear onboarding_goal from localStorage (but keep onboarding_step for the flow components to handle)
     localStorage.removeItem('onboarding_goal');
     // Note: onboarding_step is removed by the individual flow components after they use it
+}
+
+// Resume maintainer flow if returning from GitHub App installation
+if (maintainerInstalling === 'true') {
+    selectedGoal.value = 'userIsMaintainer';
+    currentStep.value = 'maintainer-flow';
+    // Don't remove the flag yet - let MaintainerFlow handle it
 }
 
 // Body scroll management
@@ -126,24 +134,19 @@ const handleGoalSelection = async (goal) => {
 };
 
 const handleFlowCompleted = async (formData) => {
-    // TODO: Uncomment when backend is ready
-    // try {
-    //     const response = await axios.post(route("user.new-user-quiz"), {
-    //         newUserQuizSubmission: {
-    //             intent: selectedGoal.value,
-    //             ...formData
-    //         },
-    //     });
-    //     toast.success(response.data.message || "Welcome to OpenPledge!");
-    //     emit("update:isOnboardingVisible", false);
-    // } catch (error) {
-    //     toast.error("Something went wrong!");
-    //     console.error(error);
-    // }
-
-    // For now, just close the modal
-    toast.success("Welcome to OpenPledge!");
-    emit("update:isOnboardingVisible", false);
+    try {
+        const response = await axios.post(route("user.new-user-quiz"), {
+            newUserQuizSubmission: {
+                intent: selectedGoal.value,
+                ...formData
+            },
+        });
+        toast.success(response.data.message || "Welcome to OpenPledge!");
+        emit("update:isOnboardingVisible", false);
+    } catch (error) {
+        toast.error("Something went wrong!");
+        console.error(error);
+    }
 };
 
 const goBack = () => {

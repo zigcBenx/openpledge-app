@@ -345,6 +345,11 @@
                 localStorage.removeItem('onboarding_in_progress');
             }
 
+            // Check if user is returning from GitHub App installation during onboarding
+            if (isAuthenticated.value && localStorage.getItem('maintainer_onboarding_installing') === 'true') {
+                isOnboardingVisible.value = true;
+            }
+
             const logout = () => {
                 router.post(route('logout'));
             };

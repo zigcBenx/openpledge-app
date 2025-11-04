@@ -18,13 +18,12 @@ class LabelActions
         ])->post($url, [
             'name' => 'Pledgeable',
             'description' => 'This issue can receive pledges/funds on OpenPledge',
-            'color' => '10B981' // Green color
+            'color' => '10B981'
         ]);
 
         if ($response->successful()) {
             return $response->json();
         } else {
-            // Check if label already exists (422 status)
             if ($response->status() === 422) {
                 $errorData = $response->json();
                 if (isset($errorData['errors']) &&
