@@ -1,5 +1,7 @@
 <template>
-    <div class="max-w-4xl mx-auto">
+    <div class="max-w-4xl mx-auto flex flex-col h-full">
+        <!-- Scrollable Content Area -->
+        <div class="flex-1 overflow-y-auto pb-24">
         <!-- Progress Indicator -->
         <div class="mb-8 flex items-center justify-center space-x-2">
             <div class="w-3 h-3 bg-grayish dark:bg-gunmetal rounded-full"></div>
@@ -130,16 +132,18 @@
             </div>
         </div>
 
-        <!-- Navigation -->
-        <div class="flex justify-between items-center mt-12">
-            <button
-                @click="goBack"
-                class="px-6 py-3 text-mondo dark:text-spun-pearl hover:text-rich-black dark:hover:text-seashell transition-colors duration-200"
-            >
-                ← Back
-            </button>
+        </div>
 
-            <div class="space-x-4">
+        <!-- Fixed Navigation Bar at Bottom -->
+        <div class="fixed bottom-0 left-0 right-0 bg-white dark:bg-charcoal-gray border-t border-gray-200 dark:border-gray-700 px-6 py-4">
+            <div class="max-w-4xl mx-auto flex justify-between items-center">
+                <button
+                    @click="goBack"
+                    class="px-6 py-3 text-mondo dark:text-spun-pearl hover:text-rich-black dark:hover:text-seashell transition-colors duration-200"
+                >
+                    ← Back
+                </button>
+
                 <button
                     v-if="currentStep < 4"
                     @click="nextStep"

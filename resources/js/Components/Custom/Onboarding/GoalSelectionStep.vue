@@ -1,5 +1,6 @@
 <template>
-    <div class="text-center">
+    <div class="h-full flex flex-col items-center justify-center text-center">
+        <div class="w-full max-w-5xl">
         <!-- Header -->
         <div class="mb-8">
             <h1 class="text-2xl font-semibold text-rich-black dark:text-seashell mb-3">
@@ -14,7 +15,7 @@
         </div>
 
         <!-- Goal Selection Cards -->
-        <div class="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             <!-- Contributor Card -->
             <div 
                 @click="selectGoal('userIsContributor')"
@@ -184,6 +185,7 @@
                     Login
                 </a>
             </p>
+        </div>
         </div>
     </div>
 </template>

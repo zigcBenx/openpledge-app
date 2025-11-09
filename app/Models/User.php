@@ -43,7 +43,8 @@ class User extends Authenticatable
         'job_title',
         'company_id',
         'is_pledging_anonymously',
-        'github_token'
+        'github_token',
+        'specific_repositories'
     ];
 
     /**
@@ -65,6 +66,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'specific_repositories' => 'array',
     ];
 
     /**

@@ -25,10 +25,10 @@
                 >
                     <div
                         v-show="isOnboardingVisible"
-                        class="relative w-full max-w-7xl max-h-[90vh] overflow-y-auto bg-white dark:bg-charcoal-gray rounded-2xl shadow-2xl transform transition-all"
+                        class="relative w-full max-w-6xl h-[80vh] bg-white dark:bg-charcoal-gray rounded-2xl shadow-2xl transform transition-all"
                         @click.stop
                     >
-                        <div class="p-6 sm:p-8 lg:p-12">
+                        <div class="h-full p-6 sm:p-8 lg:p-12">
                             <!-- Goal Selection Step -->
                             <GoalSelectionStep
                                 v-if="currentStep === 'goal-selection'"
@@ -94,6 +94,8 @@ if (storedGoal) {
         currentStep.value = 'contributor-flow';
     } else if (storedGoal === 'userIsMaintainer') {
         currentStep.value = 'maintainer-flow';
+    } else if (storedGoal === 'userIsPledger') {
+        currentStep.value = 'pledger-flow';
     }
     // Clear onboarding_goal from localStorage (but keep onboarding_step for the flow components to handle)
     localStorage.removeItem('onboarding_goal');

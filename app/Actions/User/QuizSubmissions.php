@@ -50,6 +50,16 @@ class QuizSubmissions
                 break;
         }
 
+        // Handle specific repositories (for pledgers)
+        if (!empty($newUserQuizSubmission['specificRepositories'])) {
+            $user->specific_repositories = $newUserQuizSubmission['specificRepositories'];
+        }
+
+        // Handle anonymous pledging preference
+        if (isset($newUserQuizSubmission['isPledgingAnonymously'])) {
+            $user->is_pledging_anonymously = $newUserQuizSubmission['isPledgingAnonymously'];
+        }
+
         $user->save();
 
         if (!empty($newUserQuizSubmission['programmingLanguages'])) {
