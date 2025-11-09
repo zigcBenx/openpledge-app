@@ -1,10 +1,10 @@
 <template>
-    <div class="space-y-6 w-full">
-      <div class="flex flex-col">
+    <div class="w-full">
+      <div class="flex flex-col mb-3">
         <header
-          class="space-y-2 items-center justify-between flex md:space-y-0 md:space-x-4 pb-8 md:py-6"
+          class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-3 md:pb-4"
         >
-          <div>
+          <div class="flex-1 min-w-0">
             <h1 class="dark:text-lavender-mist text-[2.5rem]">
               {{ title }}
             </h1>
@@ -12,8 +12,8 @@
               {{ description }}
             </p>
           </div>
-  
-          <div class="flex items-center gap-4 justify-start shrink-0">
+
+          <div class="flex items-center gap-4 justify-start shrink-0 w-full md:w-auto">
             <slot name="actions" />
           </div>
         </header>

@@ -4,9 +4,24 @@
       <Icon name="error" class="fill-tundora dark:fill-spun-pearl"></Icon>
     </div>
     <div class="text-[1.56rem] text-oil dark:text-lavender-mist mt-7 text-center">Oops! No matches found...</div>
-    <div class="dark:text-spun-pearl text-tundora text-xs text-center">We couldn’t find any matches for your current filters. Please try changing your search criteria or clear the filters to see more issues.</div>
+    <div class="dark:text-spun-pearl text-tundora text-xs text-center">We couldn't find any matches for your current filters. Please try changing your search criteria or clear the filters to see more issues.</div>
   </div>
-  <table v-else class="w-full border-separate border-spacing-x-0 border-spacing-y-4" id="issues-table">
+
+  <!-- Mobile Card View -->
+  <div v-if="issues.length" class="md:hidden space-y-3">
+    <IssueCard
+      v-for="issue in issues"
+      :key="issue.id"
+      :issue="issue"
+      :pledged="pledged"
+      :repository="repository"
+      :isAuthenticated="isAuthenticated"
+    />
+    <div v-intersection-observer="onIntersectionObserver"></div>
+  </div>
+
+  <!-- Desktop Table View -->
+  <table v-if="issues.length" class="hidden md:table w-full border-separate border-spacing-x-0 border-spacing-y-4" id="issues-table">
       <thead>
           <tr class="text-tundora dark:text-spun-pearl uppercase text-xs text-left">
               <th class="pb-5 min-w-[5rem] font-normal">State</th>
@@ -40,6 +55,7 @@
     import { vIntersectionObserver } from '@vueuse/components'
     import IssueItemPledged from '@/Components/Custom/IssueItemPledged.vue'
     import IssueItemExternal from '@/Components/Custom/IssueItemExternal.vue'
+    import IssueCard from '@/Components/Custom/IssueCard.vue'
     import { usePage } from '@inertiajs/vue3';
 
     const page = usePage();
