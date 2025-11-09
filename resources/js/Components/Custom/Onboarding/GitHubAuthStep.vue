@@ -109,15 +109,13 @@ const infoBgClass = computed(() => {
 });
 
 const description = computed(() => {
-    return props.flowType === 'contributor'
-        ? 'We need to verify your GitHub account to match you with issues and process payments.'
-        : 'We need to connect your GitHub account to access your repositories and manage funding.';
+    return 'We need to verify your GitHub account to match you with issues and process payments.'
 });
 
 const whyGitHub = computed(() => {
     return props.flowType === 'contributor'
         ? 'We verify your pull requests and contributions through GitHub to ensure you get paid for your work.'
-        : 'We connect to your repositories to enable funding on issues and verify your maintainer status.';
+        : 'We connect to your repositories to enable funding on issues and display them on openpledge';
 });
 
 const handleGitHubLogin = () => {

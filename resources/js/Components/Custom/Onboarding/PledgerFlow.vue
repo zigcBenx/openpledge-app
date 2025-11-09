@@ -110,9 +110,6 @@
                     <h2 class="text-3xl font-bold text-rich-black dark:text-seashell mb-2">
                         About You
                     </h2>
-                    <p class="text-lg text-mondo dark:text-spun-pearl">
-                        Help us personalize your experience
-                    </p>
                 </div>
 
                 <div class="max-w-2xl mx-auto space-y-6">

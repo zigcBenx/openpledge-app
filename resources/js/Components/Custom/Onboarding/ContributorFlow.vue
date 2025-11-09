@@ -6,6 +6,7 @@
         <div class="mb-8 flex items-center justify-center space-x-2">
             <div class="w-3 h-3 bg-grayish dark:bg-gunmetal rounded-full"></div>
             <div class="w-3 h-3 rounded-full" :class="currentStep >= 2 ? 'bg-green' : 'bg-grayish dark:bg-gunmetal'"></div>
+            <div class="w-3 h-3 rounded-full" :class="currentStep >= 3 ? 'bg-green' : 'bg-grayish dark:bg-gunmetal'"></div>
         </div>
 
         <!-- Step 1: GitHub Login -->
@@ -76,10 +77,47 @@
                 </div>
             </div>
 
-            <div class="text-center">
+            <div class="text-center mt-6">
                 <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
                     Selected {{ selectedLanguages.length }} language{{ selectedLanguages.length !== 1 ? 's' : '' }}
                 </p>
+            </div>
+        </div>
+
+        <!-- Step 3: Repositories to Contribute To -->
+        <div v-if="currentStep === 3">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 mx-auto mb-4 bg-mint-green dark:bg-shade-green rounded-full flex items-center justify-center">
+                    <svg class="w-8 h-8 text-dark-green dark:text-green" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <h2 class="text-3xl font-bold text-rich-black dark:text-seashell mb-2">
+                    Which Projects Interest You?
+                </h2>
+                <p class="text-lg text-mondo dark:text-spun-pearl mb-2">
+                    List repositories you'd like to contribute to
+                </p>
+                <p class="text-sm text-tundora dark:text-spun-pearl">
+                    You can always add or change these later
+                </p>
+            </div>
+
+            <div class="max-w-2xl mx-auto">
+                <div class="bg-white dark:bg-charcoal-gray rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+                    <label class="block text-sm font-medium text-rich-black dark:text-seashell mb-2">
+                        Repository Names (Optional)
+                    </label>
+                    <textarea
+                        v-model="specificRepositories"
+                        rows="8"
+                        placeholder="facebook/react&#10;microsoft/vscode&#10;vuejs/vue&#10;&#10;One repository per line (format: owner/repo-name)"
+                        class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green focus:border-transparent bg-white dark:bg-oil text-rich-black dark:text-seashell resize-none"
+                    ></textarea>
+                    <p class="text-xs text-tundora dark:text-spun-pearl mt-2">
+                        💡 Don't worry if you're not sure yet - you can discover and contribute to projects anytime
+                    </p>
+                </div>
             </div>
         </div>
 
@@ -96,7 +134,7 @@
                 </button>
 
                 <button
-                    v-if="currentStep < 2"
+                    v-if="currentStep < 3"
                     @click="nextStep"
                     :disabled="!canProceed"
                     class="px-8 py-3 bg-green text-rich-black font-semibold rounded-lg hover:bg-turquoise disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
@@ -106,8 +144,7 @@
                 <button
                     v-else
                     @click="completeFlow"
-                    :disabled="!canComplete"
-                    class="px-8 py-3 bg-green text-rich-black font-semibold rounded-lg hover:bg-turquoise disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                    class="px-8 py-3 bg-green text-rich-black font-semibold rounded-lg hover:bg-turquoise transition-all duration-200"
                 >
                     Start Contributing!
                 </button>
@@ -136,6 +173,7 @@ const isGitHubAuthenticated = ref(isUserAuthenticated.value);
 const selectedLanguages = ref([]);
 const loading = ref(false);
 const allLanguages = ref([]);
+const specificRepositories = ref('');
 
 const popularLanguages = computed(() => {
     return allLanguages.value.filter(lang => lang.popular);
@@ -166,10 +204,6 @@ const canProceed = computed(() => {
     return true;
 });
 
-const canComplete = computed(() => {
-    return selectedLanguages.value.length > 0;
-});
-
 const toggleLanguage = (langId) => {
     const index = selectedLanguages.value.indexOf(langId);
     if (index > -1) {
@@ -194,12 +228,16 @@ const goBack = () => {
 };
 
 const completeFlow = () => {
-    if (canComplete.value) {
-        const formData = {
-            programmingLanguages: selectedLanguages.value
-        };
-        emit("completed", formData);
-    }
+    const repositoryList = specificRepositories.value
+        .split('\n')
+        .map(repo => repo.trim())
+        .filter(repo => repo.length > 0 && repo.includes('/'));
+
+    const formData = {
+        programmingLanguages: selectedLanguages.value,
+        specificRepositories: repositoryList
+    };
+    emit("completed", formData);
 };
 
 const handleGitHubLogin = () => {
