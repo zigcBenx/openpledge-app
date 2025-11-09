@@ -15,7 +15,7 @@
                                 </Link>
                             </div>
                             <!-- Navigation Links -->
-                            <div class="space-x-8 sm:-my-px sm:ms-10 content-center">
+                            <div class="hidden nav:flex space-x-8 sm:-my-px sm:ms-10 content-center">
                                 <NavLink :href="route('discover.issues')" :active="route().current('discover.issues')">
                                     Discover
                                 </NavLink>
@@ -26,7 +26,7 @@
                             </div>
                         </div>
 
-                        <div class="hidden sm:flex sm:items-center gap-6">
+                        <div class="hidden nav:flex nav:items-center gap-6">
                             <Wallet />
                             <div class="sm:-my-px sm:ms-10 content-center">
                                 <Dropdown align="right" width="44.375rem">
@@ -90,31 +90,31 @@
                         </div>
 
                         <!-- Hamburger -->
-                        <div class="-me-2 flex items-center sm:hidden">
-                            <div class="pr-2">
-                                <Icon name="bell"
-                                    class="dark:stroke-spun-pearl hover:fill-green stroke-tundora"
-                                />
-                            </div>
-                            <button class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out" @click="showingNavigationDropdown = ! showingNavigationDropdown">
+                        <div class="flex items-center nav:hidden">
+                            <button
+                                class="inline-flex items-center justify-center p-3 rounded-lg border-2 transition-all duration-200 ease-in-out"
+                                :class="showingNavigationDropdown
+                                    ? 'bg-green border-green text-rich-black dark:bg-green dark:border-green dark:text-rich-black'
+                                    : 'border-tundora dark:border-spun-pearl text-tundora dark:text-spun-pearl hover:border-green hover:text-green dark:hover:border-green dark:hover:text-green hover:bg-mint-green dark:hover:bg-shade-green'"
+                                @click="showingNavigationDropdown = ! showingNavigationDropdown"
+                            >
                                 <svg
                                     class="h-6 w-6"
                                     stroke="currentColor"
                                     fill="none"
                                     viewBox="0 0 24 24"
+                                    stroke-width="2.5"
                                 >
                                     <path
                                         :class="{'hidden': showingNavigationDropdown, 'inline-flex': ! showingNavigationDropdown }"
                                         stroke-linecap="round"
                                         stroke-linejoin="round"
-                                        stroke-width="2"
                                         d="M4 6h16M4 12h16M4 18h16"
                                     />
                                     <path
                                         :class="{'hidden': ! showingNavigationDropdown, 'inline-flex': showingNavigationDropdown }"
                                         stroke-linecap="round"
                                         stroke-linejoin="round"
-                                        stroke-width="2"
                                         d="M6 18L18 6M6 6l12 12"
                                     />
                                 </svg>
@@ -124,59 +124,104 @@
                 </div>
 
                 <!-- Responsive Navigation Menu -->
-                <div :class="{'block': showingNavigationDropdown, 'hidden': ! showingNavigationDropdown}" class="sm:hidden">
-                    <div class="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink :href="route('discover.issues')" :active="route().current('discover.issues')">
-                            Discover
-                        </ResponsiveNavLink>
-                        <div @click="displayLeaderBoardModal=true">
-                            Leaderboard
-                        </div>
-                    </div>
-
-                    <!-- Responsive Settings Options -->
-                    <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
-                        <div class="flex items-center px-4">
-                            <div v-if="$page.props.jetstream.managesProfilePhotos" class="shrink-0 me-3">
+                <div :class="{'block': showingNavigationDropdown, 'hidden': ! showingNavigationDropdown}" class="nav:hidden bg-white dark:bg-charcoal-gray border-t border-gray-200 dark:border-gray-700">
+                    <div class="px-4 py-6 space-y-6">
+                        <!-- User Profile & Wallet Section -->
+                        <div class="flex items-center justify-between gap-3 pb-4 border-b border-gray-200 dark:border-gray-700">
+                            <div class="flex items-center gap-3 flex-1 min-w-0">
                                 <img
-                                    class="h-10 w-10 rounded-full object-cover"
+                                    class="h-12 w-12 rounded-full object-cover ring-2 ring-green"
                                     :src="$page.props.auth?.user?.profile_photo_url || '/images/anonymous_pledger.png'"
-                                    :alt="$page.props.auth?.user?.name || 'Anonymous Pledger'">
+                                    :alt="$page.props.auth?.user?.name || 'Anonymous Pledger'"
+                                >
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-semibold text-base text-rich-black dark:text-seashell truncate">
+                                        {{ $page.props.auth?.user?.name || 'Anonymous Pledger' }}
+                                    </div>
+                                    <div class="text-sm text-mondo dark:text-spun-pearl truncate">
+                                        {{ $page.props.auth?.user?.email || 'anonymous@openpledge.io' }}
+                                    </div>
+                                </div>
                             </div>
-
-                            <div>
-                                <div class="font-medium text-base text-gray-800 dark:text-gray-200">
-                                    {{ $page.props.auth?.user?.name || 'Anonymous Pledger' }}
-                                </div>
-                                <div class="font-medium text-sm text-gray-500">
-                                    {{ $page.props.auth?.user?.email || 'anonymous@openpledge.io' }}
-                                </div>
+                            <div class="flex-shrink-0">
+                                <Wallet />
                             </div>
                         </div>
 
-                        <div class="mt-3 space-y-1">
+                        <!-- Search Section -->
+                        <div class="pb-4 border-b border-gray-200 dark:border-gray-700">
+                            <Input
+                                v-model="searchQuery"
+                                placeholder="Search repositories and issues..."
+                                type="search"
+                                icon="search"
+                                inputClass="w-full"
+                                @onInput="searchQuery = $event.target.value"
+                            />
+                            <div v-if="searchQuery.length > 0 && filteredData.length > 0" class="mt-2 bg-gray-50 dark:bg-oil rounded-lg p-2 max-h-64 overflow-y-auto">
+                                <SearchCard
+                                    :isDark="isDark"
+                                    :data="filteredData"
+                                    checkboxLabel="Show GitHub results"
+                                    :isCheckboxDisabled="!isAuthenticated"
+                                    :getSearchItemHref="generateSearchItemHref"
+                                    @checkbox-toggled="includeGitHubResults = $event"
+                                    :tooltipText="!isAuthenticated ? 'Log In to show GitHub results' : ''"
+                                />
+                            </div>
+                        </div>
+
+                        <!-- Navigation Links -->
+                        <nav class="space-y-2">
+                            <ResponsiveNavLink :href="route('discover.issues')" :active="route().current('discover.issues')">
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                                    </svg>
+                                    <span>Discover</span>
+                                </div>
+                            </ResponsiveNavLink>
+
+                            <div
+                                @click="displayLeaderBoardModal=true; showingNavigationDropdown = false"
+                                class="cursor-pointer flex items-center gap-3 ps-3 pe-4 py-3 border-l-4 border-transparent text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-green transition duration-150 ease-in-out"
+                            >
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                </svg>
+                                <span class="uppercase">Leaderboard</span>
+                            </div>
+
                             <ResponsiveNavLink :href="route('profile.settings')" :active="route().current('profile.settings')">
-                                Profile
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>Profile</span>
+                                </div>
                             </ResponsiveNavLink>
+                        </nav>
 
-                            <!-- <ResponsiveNavLink v-if="$page.props.jetstream.hasApiFeatures" :href="route('api-tokens.index')" :active="route().current('api-tokens.index')">
-                                API Tokens
-                            </ResponsiveNavLink> -->
+                        <!-- Bottom Actions -->
+                        <div class="pt-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
+                            <button
+                                @click="toggleDark()"
+                                class="w-full flex items-center gap-3 ps-3 pe-4 py-3 rounded-lg text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150 ease-in-out"
+                            >
+                                <Icon v-if="isDark" name="moon" class="w-5 h-5 dark:stroke-current" />
+                                <Icon v-else name="sun" class="w-5 h-5 stroke-current fill-current" />
+                                <span>{{ isDark ? 'Dark' : 'Light' }} Mode</span>
+                            </button>
 
-                            <ResponsiveNavLink @click="toggleDark()" as="button">
-                                   <button
-                                        class="text-gray-600 dark:text-gray-400"
-                                    >
-                                        <i :class="{'fa-solid': true, 'fa-sun': !isDark, 'fa-moon': isDark}"></i> Switch theme
-                                    </button>
-                            </ResponsiveNavLink>
-
-                            <!-- Authentication -->
-                            <form method="POST" @submit.prevent="logout">
-                                <ResponsiveNavLink as="button">
-                                    Log Out
-                                </ResponsiveNavLink>
-                            </form>
+                            <button
+                                @click="logout"
+                                class="w-full flex items-center gap-3 ps-3 pe-4 py-3 rounded-lg text-base font-medium text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 hover:bg-red-50 dark:hover:bg-red-900/20 transition duration-150 ease-in-out"
+                            >
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                </svg>
+                                <span>Log Out</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -195,7 +240,7 @@
             </main>
         </div>
     </div>
-    <div class="fixed bottom-0 left-0 w-full text-white w-100 bg-openpledge-yellow p-2 text-center">
+    <div class="fixed bottom-0 left-0 w-full text-white bg-openpledge-yellow p-2 text-center text-xs sm:text-sm md:text-base">
         OpenPledge is in <b>BETA</b>. Things might get a little quirky! 🚀
     </div>
 <!--    <Button-->
@@ -210,6 +255,7 @@
     >
         <i class="fab fa-discord text-3xl text-white transition-all duration-200 hover:scale-125"></i>
     </a>
+    <OnboardingModal v-model:isOnboardingVisible="isOnboardingVisible" />
     <DialogModal :show="displayFeedbackModal" @close="displayFeedbackModal = false">
         <template #title>
             <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
@@ -279,6 +325,7 @@
     import { useToast } from "vue-toastification";
     import { validateEmail } from '@/utils/validateEmail';
     import Wallet from '@/Components/Custom/Wallet.vue';
+    import OnboardingModal from '@/Components/Custom/Onboarding/OnboardingModal.vue';
 
     export default {
         props: {
@@ -299,7 +346,8 @@
             DialogModal,
             Button,
             TextArea,
-            Wallet
+            Wallet,
+            OnboardingModal
         },
         setup() {
             const isDark = useDark();
@@ -323,6 +371,29 @@
             const isAuthenticated = computed(() => {
                 return user.value !== null;
             });
+
+            // Check if user needs onboarding
+            const needsOnboarding = computed(() => {
+                if (!isAuthenticated.value) return true; // Not authenticated - show onboarding
+
+                // Authenticated - check if they have completed onboarding
+                const u = user.value;
+                return u.is_contributor === null && u.is_pledger === null && u.is_maintainer === null;
+            });
+
+            const isOnboardingVisible = ref(needsOnboarding.value);
+
+            // Check if user just authenticated from onboarding flow
+            if (isAuthenticated.value && localStorage.getItem('onboarding_in_progress') === 'true') {
+                isOnboardingVisible.value = true;
+                // Clear the localStorage flag
+                localStorage.removeItem('onboarding_in_progress');
+            }
+
+            // Check if user is returning from GitHub App installation during onboarding
+            if (isAuthenticated.value && localStorage.getItem('maintainer_onboarding_installing') === 'true') {
+                isOnboardingVisible.value = true;
+            }
 
             const logout = () => {
                 router.post(route('logout'));
@@ -460,7 +531,8 @@
                 feedbackData,
                 submitFeedback,
                 feedbackModalMessage,
-                isAuthenticated
+                isAuthenticated,
+                isOnboardingVisible
             };
         }
     };

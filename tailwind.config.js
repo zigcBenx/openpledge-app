@@ -16,6 +16,9 @@ export default {
 
     theme: {
         extend: {
+            screens: {
+                'nav': '1084px',
+            },
             keyframes: {
                 pulse: {
                     '0%, 100%': { opacity: '1' },

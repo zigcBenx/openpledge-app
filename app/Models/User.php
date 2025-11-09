@@ -39,10 +39,12 @@ class User extends Authenticatable
         'stripe_id',
         'is_pledger',
         'is_contributor',
+        'is_maintainer',
         'job_title',
         'company_id',
         'is_pledging_anonymously',
-        'github_token'
+        'github_token',
+        'specific_repositories'
     ];
 
     /**
@@ -64,6 +66,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'specific_repositories' => 'array',
     ];
 
     /**

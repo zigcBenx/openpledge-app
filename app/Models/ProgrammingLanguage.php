@@ -11,5 +11,10 @@ class ProgrammingLanguage extends Model
 
     protected $fillable = [
         'name',
+        'popular',
+    ];
+
+    protected $casts = [
+        'popular' => 'boolean',
     ];
 }

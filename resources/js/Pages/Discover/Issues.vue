@@ -4,7 +4,7 @@
         </template>
         <div class="flex gap-10">
             <div class="flex flex-grow">
-                <Page title="Issues" :class="['pb-10', { 'blur-sm': isQuizModalVisible }]"
+                <Page title="Issues" class="pb-10"
                     description="Search issues you are interested in...">
                     <template #actions>
                         <button @click="displayFilterModal = true" id="filter-issues-button"
@@ -57,8 +57,6 @@
         <Filters @submit="updateFilterList" @display="handleDisplayModal" :displayFilterModal="displayFilterModal"
             :labels="labels" :languages="languages" :queryFilters="queryFilters" :removedFilters="removedFilters"
             :keys="keys" />
-        <NewUserQuizModal v-model:isQuizModalVisible="isQuizModalVisible"
-            :programmingLanguages="programmingLanguages" />
     </AppLayout>
 </template>
 <script setup>
@@ -75,15 +73,11 @@ import IssuesTable from '@/Components/Custom/IssuesTable.vue';
 import Sidebar from './Partials/Sidebar.vue';
 import { useElementSize } from '@vueuse/core';
 import TableRowSkeleton from '@/Components/Custom/TableRowSkeleton.vue';
-import NewUserQuizModal from '@/Components/Custom/NewUserQuizModal.vue';
-import { getDiscoverIssuesTour } from '@/utils/onboardingWalkthrough.js';
 import { usePage } from '@inertiajs/vue3';
 
 const props = defineProps
     ({
         issues: Array,
-        userIsContributor: Boolean,
-        userIsResolver: Boolean,
         programmingLanguages: Array
     });
 
@@ -91,8 +85,6 @@ const inertiaPage = usePage();
 const isAuthenticated = inertiaPage.props.auth.user !== null;
 
 const keys = { labels: 'labels', languages: 'languages', range: 'range', date: 'date', storageDiscoverKey: 'discover' };
-
-const isQuizModalVisible = ref(!props.userIsContributor && !props.userIsResolver);
 const labels = ref(labelsList);
 const languages = ref(props.programmingLanguages);
 const issues = ref(props.issues);
@@ -206,20 +198,5 @@ const getValue = (value) => {
         return value.value.year;
     }
     return false;
-}
-
-const startDiscoverIssuesTour = () => {
-    const discoverIssuesTour = getDiscoverIssuesTour(issues.value[0]?.repository.title.split('/')[0], issues.value[0]?.repository.title.split('/')[1]);
-    discoverIssuesTour.start();
-}
-
-watch(isQuizModalVisible, (newValue, oldValue) => {
-    if (oldValue && !newValue) {
-        startDiscoverIssuesTour();
-    }
-});
-
-if (localStorage.getItem('isTutorialInProgress') === 'true') {
-    startDiscoverIssuesTour();
 }
 </script>

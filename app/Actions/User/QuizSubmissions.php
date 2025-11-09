@@ -29,9 +29,10 @@ class QuizSubmissions
             );
         }
 
-        $user->job_title = $newUserQuizSubmission['jobTitle'];
+        $user->job_title = $newUserQuizSubmission['jobTitle'] ?? null;
         $user->is_contributor = false;
         $user->is_pledger = false;
+        $user->is_maintainer = false;
 
         switch ($newUserQuizSubmission['intent']) {
             case 'userIsContributor':
@@ -40,20 +41,35 @@ class QuizSubmissions
             case 'userIsPledger':
                 $user->is_pledger = true;
                 break;
+            case 'userIsMaintainer':
+                $user->is_maintainer = true;
+                break;
             case 'userIsBoth':
                 $user->is_contributor = true;
                 $user->is_pledger = true;
                 break;
         }
 
+        // Handle specific repositories (for pledgers)
+        if (!empty($newUserQuizSubmission['specificRepositories'])) {
+            $user->specific_repositories = $newUserQuizSubmission['specificRepositories'];
+        }
+
+        // Handle anonymous pledging preference
+        if (isset($newUserQuizSubmission['isPledgingAnonymously'])) {
+            $user->is_pledging_anonymously = $newUserQuizSubmission['isPledgingAnonymously'];
+        }
+
         $user->save();
 
-        foreach ($newUserQuizSubmission['programmingLanguages'] as $programmingLanguageId) {
-            ProgrammingLanguageable::create([
-                'programming_language_id' => $programmingLanguageId,
-                'programming_languageable_id' => $user->id,
-                'programming_languageable_type' => User::class,
-            ]);
+        if (!empty($newUserQuizSubmission['programmingLanguages'])) {
+            foreach ($newUserQuizSubmission['programmingLanguages'] as $programmingLanguageId) {
+                ProgrammingLanguageable::create([
+                    'programming_language_id' => $programmingLanguageId,
+                    'programming_languageable_id' => $user->id,
+                    'programming_languageable_type' => User::class,
+                ]);
+            }
         }
 
         return response()->json([

@@ -101,11 +101,22 @@ class AuthActions
 
         $authenticatedUser = Auth::user();
 
+        // Check if this is an onboarding flow
+        $isOnboarding = session('onboarding_in_progress');
+        $onboardingGoal = session('onboarding_goal');
+
         if ($authenticatedUser) {
             // We sync the github id to the authenticated user
             $authenticatedUser->github_id = $githubAccountData->id;
             $authenticatedUser->save();
             Auth::login($authenticatedUser);
+
+            // If onboarding, pass success message
+            if ($isOnboarding) {
+                session()->forget('onboarding_in_progress');
+                return redirect('/')->with('onboarding_success', true)->with('onboarding_goal', $onboardingGoal);
+            }
+
             $redirectPath = session('github_redirect_path');
             if ($redirectPath) {
                 session()->forget('github_redirect_path');
@@ -123,6 +134,13 @@ class AuthActions
             }
             // User is already connected with GitHub
             Auth::login($dbUser);
+
+            // If onboarding, pass success message
+            if ($isOnboarding) {
+                session()->forget('onboarding_in_progress');
+                return redirect('/')->with('onboarding_success', true)->with('onboarding_goal', $onboardingGoal);
+            }
+
             return redirect('/');
         }
 
@@ -135,6 +153,13 @@ class AuthActions
                 $userWithSameEmail->github_id = $githubAccountData->id;
                 $userWithSameEmail->save();
                 Auth::login($userWithSameEmail);
+
+                // If onboarding, pass success message
+                if ($isOnboarding) {
+                    session()->forget('onboarding_in_progress');
+                    return redirect('/')->with('onboarding_success', true)->with('onboarding_goal', $onboardingGoal);
+                }
+
                 return redirect('/');
             }
             // For security reasons, if email is not verified, we should not do anything, since we can't verify if this user is the owner of the email
@@ -179,6 +204,13 @@ class AuthActions
         }
 
         Auth::login($dbUser);
+
+        // If onboarding, pass success message
+        if ($isOnboarding) {
+            session()->forget('onboarding_in_progress');
+            return redirect('/')->with('onboarding_success', true)->with('onboarding_goal', $onboardingGoal);
+        }
+
         return redirect('/');
     }
 }
