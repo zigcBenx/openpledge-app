@@ -240,7 +240,7 @@
             </main>
         </div>
     </div>
-    <div class="fixed bottom-0 left-0 w-full text-white w-100 bg-openpledge-yellow p-2 text-center">
+    <div class="fixed bottom-0 left-0 w-full text-white bg-openpledge-yellow p-2 text-center text-xs sm:text-sm md:text-base">
         OpenPledge is in <b>BETA</b>. Things might get a little quirky! 🚀
     </div>
 <!--    <Button-->
