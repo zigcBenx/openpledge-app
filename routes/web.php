@@ -116,6 +116,7 @@ Route::middleware([
     Route::put('/repositories/{repositoryId}/settings', [RepositoryController::class, 'updateSettings'])->name('repositories.settings.update');
 
     Route::post('/user/new-user-quiz-submission', [UserController::class, 'handleNewUserQuizSubmission'])->name('user.new-user-quiz');
+    Route::get('/programming-languages', [UserController::class, 'getProgrammingLanguages'])->name('programming-languages.index');
 
     // Stripe Connect routes
     Route::get('/stripe/connect', [StripeConnectController::class, 'stripeConnect'])->name('stripe.connect');

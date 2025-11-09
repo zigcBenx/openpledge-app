@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Email\SendFeedbackMail;
+use App\Models\ProgrammingLanguage;
 use Illuminate\Http\Request;
 use App\Actions\User\QuizSubmissions;
 
@@ -25,5 +26,14 @@ class UserController extends Controller
             'toastMessage' => "Thank you! Your feedback was submitted successfully.",
             'modalMessage' => "We sincerely appreciate your feedback! It helps us improve the platform. Our team will review it soon.",
         ]);
+    }
+
+    public function getProgrammingLanguages()
+    {
+        $languages = ProgrammingLanguage::orderBy('popular', 'desc')
+            ->orderBy('name', 'asc')
+            ->get(['id', 'name', 'popular']);
+
+        return response()->json($languages);
     }
 }
